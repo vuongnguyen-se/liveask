@@ -1,21 +1,24 @@
 # Local development: the API plus PostgreSQL, no AWS needed.
-#   docker compose up --build   ->  http://localhost:8000/docs
+#   docker compose up --build   ->  http://localhost:8000/healthz
+# (Two API containers behind nginx arrive in task D1-07.)
 services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: notes
-      POSTGRES_PASSWORD: notes-local-only
-      POSTGRES_DB: notes
+      POSTGRES_USER: liveask
+      POSTGRES_PASSWORD: liveask-local-only
+      POSTGRES_DB: liveask
+    ports:
+      - "127.0.0.1:5432:5432"   # lets pytest on your machine reach it
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U notes"]
+      test: ["CMD-SHELL", "pg_isready -U liveask"]
       interval: 3s
       retries: 10
 
   api:
     build: ./app
     environment:
-      DATABASE_URL: postgresql://notes:notes-local-only@db:5432/notes
+      DATABASE_URL: postgresql://liveask:liveask-local-only@db:5432/liveask
     ports:
       - "8000:8000"
     depends_on:

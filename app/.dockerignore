@@ -1,5 +1,7 @@
 __pycache__/
 .pytest_cache/
+.ruff_cache/
 .venv/
-test_*.py
+tests/
+pyproject.toml
 requirements-dev.txt
