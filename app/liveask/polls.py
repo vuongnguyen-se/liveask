@@ -64,12 +64,14 @@ async def _counts(conn: AsyncConnection, poll_ids: list[int]) -> dict[int, dict[
     return result
 
 
-async def poll_by_id(conn: AsyncConnection, poll_id: int) -> dict:
+async def poll_by_id(conn: AsyncConnection, poll_id: int) -> dict | None:
     async with conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(
             "SELECT id, question, options, status FROM poll WHERE id = %s", (poll_id,)
         )
         row = await cur.fetchone()
+    if row is None:
+        return None
     return poll_json(row, (await _counts(conn, [poll_id]))[poll_id])
 
 

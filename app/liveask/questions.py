@@ -70,6 +70,13 @@ async def list_questions(
     return [question_json(r) for r in rows], voted
 
 
+async def question_by_id(conn: AsyncConnection, question_id: int) -> dict | None:
+    async with conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(f"SELECT {COLUMNS} FROM question q WHERE q.id = %s", (question_id,))
+        row = await cur.fetchone()
+    return None if row is None else question_json(row)
+
+
 async def _load_question_for_update(conn: AsyncConnection, question_id: int) -> dict:
     """Lock the question row and return it with its room's code, state and token hash."""
     async with conn.cursor(row_factory=dict_row) as cur:

@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 
-from liveask import db, errors, polls, questions, rooms
+from liveask import db, errors, hub, polls, questions, rooms
 from liveask.config import get_settings
 
 log = logging.getLogger("liveask")
@@ -18,8 +18,20 @@ log = logging.getLogger("liveask")
 async def lifespan(app: FastAPI):
     settings = get_settings()
     logging.basicConfig(level=settings.log_level)
-    app.state.pool = await db.open_pool(settings.database_url) if settings.database_url else None
+    app.state.pool = None
+    app.state.hub = None
+    if settings.database_url:
+        app.state.pool = await db.open_pool(settings.database_url)
+        app.state.hub = hub.Hub(
+            settings.database_url,
+            app.state.pool,
+            settings.pod_name,
+            settings.max_connections_per_room,
+        )
+        await app.state.hub.start()
     yield
+    if app.state.hub is not None:
+        await app.state.hub.stop()  # closes sockets with 1012 so clients reconnect elsewhere
     if app.state.pool is not None:
         await app.state.pool.close()
 
@@ -29,6 +41,7 @@ errors.install(app)
 app.include_router(rooms.router)
 app.include_router(questions.router)
 app.include_router(polls.router)
+app.include_router(hub.router)
 
 
 @app.get("/healthz")
@@ -39,10 +52,14 @@ async def healthz() -> dict:
 
 @app.get("/readyz")
 async def readyz() -> dict:
-    """Readiness: the database is reachable. (The LISTEN connection joins this check in D1-05.)"""
-    pool = app.state.pool
-    if pool is None:
+    """Readiness: database reachable AND the LISTEN connection alive; 503 while shutting down."""
+    pool, live = app.state.pool, app.state.hub
+    if pool is None or live is None:
         raise HTTPException(status_code=503, detail="database not configured")
+    if live.shutting_down:
+        raise HTTPException(status_code=503, detail="shutting down")
+    if not live.listening:
+        raise HTTPException(status_code=503, detail="event listener not connected")
     try:
         await db.ping(pool)
     except Exception as exc:  # noqa: BLE001 - any backend failure means "not ready"

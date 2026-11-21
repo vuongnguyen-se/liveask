@@ -9,7 +9,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 | Day | Goal | Status |
 |---|---|---|
 | 0 | Platform skeleton (Terraform, K8s, CI) carried over into the fresh `liveask` repo | ✅ Done (2026-11-21) |
-| 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | In progress (D1-01 to D1-04 done) |
+| 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | In progress (D1-01 to D1-05 done) |
 | 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | Not started |
 | 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | Not started |
 
@@ -24,7 +24,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 - [x] **D1-03** (2026-11-21) Questions and votes: create (rate limit), toggle vote (counter updated in the same transaction), host moderation; tests.
   - Done when: tests cover one-vote-per-device, unvote, hidden questions not visible to the audience, and 429.
 - [x] **D1-04** (2026-11-21) Polls: create, open/close, vote, change vote, counts; tests.
-- [ ] **D1-05** Real time: `hub.py` with one LISTEN connection per process; every write calls `pg_notify` in its transaction; `/ws/rooms/{code}` with hello/ping/pong; `/readyz` checks the DB and the LISTEN connection.
+- [x] **D1-05** (2026-11-21) Real time: `hub.py` with one LISTEN connection per process; every write calls `pg_notify` in its transaction; `/ws/rooms/{code}` with hello/ping/pong; `/readyz` checks the DB and the LISTEN connection.
   - Done when: an integration test (or script) starts **two app processes** on different ports against the same Postgres; a question posted to process A arrives on a WebSocket connected to process B.
 - [ ] **D1-06** Pages: `/`, `/r/{code}`, `/host/{code}#t=…`, `/screen/{code}` in plain HTML/CSS/JS; device UUID in `localStorage`; reconnect with backoff + resync; QR code on the screen view (small JS library vendored into `static/`, no CDN); show "connected to pod …".
   - Done when: in a browser, three tabs (audience, host, screen) update each other live.
