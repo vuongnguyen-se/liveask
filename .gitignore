@@ -17,3 +17,5 @@ __pycache__/
 .env
 *.pem
 kubeconfig*
+e2e/node_modules/
+e2e/out/

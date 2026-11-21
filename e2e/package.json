@@ -1,0 +1,14 @@
+{
+  "name": "liveask-e2e",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Browser checks for LiveAsk (development only, not part of the Docker image)",
+  "scripts": {
+    "test": "node run.js",
+    "reconnect": "node reconnect.js",
+    "all": "node run.js && node reconnect.js"
+  },
+  "devDependencies": {
+    "playwright-core": "1.49.1"
+  }
+}
