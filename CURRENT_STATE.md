@@ -93,7 +93,7 @@ Notes and gotchas:
 - nginx resolves `api1`/`api2` only at startup; a container that comes back with a *different* IP would need `docker compose restart nginx` (it kept the same IP in the restart test). Kubernetes does not have this issue (Service + ALB target type `ip`).
 - A failed `compose up` (port clash) leaves a container with no network; fix with `docker compose rm -f nginx` and `up -d` again.
 
-Not verified: CI on GitHub (has never run on these commits: please push and check it); a real phone; behaviour on Linux of `python -m liveask.run` (only used on Windows).
+Manually confirmed by the developer (screenshot, 2026-11-21): `docker compose up --build`, room created at `http://localhost:8000`, host page shows `live · pod api2`. Not yet confirmed by hand: audience and screen tabs updating each other, a real phone. Not verified: CI on GitHub (has never run on these commits: please push and check it); behaviour on Linux of `python -m liveask.run` (only used on Windows).
 
 ## 8. Next step
 
