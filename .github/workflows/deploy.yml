@@ -1,0 +1,66 @@
+# Manual deploy: the cluster only exists while you are running the lab,
+# so this runs on demand instead of on every push.
+#
+# Repository variables (Settings > Secrets and variables > Actions > Variables):
+#   AWS_DEPLOY_ROLE_ARN  terraform output github_deploy_role_arn
+#   ECR_REPOSITORY_URL   terraform output ecr_repository_url
+#   EKS_CLUSTER_NAME     terraform output cluster_name
+name: Deploy to EKS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # lets the job request a GitHub OIDC token for AWS
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-southeast-1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # No `environment:` here: it would change the OIDC subject to
+    # repo:<owner>/<repo>:environment:<name>, and the IAM trust policy expects ref:refs/heads/main.
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image tagged with the commit SHA
+        env:
+          IMAGE: ${{ vars.ECR_REPOSITORY_URL }}:${{ github.sha }}
+        run: |
+          docker build --build-arg APP_VERSION=${GITHUB_SHA::7} -t "$IMAGE" app
+          docker push "$IMAGE"
+
+      - name: Point kubectl at the cluster
+        run: aws eks update-kubeconfig --region "$AWS_REGION" --name "${{ vars.EKS_CLUSTER_NAME }}"
+
+      - name: Apply manifests
+        working-directory: k8s/overlays/aws
+        run: |
+          kustomize edit set image "notes-api=${{ vars.ECR_REPOSITORY_URL }}:${{ github.sha }}"
+          kubectl apply -k .
+          kubectl -n notes rollout status deployment/notes-api --timeout=180s
+
+      - name: Print the load balancer address
+        run: |
+          for i in $(seq 1 30); do
+            host=$(kubectl -n notes get ingress notes-api -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+            if [ -n "$host" ]; then echo "App: http://$host"; exit 0; fi
+            sleep 10
+          done
+          echo "ALB not ready yet; check: kubectl -n notes describe ingress notes-api"

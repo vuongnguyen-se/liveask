@@ -1,0 +1,10 @@
+# Copy to terraform.tfvars (git-ignored) and fill in.
+owner        = "your-github-handle"
+github_repo  = "your-github-handle/liveask"
+budget_email = "you@example.com"
+
+# Lock the Kubernetes API to your own IP: curl https://checkip.amazonaws.com
+# cluster_endpoint_public_access_cidrs = ["203.0.113.10/32"]
+
+# Only if this AWS account has no GitHub OIDC provider yet:
+# create_github_oidc_provider = true

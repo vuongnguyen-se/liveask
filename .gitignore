@@ -1,0 +1,19 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+backend.tf
+crash.log
+tfplan
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+
+# Env and secrets
+.env
+*.pem
+kubeconfig*

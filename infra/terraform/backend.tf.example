@@ -1,0 +1,11 @@
+# Optional remote state, same pattern as say-cafe. Copy to backend.tf and set your bucket.
+# Without it, state stays in a local terraform.tfstate file (git-ignored).
+terraform {
+  backend "s3" {
+    bucket       = "your-terraform-state-bucket"
+    key          = "liveask/terraform.tfstate"
+    region       = "ap-southeast-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
