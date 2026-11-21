@@ -90,7 +90,7 @@ Notes: `crypto.randomUUID` does not exist on plain HTTP, so `app.js` falls back 
 Notes and gotchas:
 - Port **8080 is used by another project's container** on this machine (`halora-admin`), so LiveAsk's published port is **8000** (override with `LIVEASK_PORT`).
 - nginx round robin was 8:2 until the upstream got a `zone` (each nginx worker process had its own counter); now 10:10.
-- nginx resolves `api1`/`api2` only at startup; a container that comes back with a *different* IP would need `docker compose restart nginx` (it kept the same IP in the restart test). Kubernetes does not have this issue (Service + ALB target type `ip`).
+- nginx now re-resolves `api1`/`api2` every few seconds (`resolve`, nginx 1.27.3+; verified by forcing `api1` onto a new address: nginx followed it in about 30 s without a restart). It gives up on a silent peer after 2 s, and does not resend a POST that timed out on a stopped container, so the first request at that moment can get a 504 (clients retry). Kubernetes does not have this issue.
 - A failed `compose up` (port clash) leaves a container with no network; fix with `docker compose rm -f nginx` and `up -d` again.
 
 Manually confirmed by the developer (screenshot, 2026-11-21): `docker compose up --build`, room created at `http://localhost:8000`, host page shows `live · pod api2`. Not yet confirmed by hand: audience and screen tabs updating each other, a real phone. Not verified: CI on GitHub (has never run on these commits: please push and check it); behaviour on Linux of `python -m liveask.run` (only used on Windows).
@@ -103,6 +103,16 @@ Plan and checkboxes: `TASKS.md` (UI-00 to UI-07). Decisions D-016 to D-018 are *
 
 **UI-01 written, awaiting approval.** `docs/ui/landing-copy.md` (`copy-lint`: 0 FAIL, 0 WARN) and `docs/ui/DESIGN_PLAN.md`. The deal: hero `centred`, palette `cool-white-slate` (teal accent), type Host Grotesk + JetBrains Mono, radius `round`, `nav-split` (re-dealt: no photographs for `nav-cards`), `footer-statement`, `close-type`, `dark-band`, `tonal` buttons, `initial` mark, moment `marquee-row`; no shader effect planned. Open points for UI-03 are listed in the plan (create form vs the kit's form code, `GET /join`, icons).
 
+**UI-02 done (foundation).** On branch `ui/redesign`, one commit per piece:
+- the kit core (20 files, unmodified, LF, MIT, checksum manifest, `scripts/vendor_taste_kit.py --check`), guarded by `tests/test_kit.py`;
+- three self-hosted woff2 faces with `@font-face` and their OFL licences (`tests/test_fonts.py`), served as `font/woff2` (a fix: the slim image sent `application/octet-stream`);
+- `tokens.css`, the dealt tokens, pinned by `tests/test_tokens.py`;
+- an e2e check that no page requests another site (D-017).
+
+Verified 2026-11-21: `pytest` 87 passed, `ruff` clean, kit unmodified, Docker image builds and runs (253 MB, about +1 MB), `e2e/run.js` 19/19 three times, `e2e/reconnect.js` 6/6 (8 of 8 consecutive runs earlier). nginx and the e2e harness were hardened on the way (see the notes under D1-07).
+
+**Known limitation:** Host Grotesk covers `latin` and `latin-ext` only, not Vietnamese letters (U+1EA0 to U+1EF9). A question typed with Vietnamese accents shows those letters in the system font. Decide in UI-04 whether to keep the dealt pairing (the skill says to take the first) or take the next dealt one.
+
 ## 9. Next step
 
-**UI-01** (brief, copy, plan and deal for the landing page; documents only), then the rest of the UI track, then Day 2, D2-01: `k8s/base` rename `notes` → `liveask`, ConfigMap, Deployment with initContainer `migrate`, probes, preStop, CronJob. Needs a `cleanup.py` entry point (listed in `ARCHITECTURE.md` §6 but not written yet) for the CronJob (D2-06).
+your approval of the UI-01 plan, then **UI-03** (the landing page, one commit per section) and the rest of the UI track, then Day 2, D2-01: `k8s/base` rename `notes` → `liveask`, ConfigMap, Deployment with initContainer `migrate`, probes, preStop, CronJob. Needs a `cleanup.py` entry point (listed in `ARCHITECTURE.md` §6 but not written yet) for the CronJob (D2-06).

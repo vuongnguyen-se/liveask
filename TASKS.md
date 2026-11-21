@@ -50,11 +50,11 @@ Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the sk
   - [x] all landing copy written first and checked with `copy-lint.mjs`
   - [x] page plan by screens and the deal (hero, palette, type pairing, nav, footer, close, rhythm, buttons, mark), each with a one-line reason
   - Done when: `copy-lint` has no FAIL and you approve the plan.
-- [ ] **UI-02 Foundation.**
-  - [ ] `chore(ui)`: vendor the kit core, unmodified, into `app/liveask/static/assets/`; `.gitignore` the gate's scratch files in `.taste-skill/`, keep `waivers.json`
-  - [ ] `feat(ui)`: self-host the two dealt font faces (woff2) with `@font-face` and `font-display: swap`
-  - [ ] `feat(ui)`: the dealt `:root` tokens, shared by all four pages
-  - [ ] `test(ui)`: guard test exempts the kit by path only; image still builds; report the image size change
+- [x] **UI-02 Foundation.** (2026-11-21)
+  - [x] `chore(ui)`: vendor the kit core, unmodified, into `app/liveask/static/assets/`; `.gitignore` the gate's scratch files in `.taste-skill/`, keep `waivers.json`
+  - [x] `feat(ui)`: self-host the two dealt font faces (woff2) with `@font-face` and `font-display: swap`
+  - [x] `feat(ui)`: the dealt `:root` tokens, shared by all four pages
+  - [x] `test(ui)`: guard test exempts the kit by path only; image still builds; report the image size change
   - Done when: `pytest` green, the Docker image builds and runs, no request leaves localhost.
 - [ ] **UI-03 Landing page `/`** (kind: software; the full skill workflow; one commit per section).
   - [ ] `feat(landing)`: nav and hero; the **create-room** and **join-by-code** actions still work
