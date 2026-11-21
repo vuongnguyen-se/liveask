@@ -297,23 +297,6 @@
 
   const views = {};
 
-  views.index = function () {
-    $("create").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      try {
-        const room = await api("POST", "/api/rooms", { title: $("title").value });
-        store.set("liveask.host." + room.code, room.host_token);
-        location.href = room.host_url; // the token travels in the #fragment, never to the server
-      } catch (err) { showError($("create-error"), err); }
-    });
-    $("join").addEventListener("submit", (event) => {
-      event.preventDefault();
-      const code = $("code").value.trim().toUpperCase();
-      if (!CODE_RE.test(code)) { showError($("join-error"), new Error("A room code has 6 letters or digits.")); return; }
-      location.href = "/r/" + code;
-    });
-  };
-
   views.audience = function () {
     const code = pathCode();
     if (!CODE_RE.test(code)) { $("missing").hidden = false; return; }
