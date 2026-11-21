@@ -99,6 +99,71 @@
       </div>
     </div></div>
   </section>
+
+  <section class="section" id="console" aria-labelledby="console-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="section-head span-5"><h2 id="console-h">Run the room from one page</h2></div>
+        <div class="span-6 start-7 stack-4">
+          <p class="t-lead muted">Hide a question, mark one answered, open a poll or close the room. Phones and the projector follow every change.</p>
+          <a class="link" href="#screen">See the projector view</a>
+        </div>
+      </div>
+      <div class="ui app fill" role="img" aria-label="The presenter's page: the audience's questions in a list, the open question with its actions, and a live poll">
+        <div class="app__pane app__pane--list" aria-hidden="true">
+          <div class="ui ui-panel ui-win" data-ui="window" data-open="Open" data-work="Answering" data-done="Answered">
+            <div class="ui-win__bar">
+              <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="ui-win__crumb"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Cloud 101 <i>/</i> <b>Questions</b></span>
+              <span class="ui-spacer"></span>
+              <span class="ui-win__search"><span class="ui-win__ph">Room</span><span class="ui-kbd">K7PX4M</span></span>
+            </div>
+            <div class="ui-win__body">
+              <nav class="ui-win__side">
+                <span class="ui-win__nav is-on"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Open<em>9</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg>Answered<em>4</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="m4.5 11.5 7-7"/></svg>Hidden<em>1</em></span>
+                <span class="ui-win__label">Polls</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Next service</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Quick check</span>
+              </nav>
+              <div class="ui-win__main">
+                <div class="ui-win__cols"><span>Asked by</span><span>Question</span><span>Status</span><span>Votes</span></div>
+                <ul class="ui-win__rows">
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">L</span><span class="ui-win__who">Lan</span><span class="ui-win__sub">What is a pod?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">14</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">EKS or ECS for a small app?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">9</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Do pods share one database?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">7</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">When is Lambda the better fit?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">5</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">How does autoscaling pick a count?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">4</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Can I try this at home for free?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">3</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">What does a Service do?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">2</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Is a pod the same as a container?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">2</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Which region should we use?</span><span class="ui-win__st is-you" data-st>Hidden</span><span class="ui-win__age">1</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app__pane app__pane--open" aria-hidden="true">
+          <div class="ui ui-panel cp">
+            <div class="cp__bar"><span class="cp__label">Open question</span><span class="cp__chip">9 votes</span></div>
+            <div class="cp__body">
+              <p class="cp__q">EKS or ECS for a small app?</p>
+              <p class="cp__by">Asked by Anonymous</p>
+              <div class="cp__acts"><span class="cp__btn cp__btn--on">Mark answered</span><span class="cp__btn">Hide</span></div>
+              <p class="cp__label cp__label--poll">Poll: Which service next?</p>
+              <ul class="cp__bars">
+                <li style="--w:58%"><span>EKS</span><b>46</b></li>
+                <li style="--w:26%"><span>ECS</span><b>21</b></li>
+                <li style="--w:15%"><span>Lambda</span><b>12</b></li>
+              </ul>
+              <p class="cp__meta">79 votes. Open for 4 minutes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="footer footer--statement closing" id="contact" aria-labelledby="close-h">

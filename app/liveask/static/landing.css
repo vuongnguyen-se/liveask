@@ -1,3 +1,42 @@
 /* Page CSS for the landing page: only what sits inside a visual and the kit lacks.
    The kit's own files are never edited (D-018). */
 
+/* ---- console: the app-frame recipe (sections-library.md, app-frame), verbatim ---- */
+.app.ui { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); background: var(--u-bg); border: 1px solid var(--u-border); border-radius: var(--u-r); box-shadow: var(--u-shadow); }
+.app > .app__pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+.app > .app__pane + .app__pane { border-left: 1px solid var(--u-line); }
+.app > .app__pane > .ui-panel { width: 100%; border: 0; border-radius: 0; box-shadow: none; }
+.app > .app__pane::after { content: ""; position: absolute; inset: auto 0 0 0; height: 64px; background: linear-gradient(transparent, var(--u-bg)); pointer-events: none; }
+@media (min-width: 1024px) and (max-width: 1279px) { .app.ui { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); } }
+@media (max-width: 1023px) {
+  .app.ui { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .app > .app__pane--list { max-height: 252px; }
+  .app > .app__pane--list::after { display: none; }
+  .app .ui-win__side { display: none; }
+  .app .ui-win__body { grid-template-columns: minmax(0, 1fr); }
+  .app > .app__pane + .app__pane { border-left: 0; border-top: 1px solid var(--u-line); }
+}
+@media (max-width: 639px) {
+  .app.ui { grid-template-rows: minmax(0, 1fr); }
+  .app > .app__pane--list { display: none; }
+  .app > .app__pane + .app__pane { border-top: 0; }
+}
+
+/* ---- console: the open question and its poll (a visual of LiveAsk's own page) ---- */
+.cp { font-size: 13px; color: var(--u-ink); }
+.cp__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 40px; padding: 0 20px; border-bottom: 1px solid var(--u-line); }
+.cp__label { color: var(--u-muted); font-size: 12px; }
+.cp__label--poll { margin: 28px 0 10px; }
+.cp__chip { font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--u-tint); color: var(--u-accent-text); }
+.cp__body { padding: 20px 20px 0; }
+.cp__q { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 500; }
+.cp__by { margin: 4px 0 16px; color: var(--u-muted); }
+.cp__acts { display: flex; gap: 8px; }
+.cp__btn { padding: 7px 14px; border-radius: var(--u-r2); box-shadow: inset 0 0 0 1px var(--u-line-2); color: var(--u-ink); }
+.cp__btn--on { background: var(--u-accent); color: var(--u-accent-ink); box-shadow: none; }
+.cp__bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.cp__bars li { position: relative; display: flex; justify-content: space-between; padding: 8px 12px; border-radius: var(--u-r2); background: var(--u-fill); overflow: hidden; }
+.cp__bars li::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--u-tint-2); }
+.cp__bars li > * { position: relative; }
+.cp__bars b { font-weight: 500; }
+.cp__meta { margin: 12px 0 0; color: var(--u-muted); }
