@@ -12,7 +12,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from liveask import db, errors, hub, polls, questions, rooms
+from liveask import db, errors, hub, landing, polls, questions, rooms
 from liveask.config import get_settings
 
 log = logging.getLogger("liveask")
@@ -50,6 +50,7 @@ app.include_router(rooms.router)
 app.include_router(questions.router)
 app.include_router(polls.router)
 app.include_router(hub.router)
+app.include_router(landing.router)
 
 
 @app.get("/healthz")
