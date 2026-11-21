@@ -22,8 +22,9 @@ const SHOTS = process.env.SHOTS_DIR; // optional: save screenshots here
   async function openOn(url, avoid, viewport) {
     for (let i = 0; i < 6; i++) {
       // nginx rotates per request and a page load makes a fixed number of requests, so the
-      // WebSocket would land on the same container every time: one extra request shifts it.
-      if (i > 0) await fetch(BASE + "/healthz");
+      // WebSocket can land on the same container every time. Shifting by 0, 1 or 2 extra
+      // requests changes the parity whether that number is odd or even.
+      for (let k = 0; k < i % 3; k++) await fetch(BASE + "/healthz");
       const page = await newPage(viewport);
       await page.goto(url);
       const pod = await podOf(page);

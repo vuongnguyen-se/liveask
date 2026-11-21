@@ -36,5 +36,6 @@ The checks find things by id and class: `#status`, `#title`, `#code`, `#qr`, `#t
 ## Gotcha
 
 nginx rotates containers per request, and a page load makes a fixed number of requests, so
-every new page can land on the same container. `run.js` shifts the rotation with one extra
-request until it reaches the other container.
+every new page can land on the same container. `run.js` shifts the rotation by 0, 1 or 2 extra
+requests per attempt (one extra request is not enough when the page makes an odd number of
+requests) until it reaches the other container.
