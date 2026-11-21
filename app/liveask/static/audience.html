@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LiveAsk</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body data-view="audience">
+  <header>
+    <h1 id="title">LiveAsk</h1>
+    <span id="status" class="pill">connecting…</span>
+  </header>
+  <main>
+    <div id="closed" class="banner" hidden>This room is closed. Thanks for joining!</div>
+    <div id="missing" class="banner" hidden>Room not found. Check the code.</div>
+
+    <form id="ask" class="card">
+      <label for="text">Ask a question</label>
+      <textarea id="text" maxlength="280" required></textarea>
+      <div class="row">
+        <input id="name" maxlength="40" placeholder="Your name (optional)" aria-label="Your name (optional)" style="flex:1;min-width:140px">
+        <span id="count" class="muted">0/280</span>
+        <button class="primary" type="submit">Ask</button>
+      </div>
+      <p id="ask-error" class="error" role="alert"></p>
+    </form>
+
+    <section id="polls" aria-label="Polls"></section>
+
+    <h2>Questions</h2>
+    <ul id="questions" class="list"></ul>
+    <p id="empty" class="muted" hidden>No questions yet. Be the first!</p>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

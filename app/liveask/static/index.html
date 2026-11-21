@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LiveAsk</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body data-view="index">
+  <header><h1>LiveAsk</h1></header>
+  <main>
+    <p class="muted">Real-time questions and polls for your talk. No sign-up.</p>
+
+    <h2>Join a room</h2>
+    <form id="join" class="card">
+      <label for="code">Room code (6 characters)</label>
+      <input id="code" name="code" maxlength="6" autocomplete="off" autocapitalize="characters" required>
+      <button class="primary" type="submit">Join</button>
+      <p id="join-error" class="error" role="alert"></p>
+    </form>
+
+    <h2>Start a room as presenter</h2>
+    <form id="create" class="card">
+      <label for="title">Title</label>
+      <input id="title" name="title" maxlength="120" placeholder="Cloud 101, week 5" required>
+      <button class="primary" type="submit">Create room</button>
+      <p id="create-error" class="error" role="alert"></p>
+    </form>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

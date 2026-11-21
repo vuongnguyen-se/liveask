@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LiveAsk host</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body data-view="host">
+  <header>
+    <h1 id="title">LiveAsk host</h1>
+    <span id="status" class="pill">connecting…</span>
+  </header>
+  <main>
+    <div id="closed" class="banner" hidden>This room is closed.</div>
+    <div id="missing" class="banner" hidden>Room not found, or the host link is incomplete.</div>
+    <div id="notoken" class="banner" hidden>No host token. Open the full host link you got when you created the room.</div>
+
+    <section class="card">
+      <p><strong>Share</strong></p>
+      <p class="muted">Audience: <a id="audience-link" target="_blank" rel="noopener"></a></p>
+      <p class="muted">Projector: <a id="screen-link" target="_blank" rel="noopener"></a></p>
+      <div class="row">
+        <button id="copy-audience" type="button">Copy audience link</button>
+        <button id="close-room" type="button" class="danger right">Close room</button>
+      </div>
+    </section>
+
+    <h2>Polls</h2>
+    <form id="poll-form" class="card">
+      <label for="poll-question">Poll question</label>
+      <input id="poll-question" maxlength="200" required>
+      <label for="poll-options">Options, one per line (2 to 6)</label>
+      <textarea id="poll-options" required></textarea>
+      <button class="primary" type="submit">Create poll (draft)</button>
+      <p id="poll-error" class="error" role="alert"></p>
+    </form>
+    <section id="polls"></section>
+
+    <h2>Questions</h2>
+    <ul id="questions" class="list"></ul>
+    <p id="empty" class="muted" hidden>No questions yet.</p>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -5,13 +5,17 @@ from __future__ import annotations
 import logging
 import time
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from liveask import db, errors, hub, polls, questions, rooms
 from liveask.config import get_settings
 
 log = logging.getLogger("liveask")
+STATIC_DIR = Path(__file__).parent / "static"
 
 
 @asynccontextmanager
@@ -76,3 +80,34 @@ def burn(ms: int = 200) -> dict:
     while time.monotonic() < end:
         n += 1
     return {"iterations": n}
+
+
+# --- pages (plain HTML; the JS in /static/app.js does the rest) ---------------------------
+
+
+def _page(name: str) -> FileResponse:
+    # no-cache: a new deploy must not leave browsers on an old page
+    return FileResponse(STATIC_DIR / name, headers={"Cache-Control": "no-cache"})
+
+
+@app.get("/", include_in_schema=False)
+async def page_index() -> FileResponse:
+    return _page("index.html")
+
+
+@app.get("/r/{code}", include_in_schema=False)
+async def page_audience(code: str) -> FileResponse:
+    return _page("audience.html")
+
+
+@app.get("/host/{code}", include_in_schema=False)
+async def page_host(code: str) -> FileResponse:
+    return _page("host.html")  # the host token is in the #fragment, which never reaches us
+
+
+@app.get("/screen/{code}", include_in_schema=False)
+async def page_screen(code: str) -> FileResponse:
+    return _page("screen.html")
+
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")

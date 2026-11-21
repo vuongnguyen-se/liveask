@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LiveAsk screen</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="screen" data-view="screen">
+  <div class="screen-grid">
+    <aside class="screen-side">
+      <h1 id="title">LiveAsk</h1>
+      <img id="qr" alt="QR code to join the room" hidden>
+      <div id="code" class="code"></div>
+      <p id="join-url" class="muted"></p>
+      <div id="closed" class="banner" hidden>This room is closed.</div>
+      <div id="missing" class="banner" hidden>Room not found.</div>
+    </aside>
+    <main style="max-width:none;margin:0;padding:0">
+      <section id="polls" aria-label="Live poll"></section>
+      <h2>Top questions</h2>
+      <ul id="questions" class="list"></ul>
+      <p id="empty" class="muted" hidden>Scan the QR code and ask the first question.</p>
+    </main>
+  </div>
+  <span id="status" class="pill">connecting…</span>
+  <script src="/static/qrcode.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
