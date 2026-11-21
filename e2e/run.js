@@ -12,10 +12,16 @@ const SHOTS = process.env.SHOTS_DIR; // optional: save screenshots here
 (async () => {
   const browser = await launch();
   const errors = [];
+  const external = []; // requests to any other site (D-017: there must be none)
+  const origin = new URL(BASE).origin;
   // A separate context is a separate localStorage, so each one is a different device.
   async function newPage(viewport) {
     const page = await (await browser.newContext(viewport ? { viewport } : {})).newPage();
     page.on("pageerror", (e) => errors.push(e.message));
+    page.on("request", (r) => {
+      const url = new URL(r.url());
+      if (url.protocol.startsWith("http") && url.origin !== origin) external.push(r.url());
+    });
     return page;
   }
   /** Open a page until it is connected to a container other than `avoid` (round robin). */
@@ -122,6 +128,8 @@ const SHOTS = process.env.SHOTS_DIR; // optional: save screenshots here
   await screen.waitForSelector("#closed:not([hidden])");
   check("closing the room is shown to the audience and the screen", await phone.locator("#ask textarea").isDisabled());
 
+  check("no request leaves the site on any page", external.length === 0);
+  if (external.length) console.log(external);
   check("no JavaScript errors on any page", errors.length === 0);
   if (errors.length) console.log(errors);
   await browser.close();
