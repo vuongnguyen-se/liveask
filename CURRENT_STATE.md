@@ -95,9 +95,9 @@ Notes and gotchas:
 
 Manually confirmed by the developer (screenshot, 2026-11-21): `docker compose up --build`, room created at `http://localhost:8000`, host page shows `live · pod api2`. Not yet confirmed by hand: audience and screen tabs updating each other, a real phone. Not verified: CI on GitHub (has never run on these commits: please push and check it); behaviour on Linux of `python -m liveask.run` (only used on Windows).
 
-## 8. UI track (planned, not started)
+## 8. UI track (in progress, branch `ui/redesign`)
 
-Plan and checkboxes: `TASKS.md` (UI-00 to UI-07). Decisions D-016 to D-018 are **proposed** and need approval. What I checked (nothing built yet): the skill folder is the installed skill (symlink), Node 24 and Edge are available for its checker, the kit core is about 300 KB, its `innerHTML` uses are constant SVG strings. Not yet verified: that the skill's `gate.mjs`, `consistency.mjs` and `copy-lint.mjs` run on this machine; that self-hosted fonts pass its `font-load` check; that its form recipe can coexist with our create-room code.
+Plan and checkboxes: `TASKS.md` (UI-00 to UI-07). Decisions D-016 to D-018 are **accepted**. What I checked (nothing built yet): the skill folder is the installed skill (symlink), Node 24 and Edge are available for its checker, the kit core is about 300 KB, its `innerHTML` uses are constant SVG strings. Not yet verified: that the skill's `gate.mjs`, `consistency.mjs` and `copy-lint.mjs` run on this machine; that self-hosted fonts pass its `font-load` check; that its form recipe can coexist with our create-room code.
 
 ## 9. Next step
 

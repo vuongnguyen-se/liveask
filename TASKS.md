@@ -10,7 +10,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 |---|---|---|
 | 0 | Platform skeleton (Terraform, K8s, CI) carried over into the fresh `liveask` repo | ✅ Done (2026-11-21) |
 | 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | ✅ Done (2026-11-21) |
-| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | 📋 Planned, awaiting approval (D-016 to D-018) |
+| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | 🔨 In progress (D-016 to D-018 accepted) |
 | 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | Not started |
 | 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | Not started |
 
@@ -34,7 +34,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 
 ## UI track: redesign with taste-skill (after Day 1, before Day 2; time-box about half a day)
 
-Source: `C:\Users\Vuong\Downloads\taste-skill` (tasteskill 2.5.1, also linked as `~/.claude/skills/design-taste-frontend`). Decisions: D-016 to D-018 (proposed). Git rules: `AI_CODING_RULES.md` section 7 (one commit per component, Conventional Commits). UI rules: section 8.
+Source: `C:\Users\Vuong\Downloads\taste-skill` (tasteskill 2.5.1, also linked as `~/.claude/skills/design-taste-frontend`). Decisions: D-016 to D-018 (accepted). Git rules: `AI_CODING_RULES.md` section 7 (one commit per component, Conventional Commits). UI rules: section 8.
 
 How the skill applies: it builds company and product websites. Its **full workflow and finish gate** run on the **landing page `/`** (kind: software). The **audience, host and screen** views use its design system (tokens, type, radius, buttons, contrast, accessibility) but not its marketing-page rules.
 
