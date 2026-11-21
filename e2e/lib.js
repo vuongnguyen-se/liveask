@@ -33,6 +33,28 @@ function check(name, ok) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Waits until nginx reaches BOTH app containers. A container that was just re-created can be
+ * healthy before nginx sends it traffic, and the checks that hop between containers need both.
+ */
+async function waitForBothContainers(seconds = 90) {
+  for (let i = 0; i < seconds; i++) {
+    const seen = new Set();
+    for (let k = 0; k < 6; k++) {
+      try {
+        const res = await fetch(BASE + "/healthz");
+        const upstream = res.headers.get("x-upstream");
+        if (res.ok && upstream) seen.add(upstream.split(",").pop().trim());
+      } catch (e) {
+        /* not up yet */
+      }
+    }
+    if (seen.size >= 2) return;
+    await sleep(1000);
+  }
+  throw new Error("nginx does not reach two app containers: is `docker compose up -d` finished?");
+}
+
 /** Waits until the page's connection badge is live and returns the pod name it shows. */
 async function podOf(page) {
   await page.waitForSelector("#status.live", { timeout: 15000 });
@@ -40,4 +62,4 @@ async function podOf(page) {
   return match ? match[1] : null;
 }
 
-module.exports = { BASE, launch, check, sleep, podOf };
+module.exports = { BASE, launch, check, sleep, podOf, waitForBothContainers };

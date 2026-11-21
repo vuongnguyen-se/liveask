@@ -4,7 +4,7 @@
 // (the service name is also the pod name: api1 or api2).
 const path = require("path");
 const { execSync } = require("child_process");
-const { BASE, launch, check, sleep, podOf } = require("./lib");
+const { BASE, launch, check, sleep, podOf, waitForBothContainers } = require("./lib");
 
 const ROOT = path.resolve(__dirname, "..");
 const compose = (args) => execSync(`docker compose ${args}`, { cwd: ROOT, stdio: "pipe" }).toString();
@@ -23,6 +23,7 @@ async function waitHealthy(service, seconds = 60) {
   // Both containers must be healthy first: a previous run may have just restarted one.
   await waitHealthy("api1");
   await waitHealthy("api2");
+  await waitForBothContainers();
   const browser = await launch();
   const created = await fetch(BASE + "/api/rooms", {
     method: "POST",
@@ -88,6 +89,7 @@ async function waitHealthy(service, seconds = 60) {
   }
 
   await waitHealthy(pod);
+  await waitForBothContainers();
   await screen.waitForFunction(() => document.querySelector("#status").classList.contains("live"), null, { timeout: 40000 });
   check("the screen is still live after the container is back", true);
   await screen.waitForSelector("#questions .question");

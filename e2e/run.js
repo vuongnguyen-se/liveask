@@ -5,11 +5,12 @@
 // The selectors below (#status, #questions .question, ...) are the contract between these
 // checks and the pages: keep those ids and classes when restyling.
 const path = require("path");
-const { BASE, launch, check, podOf } = require("./lib");
+const { BASE, launch, check, podOf, waitForBothContainers } = require("./lib");
 
 const SHOTS = process.env.SHOTS_DIR; // optional: save screenshots here
 
 (async () => {
+  await waitForBothContainers();
   const browser = await launch();
   const errors = [];
   const external = []; // requests to any other site (D-017: there must be none)
