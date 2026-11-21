@@ -15,7 +15,7 @@ The repository holds a **working EKS platform skeleton** (Terraform, Kubernetes 
 
 | Path | What it is | Status |
 |---|---|---|
-| `app/` | `liveask` package (D1-01): `config.py`, `db.py` (async pool), `schema.sql`, `migrate.py` (advisory lock), `security.py` (codes, host-token hashing), `errors.py` (error envelope), `rooms.py` (create/get/close), `questions.py` (post, vote toggle, moderation), `events.py` (`pg_notify` helper), `common.py` (shared deps), `main.py` with `/healthz`, `/readyz` (DB check), `/burn`. 40 pytest tests (DB tests need `TEST_DATABASE_URL`, else skipped). Non-root Dockerfile runs `liveask.main:app`. Questions/polls/WebSocket not built yet | ✅ D1-01 to D1-03 verified locally |
+| `app/` | `liveask` package (D1-01): `config.py`, `db.py` (async pool), `schema.sql`, `migrate.py` (advisory lock), `security.py` (codes, host-token hashing), `errors.py` (error envelope), `rooms.py` (create/get/close), `questions.py` (post, vote toggle, moderation), `polls.py` (create/open/close/vote), `events.py` (`pg_notify` helper), `common.py` (shared deps), `main.py` with `/healthz`, `/readyz` (DB check), `/burn`. 57 pytest tests (DB tests need `TEST_DATABASE_URL`, else skipped). Non-root Dockerfile runs `liveask.main:app`. Questions/polls/WebSocket not built yet | ✅ D1-01 to D1-04 verified locally |
 | `docker-compose.yml` | App + Postgres 17 (user/db `liveask`; Postgres published on `127.0.0.1:5432` for tests) | ✅ db verified; two-API + nginx comes in D1-07 |
 | `infra/terraform/` | VPC (2 AZs: public, private, database subnets, 1 NAT), EKS (module v20, managed Spot node group AL2023, access entries), AWS Load Balancer Controller (Helm, IRSA), metrics-server (Helm), ECR (immutable tags, scan on push, keep 10), RDS PostgreSQL 17 (`db.t4g.micro`, password in Secrets Manager, db name still `notes`), GitHub OIDC deploy role (access entry namespace still `notes`), AWS Budgets. `project` default is now `liveask` | ✅ `fmt`/`validate` pass; **never applied** |
 | `k8s/base` | Namespace `notes`, Deployment (probes, non-root, read-only FS, topology spread), Service, HPA (CPU 60%, 2–6), PDB | ✅ verified on minikube; **rename to `liveask` on day 2** |
@@ -75,6 +75,8 @@ Not verified: CI on GitHub (the app job now has a Postgres service and ruff step
 
 **D1-03 done.** Verified: `pytest` 40 passed (one vote per device, unvote, counter equals vote rows, sort order, hidden invisible to audience and visible to host, 429 on the 6th question, closed room 409, host token 401/403); ruff clean. Decisions: rate limit counts rows in `question` per device in the last minute under a per-device advisory lock (works across pods); hidden questions return 404 on vote; `X-Device-Id` missing/invalid → 400. Every write already calls `pg_notify` in its transaction (`events.notify`); nobody listens until D1-05. Not verified: CI on GitHub.
 
+**D1-04 done.** Verified: `pytest` 57 passed (create, validation 2–6 options, host-only, drafts hidden from audience, transitions draft→open→closed only, one vote per device, changing a vote, out-of-range option 422, closed poll 409, results stay visible after closing, `my_votes.polls`, cascade delete); ruff clean. Decision: `poll.created` is notified when a poll is first **opened** (drafts are private to the host, whose page uses the REST response); `poll.updated` for votes and closing. Not verified: CI on GitHub.
+
 ## 8. Next step
 
-**D1-04** (polls) in `TASKS.md`.
+**D1-05** (real time: hub, WebSocket, `/readyz` LISTEN check, two-process test) in `TASKS.md`.

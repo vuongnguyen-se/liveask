@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 
-from liveask import db, errors, questions, rooms
+from liveask import db, errors, polls, questions, rooms
 from liveask.config import get_settings
 
 log = logging.getLogger("liveask")
@@ -28,6 +28,7 @@ app = FastAPI(title="LiveAsk", version=get_settings().app_version, lifespan=life
 errors.install(app)
 app.include_router(rooms.router)
 app.include_router(questions.router)
+app.include_router(polls.router)
 
 
 @app.get("/healthz")

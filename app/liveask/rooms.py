@@ -1,4 +1,4 @@
-"""Rooms: create, read, close. Polls are added to the snapshot in D1-04."""
+"""Rooms: create, read, close, and the snapshot clients load on connect and reconnect."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import psycopg.errors
 from fastapi import APIRouter, Response
 from pydantic import BaseModel, StringConstraints
 
-from liveask import events, questions, security
+from liveask import events, polls, questions, security
 from liveask.common import (
     AuthHeader,
     OptionalDevice,
@@ -59,17 +59,17 @@ async def get_room(
     code: str, pool: Pool, device: OptionalDevice, authorization: AuthHeader = None
 ) -> dict:
     room = await load_room(pool, code)
+    host = is_host(room, authorization)  # the host also sees hidden questions and draft polls
     async with pool.connection() as conn:
-        qs, voted = await questions.list_questions(
-            conn, room["id"], device, include_hidden=is_host(room, authorization)
-        )
+        qs, voted = await questions.list_questions(conn, room["id"], device, include_hidden=host)
+        pl, my_poll_votes = await polls.list_polls(conn, room["id"], device, include_draft=host)
     return {
         "code": room["code"],
         "title": room["title"],
         "closed": room["closed_at"] is not None,
         "questions": qs,
-        "polls": [],  # D1-04
-        "my_votes": {"questions": voted, "polls": {}},
+        "polls": pl,
+        "my_votes": {"questions": voted, "polls": my_poll_votes},
     }
 
 
