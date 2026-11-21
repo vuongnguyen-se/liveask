@@ -9,7 +9,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 | Day | Goal | Status |
 |---|---|---|
 | 0 | Platform skeleton (Terraform, K8s, CI) carried over into the fresh `liveask` repo | ✅ Done (2026-11-21) |
-| 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | In progress (D1-01 done) |
+| 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | In progress (D1-01, D1-02 done) |
 | 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | Not started |
 | 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | Not started |
 
@@ -19,7 +19,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 
 - [x] **D1-01** (2026-11-21) Restructure `app/` into the `liveask` package (see `ARCHITECTURE.md` §6). `config.py` (env vars), `db.py` (psycopg async pool), `schema.sql`, `migrate.py` with `pg_advisory_lock`. Remove the notes endpoints but keep `/healthz` and the `/burn` load helper.
   - Done when: `python -m liveask.migrate` runs twice against Compose Postgres without errors; tests pass.
-- [ ] **D1-02** Rooms: `POST /api/rooms`, `GET /api/rooms/{code}`, `POST /api/rooms/{code}/close`; code generator; host token hashing; tests.
+- [x] **D1-02** (2026-11-21) Rooms: `POST /api/rooms`, `GET /api/rooms/{code}`, `POST /api/rooms/{code}/close`; code generator; host token hashing; tests.
   - Done when: tests cover create, get, wrong token → 403, and that the token is not stored in plain text.
 - [ ] **D1-03** Questions and votes: create (rate limit), toggle vote (counter updated in the same transaction), host moderation; tests.
   - Done when: tests cover one-vote-per-device, unvote, hidden questions not visible to the audience, and 429.

@@ -15,7 +15,7 @@ The repository holds a **working EKS platform skeleton** (Terraform, Kubernetes 
 
 | Path | What it is | Status |
 |---|---|---|
-| `app/` | `liveask` package (D1-01): `config.py`, `db.py` (async pool), `schema.sql`, `migrate.py` (advisory lock), `main.py` with `/healthz`, `/readyz` (DB check), `/burn`. 6 pytest tests (DB tests need `TEST_DATABASE_URL`, else skipped). Non-root Dockerfile runs `liveask.main:app`. Rooms/questions/polls/WebSocket not built yet | ✅ D1-01 verified locally |
+| `app/` | `liveask` package (D1-01): `config.py`, `db.py` (async pool), `schema.sql`, `migrate.py` (advisory lock), `security.py` (codes, host-token hashing), `errors.py` (error envelope), `rooms.py` (create/get/close), `main.py` with `/healthz`, `/readyz` (DB check), `/burn`. 23 pytest tests (DB tests need `TEST_DATABASE_URL`, else skipped). Non-root Dockerfile runs `liveask.main:app`. Questions/polls/WebSocket not built yet | ✅ D1-01, D1-02 verified locally |
 | `docker-compose.yml` | App + Postgres 17 (user/db `liveask`; Postgres published on `127.0.0.1:5432` for tests) | ✅ db verified; two-API + nginx comes in D1-07 |
 | `infra/terraform/` | VPC (2 AZs: public, private, database subnets, 1 NAT), EKS (module v20, managed Spot node group AL2023, access entries), AWS Load Balancer Controller (Helm, IRSA), metrics-server (Helm), ECR (immutable tags, scan on push, keep 10), RDS PostgreSQL 17 (`db.t4g.micro`, password in Secrets Manager, db name still `notes`), GitHub OIDC deploy role (access entry namespace still `notes`), AWS Budgets. `project` default is now `liveask` | ✅ `fmt`/`validate` pass; **never applied** |
 | `k8s/base` | Namespace `notes`, Deployment (probes, non-root, read-only FS, topology spread), Service, HPA (CPU 60%, 2–6), PDB | ✅ verified on minikube; **rename to `liveask` on day 2** |
@@ -71,6 +71,8 @@ Windows gotchas found:
 
 Not verified: CI on GitHub (the app job now has a Postgres service and ruff steps). Kubernetes manifests still use the `notes` names and image until D2-01.
 
+**D1-02 done.** Verified: `pytest` 23 passed (rooms create/get/close, wrong token 403, missing token 401, token not stored in plain text, expired room 404, title validation); ruff clean. Decisions made: missing host token → 401, wrong → 403; room codes are case-insensitive; expired rooms return 404; closing twice is allowed. `room.closed` notify is added in D1-05. Not verified: CI on GitHub.
+
 ## 8. Next step
 
-**D1-02** (rooms) in `TASKS.md`.
+**D1-03** (questions and votes) in `TASKS.md`.

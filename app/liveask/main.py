@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 
-from liveask import db
+from liveask import db, errors, rooms
 from liveask.config import get_settings
 
 log = logging.getLogger("liveask")
@@ -25,6 +25,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="LiveAsk", version=get_settings().app_version, lifespan=lifespan)
+errors.install(app)
+app.include_router(rooms.router)
 
 
 @app.get("/healthz")
