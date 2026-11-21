@@ -45,10 +45,10 @@ Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the sk
   - [x] `test(e2e)`: the reconnect check (kill and restart a pod)
   - [x] `docs(e2e)`: how to run it (Windows and Git Bash)
   - Done when: `node e2e/run.js` passes against `docker compose up` and `pytest` is unchanged.
-- [ ] **UI-01 Brief, copy, plan and deal** (documents only, `docs/ui/DESIGN_PLAN.md`).
-  - [ ] fact sheet and voice card; page kind `software`; the main action word for word ("Create a room")
-  - [ ] all landing copy written first and checked with `copy-lint.mjs`
-  - [ ] page plan by screens and the deal (hero, palette, type pairing, nav, footer, close, rhythm, buttons, mark), each with a one-line reason
+- [~] **UI-01 Brief, copy, plan and deal** (documents only, `docs/ui/DESIGN_PLAN.md`). Written 2026-11-21; **waiting for your approval of the plan** before UI-03.
+  - [x] fact sheet and voice card; page kind `software`; the main action word for word ("Create a room")
+  - [x] all landing copy written first and checked with `copy-lint.mjs`
+  - [x] page plan by screens and the deal (hero, palette, type pairing, nav, footer, close, rhythm, buttons, mark), each with a one-line reason
   - Done when: `copy-lint` has no FAIL and you approve the plan.
 - [ ] **UI-02 Foundation.**
   - [ ] `chore(ui)`: vendor the kit core, unmodified, into `app/liveask/static/assets/`; `.gitignore` the gate's scratch files in `.taste-skill/`, keep `waivers.json`

@@ -101,6 +101,8 @@ Plan and checkboxes: `TASKS.md` (UI-00 to UI-07). Decisions D-016 to D-018 are *
 
 **UI-00 done.** `e2e/` holds the browser checks: `run.js` (18 checks, host and screen on different containers) and `reconnect.js` (5 checks), both verified against `docker compose up` on 2026-11-21. Use `cd e2e && npm run all` before every UI commit; see `e2e/README.md` for the selector contract.
 
+**UI-01 written, awaiting approval.** `docs/ui/landing-copy.md` (`copy-lint`: 0 FAIL, 0 WARN) and `docs/ui/DESIGN_PLAN.md`. The deal: hero `centred`, palette `cool-white-slate` (teal accent), type Host Grotesk + JetBrains Mono, radius `round`, `nav-split` (re-dealt: no photographs for `nav-cards`), `footer-statement`, `close-type`, `dark-band`, `tonal` buttons, `initial` mark, moment `marquee-row`; no shader effect planned. Open points for UI-03 are listed in the plan (create form vs the kit's form code, `GET /join`, icons).
+
 ## 9. Next step
 
 **UI-01** (brief, copy, plan and deal for the landing page; documents only), then the rest of the UI track, then Day 2, D2-01: `k8s/base` rename `notes` → `liveask`, ConfigMap, Deployment with initContainer `migrate`, probes, preStop, CronJob. Needs a `cleanup.py` entry point (listed in `ARCHITECTURE.md` §6 but not written yet) for the CronJob (D2-06).
