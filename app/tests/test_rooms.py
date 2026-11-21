@@ -1,29 +1,8 @@
-import asyncio
-
 import psycopg
 import pytest
-from fastapi.testclient import TestClient
+from helpers import host, make_room
 
-from liveask import migrate, security
-from liveask.main import app
-
-
-@pytest.fixture
-def client(monkeypatch, db_url):
-    asyncio.run(migrate.run(db_url))
-    monkeypatch.setenv("DATABASE_URL", db_url)
-    with TestClient(app) as c:
-        yield c
-
-
-def make_room(client, title="Cloud 101"):
-    r = client.post("/api/rooms", json={"title": title})
-    assert r.status_code == 201
-    return r.json()
-
-
-def host(token):
-    return {"Authorization": f"Bearer {token}"}
+from liveask import security
 
 
 def test_create_room(client):

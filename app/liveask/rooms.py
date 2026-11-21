@@ -1,64 +1,29 @@
-"""Rooms: create, read, close. Questions and polls are added to the snapshot in later tasks."""
+"""Rooms: create, read, close. Polls are added to the snapshot in D1-04."""
 
 from __future__ import annotations
 
-import re
 from typing import Annotated
 
 import psycopg.errors
-from fastapi import APIRouter, Depends, Header, Request, Response
-from psycopg.rows import dict_row
-from psycopg_pool import AsyncConnectionPool
+from fastapi import APIRouter, Response
 from pydantic import BaseModel, StringConstraints
 
-from liveask import security
+from liveask import events, questions, security
+from liveask.common import (
+    AuthHeader,
+    OptionalDevice,
+    Pool,
+    is_host,
+    load_room,
+    require_host_token,
+)
 from liveask.errors import ApiError
 
 router = APIRouter(prefix="/api/rooms", tags=["rooms"])
 
-CODE_RE = re.compile(r"^[A-Z0-9]{6}$")
-
 
 class RoomIn(BaseModel):
     title: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
-
-
-def get_pool(request: Request) -> AsyncConnectionPool:
-    pool = request.app.state.pool
-    if pool is None:
-        raise ApiError(503, "unavailable", "database not configured")
-    return pool
-
-
-Pool = Annotated[AsyncConnectionPool, Depends(get_pool)]
-
-
-async def load_room(pool: AsyncConnectionPool, code: str) -> dict:
-    """Return the room row, or raise 404. Expired rooms count as gone."""
-    code = code.upper()
-    if not CODE_RE.match(code):
-        raise ApiError(404, "room_not_found", "room not found")
-    async with pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:
-        await cur.execute("SELECT * FROM room WHERE code = %s AND expires_at > now()", (code,))
-        room = await cur.fetchone()
-    if room is None:
-        raise ApiError(404, "room_not_found", "room not found")
-    return room
-
-
-def bearer_token(authorization: str | None) -> str | None:
-    if authorization and authorization.lower().startswith("bearer "):
-        return authorization[7:].strip() or None
-    return None
-
-
-def require_host_token(room: dict, authorization: str | None) -> None:
-    """401 if no token was sent, 403 if it is wrong."""
-    token = bearer_token(authorization)
-    if token is None:
-        raise ApiError(401, "host_token_required", "host token required")
-    if not security.token_matches(token, room["host_token_hash"]):
-        raise ApiError(403, "forbidden", "wrong host token")
 
 
 @router.post("", status_code=201)
@@ -90,27 +55,31 @@ async def create_room(body: RoomIn, pool: Pool) -> dict:
 
 
 @router.get("/{code}")
-async def get_room(code: str, pool: Pool) -> dict:
+async def get_room(
+    code: str, pool: Pool, device: OptionalDevice, authorization: AuthHeader = None
+) -> dict:
     room = await load_room(pool, code)
+    async with pool.connection() as conn:
+        qs, voted = await questions.list_questions(
+            conn, room["id"], device, include_hidden=is_host(room, authorization)
+        )
     return {
         "code": room["code"],
         "title": room["title"],
         "closed": room["closed_at"] is not None,
-        "questions": [],  # D1-03
+        "questions": qs,
         "polls": [],  # D1-04
-        "my_votes": {"questions": [], "polls": {}},
+        "my_votes": {"questions": voted, "polls": {}},
     }
 
 
 @router.post("/{code}/close", status_code=204)
-async def close_room(
-    code: str, pool: Pool, authorization: Annotated[str | None, Header()] = None
-) -> Response:
+async def close_room(code: str, pool: Pool, authorization: AuthHeader = None) -> Response:
     room = await load_room(pool, code)
     require_host_token(room, authorization)
     async with pool.connection() as conn:
         await conn.execute(
             "UPDATE room SET closed_at = COALESCE(closed_at, now()) WHERE id = %s", (room["id"],)
         )
-    # D1-05: pg_notify('liveask_events', room.closed) goes in this same transaction.
+        await events.notify(conn, room["code"], "room.closed")
     return Response(status_code=204)
