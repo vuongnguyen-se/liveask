@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import mimetypes
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -16,6 +17,9 @@ from liveask.config import get_settings
 
 log = logging.getLogger("liveask")
 STATIC_DIR = Path(__file__).parent / "static"
+
+# The slim Python image has no mime entry for woff2 and would send application/octet-stream.
+mimetypes.add_type("font/woff2", ".woff2")
 
 
 @asynccontextmanager

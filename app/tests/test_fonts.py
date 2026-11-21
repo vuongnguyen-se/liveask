@@ -39,3 +39,4 @@ def test_fonts_are_served(monkeypatch):
         assert web.get("/static/fonts/fonts.css").status_code == 200
         font = web.get("/static/fonts/host-grotesk-latin.woff2")
         assert font.status_code == 200 and font.content[:4] == b"wOF2"
+        assert font.headers["content-type"] == "font/woff2"
