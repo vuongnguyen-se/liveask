@@ -38,8 +38,8 @@ Terraform (`infra/terraform/`): VPC across 2 AZs (public, private and isolated d
 ## Run it
 
 ```bash
-# Local, no AWS: app + Postgres
-docker compose up --build
+# Local, no AWS: Postgres + two app containers behind nginx (like two pods behind a load balancer)
+docker compose up --build        # then open http://localhost:8000 in several tabs
 # Kubernetes on your machine
 minikube start -p eks-lab --driver=docker --memory=3072 --cpus=2 --addons=metrics-server,ingress
 kubectl apply -k k8s/overlays/local
@@ -56,7 +56,7 @@ $(terraform output -raw kubeconfig_command) && cd ../.. && ./scripts/create-db-s
 
 Teardown (always): `kubectl delete -k k8s/overlays/aws`, wait for the ALB to disappear, then `terraform destroy`.
 
-> Until day 1 is finished, these commands run the placeholder notes API that the platform was built and tested with.
+> The Docker Compose command runs LiveAsk. Until day 2 is finished, the Kubernetes and AWS commands still use the placeholder notes manifests the platform was built and tested with.
 
 ## Roadmap
 

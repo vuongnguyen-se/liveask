@@ -9,7 +9,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 | Day | Goal | Status |
 |---|---|---|
 | 0 | Platform skeleton (Terraform, K8s, CI) carried over into the fresh `liveask` repo | ✅ Done (2026-11-21) |
-| 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | In progress (D1-01 to D1-06 done) |
+| 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | ✅ Done (2026-11-21) |
 | 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | Not started |
 | 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | Not started |
 
@@ -28,7 +28,7 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
   - Done when: an integration test (or script) starts **two app processes** on different ports against the same Postgres; a question posted to process A arrives on a WebSocket connected to process B.
 - [x] **D1-06** (2026-11-21) Pages: `/`, `/r/{code}`, `/host/{code}#t=…`, `/screen/{code}` in plain HTML/CSS/JS; device UUID in `localStorage`; reconnect with backoff + resync; QR code on the screen view (small JS library vendored into `static/`, no CDN); show "connected to pod …".
   - Done when: in a browser, three tabs (audience, host, screen) update each other live.
-- [ ] **D1-07** `docker-compose.yml`: postgres + migrate + **two** api containers behind a tiny nginx (round robin) to mimic two pods.
+- [x] **D1-07** (2026-11-21) `docker-compose.yml`: postgres + migrate + **two** api containers behind a tiny nginx (round robin) to mimic two pods.
   - Done when: `docker compose up --build`, open the site through nginx, and tabs on different containers update each other.
 
 ## Day 2: Kubernetes on minikube (USD 0)

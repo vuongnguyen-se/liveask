@@ -15,8 +15,8 @@ The repository holds a **working EKS platform skeleton** (Terraform, Kubernetes 
 
 | Path | What it is | Status |
 |---|---|---|
-| `app/` | `liveask` package (D1-01): `config.py`, `db.py` (async pool), `schema.sql`, `migrate.py` (advisory lock), `security.py` (codes, host-token hashing), `errors.py` (error envelope), `rooms.py` (create/get/close), `questions.py` (post, vote toggle, moderation), `polls.py` (create/open/close/vote), `hub.py` (WebSocket hub + LISTEN connection), `run.py` (dev server for Windows), `static/` (index, audience, host, screen pages + `app.js`, `styles.css`, vendored `qrcode.js`), `events.py` (`pg_notify` helper), `common.py` (shared deps), `main.py` with `/healthz`, `/readyz` (DB check), `/burn`. 72 pytest tests (DB tests need `TEST_DATABASE_URL`, else skipped). Non-root Dockerfile runs `liveask.main:app`. Questions/polls/WebSocket not built yet | ✅ D1-01 to D1-06 verified locally |
-| `docker-compose.yml` | App + Postgres 17 (user/db `liveask`; Postgres published on `127.0.0.1:5432` for tests) | ✅ db verified; two-API + nginx comes in D1-07 |
+| `app/` | `liveask` package (D1-01): `config.py`, `db.py` (async pool), `schema.sql`, `migrate.py` (advisory lock), `security.py` (codes, host-token hashing), `errors.py` (error envelope), `rooms.py` (create/get/close), `questions.py` (post, vote toggle, moderation), `polls.py` (create/open/close/vote), `hub.py` (WebSocket hub + LISTEN connection), `run.py` (dev server for Windows), `static/` (index, audience, host, screen pages + `app.js`, `styles.css`, vendored `qrcode.js`), `events.py` (`pg_notify` helper), `common.py` (shared deps), `main.py` with `/healthz`, `/readyz` (DB check), `/burn`. 72 pytest tests (DB tests need `TEST_DATABASE_URL`, else skipped). Non-root Dockerfile runs `liveask.main:app`. Questions/polls/WebSocket not built yet | ✅ Day 1 complete, verified locally |
+| `docker-compose.yml` + `nginx/nginx.conf` | Postgres 17 (user/db `liveask`, published on `127.0.0.1:5432` for tests) + one-shot `migrate` + **two** app containers `api1`/`api2` (read-only FS, caps dropped) + nginx round robin on `http://localhost:8000` (`LIVEASK_PORT` to change) | ✅ verified D1-07 |
 | `infra/terraform/` | VPC (2 AZs: public, private, database subnets, 1 NAT), EKS (module v20, managed Spot node group AL2023, access entries), AWS Load Balancer Controller (Helm, IRSA), metrics-server (Helm), ECR (immutable tags, scan on push, keep 10), RDS PostgreSQL 17 (`db.t4g.micro`, password in Secrets Manager, db name still `notes`), GitHub OIDC deploy role (access entry namespace still `notes`), AWS Budgets. `project` default is now `liveask` | ✅ `fmt`/`validate` pass; **never applied** |
 | `k8s/base` | Namespace `notes`, Deployment (probes, non-root, read-only FS, topology spread), Service, HPA (CPU 60%, 2–6), PDB | ✅ verified on minikube; **rename to `liveask` on day 2** |
 | `k8s/overlays/aws` | + ALB Ingress (internet-facing, target-type ip) | renders; not deployed |
@@ -85,6 +85,16 @@ Notes: the hub reconnects its LISTEN connection with a 1 s delay and sends `resy
 
 Notes: `crypto.randomUUID` does not exist on plain HTTP, so `app.js` falls back to `getRandomValues` (matters for the HTTP ALB demo). The QR library is Kazuhiko Arase's `qrcode-generator` 1.4.4 (MIT, licence in the file header), 56 KB, vendored in `app/liveask/static/qrcode.js`. Not verified: a real phone; CI on GitHub; the browser test itself is not in CI.
 
+**D1-07 done. Day 1 is complete.** Verified: `docker compose up --build` starts db, `migrate` (exits 0), `api1` and `api2` (both healthy, with `read_only` and `cap_drop: ALL`) and nginx. Through nginx: 20 requests split 10/10 between the containers; in a real browser a host tab and another tab landed on `api1` and `api2` and a question and a vote crossed between them (4/4 checks); restarting `api1` kept its IP and nginx kept serving 12/12 requests, balanced 6/6.
+
+Notes and gotchas:
+- Port **8080 is used by another project's container** on this machine (`halora-admin`), so LiveAsk's published port is **8000** (override with `LIVEASK_PORT`).
+- nginx round robin was 8:2 until the upstream got a `zone` (each nginx worker process had its own counter); now 10:10.
+- nginx resolves `api1`/`api2` only at startup; a container that comes back with a *different* IP would need `docker compose restart nginx` (it kept the same IP in the restart test). Kubernetes does not have this issue (Service + ALB target type `ip`).
+- A failed `compose up` (port clash) leaves a container with no network; fix with `docker compose rm -f nginx` and `up -d` again.
+
+Not verified: CI on GitHub (has never run on these commits: please push and check it); a real phone; behaviour on Linux of `python -m liveask.run` (only used on Windows).
+
 ## 8. Next step
 
-**D1-07** (`docker-compose.yml`: postgres + migrate + two api containers behind nginx) in `TASKS.md`.
+**Day 2, D2-01**: `k8s/base` rename `notes` → `liveask`, ConfigMap, Deployment with initContainer `migrate`, probes, preStop, CronJob. Needs a `cleanup.py` entry point (listed in `ARCHITECTURE.md` §6 but not written yet) for the CronJob (D2-06).
