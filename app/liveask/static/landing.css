@@ -40,3 +40,28 @@
 .cp__bars li > * { position: relative; }
 .cp__bars b { font-weight: 500; }
 .cp__meta { margin: 12px 0 0; color: var(--u-muted); }
+
+/* ---- questions: the four small visuals of LiveAsk's own screens ---- */
+#questions .panel { --p-h: 300px; }
+@media (max-width: 639px) { #questions .panel { --p-h: 180px; } }
+.qv { font-size: 13px; color: var(--u-ink); }
+.qv__bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 40px; padding: 0 16px; border-bottom: 1px solid var(--u-line); font-weight: 500; }
+.qv__muted { color: var(--u-muted); font-weight: 400; font-size: 12px; }
+.qv__body { padding: 16px; display: grid; gap: 10px; }
+.qv__label { margin: 0; color: var(--u-muted); font-size: 12px; }
+.qv__field { margin: 0; padding: 9px 12px; border-radius: var(--u-r2); background: var(--u-bg); box-shadow: inset 0 0 0 1px var(--u-line-2); }
+.qv__field--area { min-height: 64px; }
+.qv__field--grow { flex: 1; }
+.qv__row { display: flex; align-items: center; gap: 10px; }
+.qv__btn { padding: 8px 14px; border-radius: var(--u-r2); box-shadow: inset 0 0 0 1px var(--u-line-2); }
+.qv__btn--on { background: var(--u-accent); color: var(--u-accent-ink); box-shadow: none; font-weight: 500; }
+.qv__list { list-style: none; margin: 0; padding: 0; }
+.qv__list li { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--u-line); }
+.qv__text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qv__vote { display: grid; justify-items: center; min-width: 40px; padding: 4px 6px; border-radius: var(--u-r2); box-shadow: inset 0 0 0 1px var(--u-line-2); font-size: 12px; line-height: 1.2; font-weight: 500; }
+.qv__vote i { font-style: normal; font-size: 9px; }
+.qv__vote--on { background: var(--u-accent); color: var(--u-accent-ink); box-shadow: none; }
+.qv__chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--u-line-2); color: var(--u-muted); white-space: nowrap; }
+.qv__off .qv__text { color: var(--u-muted); }
+.qv__off .qv__vote { opacity: .55; }
+.qv__done .qv__text { text-decoration: line-through; text-decoration-color: var(--u-muted); color: var(--u-muted); }
