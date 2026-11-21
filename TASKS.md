@@ -40,10 +40,10 @@ How the skill applies: it builds company and product websites. Its **full workfl
 
 Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the skill's own rule) and move on. At about half a day, stop and start D2-01.
 
-- [ ] **UI-00 Safety net first.** Move the browser checks into the repo so every UI commit can be verified.
-  - [ ] `test(e2e)`: `e2e/` with `package.json` (dev only, `playwright-core`), the three-view check (19 checks), runnable against Compose on `:8000` and against two local pods; browser path from `BROWSER_PATH`
-  - [ ] `test(e2e)`: the reconnect check (kill and restart a pod)
-  - [ ] `docs(e2e)`: how to run it (Windows and Git Bash)
+- [x] **UI-00 Safety net first.** (2026-11-21) Move the browser checks into the repo so every UI commit can be verified.
+  - [x] `test(e2e)`: `e2e/` with `package.json` (dev only, `playwright-core`), the three-view check (19 checks), runnable against Compose on `:8000` and against two local pods; browser path from `BROWSER_PATH`
+  - [x] `test(e2e)`: the reconnect check (kill and restart a pod)
+  - [x] `docs(e2e)`: how to run it (Windows and Git Bash)
   - Done when: `node e2e/run.js` passes against `docker compose up` and `pytest` is unchanged.
 - [ ] **UI-01 Brief, copy, plan and deal** (documents only, `docs/ui/DESIGN_PLAN.md`).
   - [ ] fact sheet and voice card; page kind `software`; the main action word for word ("Create a room")

@@ -99,6 +99,8 @@ Manually confirmed by the developer (screenshot, 2026-11-21): `docker compose up
 
 Plan and checkboxes: `TASKS.md` (UI-00 to UI-07). Decisions D-016 to D-018 are **accepted**. What I checked (nothing built yet): the skill folder is the installed skill (symlink), Node 24 and Edge are available for its checker, the kit core is about 300 KB, its `innerHTML` uses are constant SVG strings. Not yet verified: that the skill's `gate.mjs`, `consistency.mjs` and `copy-lint.mjs` run on this machine; that self-hosted fonts pass its `font-load` check; that its form recipe can coexist with our create-room code.
 
+**UI-00 done.** `e2e/` holds the browser checks: `run.js` (18 checks, host and screen on different containers) and `reconnect.js` (5 checks), both verified against `docker compose up` on 2026-11-21. Use `cd e2e && npm run all` before every UI commit; see `e2e/README.md` for the selector contract.
+
 ## 9. Next step
 
-**Approve the UI plan (UI-00 first), then Day 2, D2-01**: `k8s/base` rename `notes` → `liveask`, ConfigMap, Deployment with initContainer `migrate`, probes, preStop, CronJob. Needs a `cleanup.py` entry point (listed in `ARCHITECTURE.md` §6 but not written yet) for the CronJob (D2-06).
+**UI-01** (brief, copy, plan and deal for the landing page; documents only), then the rest of the UI track, then Day 2, D2-01: `k8s/base` rename `notes` → `liveask`, ConfigMap, Deployment with initContainer `migrate`, probes, preStop, CronJob. Needs a `cleanup.py` entry point (listed in `ARCHITECTURE.md` §6 but not written yet) for the CronJob (D2-06).
