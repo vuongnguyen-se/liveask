@@ -1,32 +1,154 @@
 <!doctype html>
-<html lang="en">
+<!-- type: software. Dealt (docs/ui/DESIGN_PLAN.md): hero centred, nav nav-split (re-dealt: no photographs for nav-cards),
+     close close-type, footer footer-statement, rhythm dark-band, buttons tonal, mark initial, radius round,
+     palette cool-white-slate, type host, lit ground sand, moment marquee-row (section "formats"). -->
+<html lang="en" data-type="software" data-radius="round" data-ground="sand" data-buttons="tonal" data-motion>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LiveAsk</title>
-  <link rel="stylesheet" href="/static/styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LiveAsk: live Q&amp;A and polls for presenters</title>
+<meta name="description" content="Show a QR code and your audience asks questions, upvotes and votes in polls from their phones, while you and the projector see every change.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LiveAsk: live Q&amp;A and polls for presenters">
+<meta property="og:description" content="Phones ask and vote, the projector and the presenter's page update as they do. No sign-up.">
+<meta property="og:image" content="/static/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f7f9fa">
+<!-- <link rel="canonical" href="https://[the domain]/"> stays a comment until the site has its own domain -->
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<link rel="preload" href="/static/fonts/host-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/fonts/fonts.css">
+<link rel="stylesheet" href="/static/assets/system.css">
+<link rel="stylesheet" href="/static/assets/ui/cards.css">
+<link rel="stylesheet" href="/static/assets/motion/motion.css">
+<link rel="stylesheet" href="/static/assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="/static/assets/layout/layout.css">
+<link rel="stylesheet" href="/static/assets/icons/icon.css">
+<link rel="stylesheet" href="/static/tokens.css">
+<link rel="stylesheet" href="/static/assets/ui/base.css">
+<link rel="stylesheet" href="/static/assets/ui/window/fragment.css">
+<link rel="stylesheet" href="/static/assets/diagrams/diagram.css">
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+<script src="/static/assets/backgrounds/backgrounds.js"></script>
+<link rel="stylesheet" href="/static/landing.css">
 </head>
-<body data-view="index">
-  <header><h1>LiveAsk</h1></header>
-  <main>
-    <p class="muted">Real-time questions and polls for your talk. No sign-up.</p>
+<body>
+<header class="nav nav--split">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="#top"><span class="mark mark--initial" aria-hidden="true">L</span>LiveAsk</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item"><a class="nav__link" href="#questions">Questions</a></div>
+      <div class="nav__item"><a class="nav__link" href="#polls">Polls</a></div>
+      <div class="nav__item"><a class="nav__link" href="#screen">Screen</a></div>
+      <div class="nav__item"><a class="nav__link" href="#faq">FAQ</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="nav__link" href="#join">Join a room</a>
+      <a class="btn btn--primary" href="#create">Create a room</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
 
-    <h2>Join a room</h2>
-    <form id="join" class="card">
-      <label for="code">Room code (6 characters)</label>
-      <input id="code" name="code" maxlength="6" autocomplete="off" autocapitalize="characters" required>
-      <button class="primary" type="submit">Join</button>
-      <p id="join-error" class="error" role="alert"></p>
-    </form>
+<main id="top">
+  <section class="hero hero--centred" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text">
+      <div class="hero__c">
+        <a class="pill" href="#faq"><span>No sign-up needed</span><span class="muted">Rooms expire after 24 hours</span></a>
+        <h1 id="hero-h" aria-label="Live Q&amp;A and polls for presenters"><span class="ly-mark" aria-hidden="true"></span> Live Q&amp;A and polls for presenters</h1>
+        <p class="hero__lead">Show a QR code. Your audience asks questions, upvotes the best ones and votes in polls from their phones, and the projector updates as they do.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="#create">Create a room</a><a class="btn btn--secondary" href="#join">Join a room</a></div>
+      </div>
+      <div class="hero__window" role="img" aria-label="The presenter's list of audience questions, most upvoted first, with one being answered">
+        <div class="ly-piece" aria-hidden="true">
+          <div class="ui ui-panel ui-win" data-ui="window" data-open="Open" data-work="Answering" data-done="Answered">
+            <div class="ui-win__bar">
+              <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="ui-win__crumb"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Cloud 101 <i>/</i> <b>Questions</b></span>
+              <span class="ui-spacer"></span>
+              <span class="ui-win__search" aria-hidden="true"><span class="ui-win__ph">Room</span><span class="ui-kbd">K7PX4M</span></span>
+            </div>
+            <div class="ui-win__body">
+              <nav class="ui-win__side" aria-hidden="true">
+                <span class="ui-win__nav is-on"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Open<em>9</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg>Answered<em>4</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="m4.5 11.5 7-7"/></svg>Hidden<em>1</em></span>
+                <span class="ui-win__label">Polls</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Next service</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Quick check</span>
+              </nav>
+              <div class="ui-win__main">
+                <div class="ui-win__cols" aria-hidden="true"><span>Asked by</span><span>Question</span><span>Status</span><span>Votes</span></div>
+                <ul class="ui-win__rows">
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">L</span><span class="ui-win__who">Lan</span><span class="ui-win__sub">What is a pod?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">14</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">EKS or ECS for a small app?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">9</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Do pods share one database?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">7</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">When is Lambda the better fit?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">5</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Can I try this at home for free?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">3</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">What does a Service do?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">2</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+</main>
 
-    <h2>Start a room as presenter</h2>
-    <form id="create" class="card">
-      <label for="title">Title</label>
-      <input id="title" name="title" maxlength="120" placeholder="Cloud 101, week 5" required>
-      <button class="primary" type="submit">Create room</button>
-      <p id="create-error" class="error" role="alert"></p>
-    </form>
-  </main>
-  <script src="/static/app.js"></script>
+<footer class="footer footer--statement closing" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">Create your first room</h2>
+        <p>A room needs a title and one click. The projector view shows its QR code straight away.</p>
+      </div>
+      <form class="form" id="create" action="/create" method="post" novalidate>
+        <div class="field">
+          <label for="create-title">Room title</label>
+          <input id="create-title" name="title" type="text" maxlength="120" autocomplete="off" required aria-describedby="create-title-err">
+          <p class="field__error" id="create-title-err" hidden>Write a title for the room, up to 120 characters.</p>
+        </div>
+        <button class="btn btn--primary btn--xl btn--wide" type="submit">Create a room</button>
+        <p class="form__status" role="status" data-form-status></p>
+      </form>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top"><span class="mark mark--initial" aria-hidden="true">L</span>LiveAsk</a>
+          <p class="footer__lede">Live questions and polls on phones, the presenter's page and a projector.</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Product</h3><ul><li><a href="#questions">Questions</a></li><li><a href="#polls">Polls</a></li><li><a href="#screen">Screen</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+        <div class="span-4 footer__col">
+          <h3>Join</h3>
+          <form class="form" id="join" action="/join" method="get" novalidate>
+            <div class="field">
+              <label for="join-code">Room code</label>
+              <input id="join-code" name="code" type="text" minlength="6" maxlength="6" pattern="[A-Za-z0-9]{6}" autocomplete="off" autocapitalize="characters" required aria-describedby="join-code-err">
+              <p class="field__error" id="join-code-err" hidden>Write the 6 characters shown on the projector.</p>
+            </div>
+            <button class="btn btn--secondary" type="submit">Join a room</button>
+            <p class="form__status" role="status" data-form-status></p>
+          </form>
+        </div>
+        <div class="span-2 footer__col"><h3>Code</h3><ul><li><a href="https://github.com/vuongnguyen-se/liveask">Source code</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 LiveAsk</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/static/assets/system.js"></script>
+<script type="module" src="/static/assets/motion/motion.js"></script>
+<script type="module" src="/static/assets/layout/layout.js"></script>
+<script type="module" src="/static/assets/diagrams/mount.js"></script>
 </body>
 </html>

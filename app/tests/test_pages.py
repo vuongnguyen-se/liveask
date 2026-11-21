@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -14,19 +15,19 @@ def web(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    ("path", "view"),
+    ("path", "marker"),
     [
-        ("/", "index"),
-        ("/r/K7PX4M", "audience"),
-        ("/host/K7PX4M", "host"),
-        ("/screen/K7PX4M", "screen"),
+        ("/", 'data-type="software"'),  # the landing page
+        ("/r/K7PX4M", 'data-view="audience"'),
+        ("/host/K7PX4M", 'data-view="host"'),
+        ("/screen/K7PX4M", 'data-view="screen"'),
     ],
 )
-def test_pages_are_served(web, path, view):
+def test_pages_are_served(web, path, marker):
     r = web.get(path)
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("text/html")
-    assert f'data-view="{view}"' in r.text
+    assert marker in r.text
     assert r.headers["cache-control"] == "no-cache"
 
 
@@ -40,10 +41,20 @@ def test_host_token_fragment_never_reaches_the_server(web):
     assert web.get("/host/K7PX4M").status_code == 200
 
 
+REMOTE_RESOURCE = re.compile(
+    r"<(?:link|script|img|iframe|source|video|audio)[^>]*?(?:href|src)=[\"'](?:https?:)?//",
+    re.IGNORECASE,
+)
+
+
 def test_pages_load_no_external_resources():
+    # A link to another site (the source code) is fine; loading anything from one is not.
     for page in STATIC_DIR.glob("*.html"):
         text = page.read_text(encoding="utf-8")
-        assert "http://" not in text and "https://" not in text, page.name
+        assert not REMOTE_RESOURCE.search(text), f"{page.name} loads a remote resource"
+    for sheet in ("tokens.css", "styles.css", "landing.css", "fonts/fonts.css"):
+        css = (STATIC_DIR / sheet).read_text(encoding="utf-8")
+        assert not re.search(r"url\(\s*[\"']?(?:https?:)?//", css), f"{sheet} loads a remote file"
 
 
 def test_front_end_never_uses_innerhtml():

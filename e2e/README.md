@@ -28,7 +28,7 @@ Every line prints `PASS` or `FAIL`; the exit code is non-zero if anything fails.
 
 ## The selector contract
 
-The checks find things by id and class: `#status`, `#title`, `#code`, `#qr`, `#text`, `#name`,
+The checks find things by id and class: `#create-title` and `#create` (the landing page's form), `#status`, `#title`, `#code`, `#qr`, `#text`, `#name`,
 `#ask`, `#questions .question`, `.vote`, `#polls .option`, `#poll-form`, `#poll-question`,
 `#poll-options`, `#close-room`, `#closed`, and the buttons named "Hide", "Mark answered",
 "Open for voting". **Keep these when restyling**, or change the checks in the same commit.

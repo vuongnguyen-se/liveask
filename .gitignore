@@ -19,3 +19,8 @@ __pycache__/
 kubeconfig*
 e2e/node_modules/
 e2e/out/
+
+# taste-skill gate scratch (keep the waivers)
+.taste-skill/*
+!.taste-skill/waivers.json
+shots/

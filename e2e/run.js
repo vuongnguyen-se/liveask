@@ -44,7 +44,7 @@ const SHOTS = process.env.SHOTS_DIR; // optional: save screenshots here
   // 1. the presenter creates a room through the real form
   const host = await newPage();
   await host.goto(BASE + "/");
-  await host.fill("#title", "E2E demo <b>room</b>");
+  await host.fill("#create-title", "E2E demo <b>room</b>");
   await host.click("#create button[type=submit]");
   await host.waitForURL(/\/host\/[A-Z0-9]{6}#t=/);
   const code = host.url().match(/\/host\/([A-Z0-9]{6})/)[1];
