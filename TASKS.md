@@ -56,7 +56,7 @@ Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the sk
   - [x] `feat(ui)`: the dealt `:root` tokens, shared by all four pages
   - [x] `test(ui)`: guard test exempts the kit by path only; image still builds; report the image size change
   - Done when: `pytest` green, the Docker image builds and runs, no request leaves localhost.
-- [ ] **UI-03 Landing page `/`** (kind: software; the full skill workflow; one commit per section).
+- [x] **UI-03 Landing page `/`** (2026-11-22; **`GATE: OPEN`**: 1 finding open, `ui-centre` on the hero window, and 3 `section-gaps` waivers at 390 px, see `CURRENT_STATE.md`) (kind: software; the full skill workflow; one commit per section).
   - [ ] `feat(landing)`: nav and hero; the **create-room** and **join-by-code** actions still work
   - [ ] `feat(landing)`: `app-frame` showing LiveAsk's own UI as live HTML
   - [ ] `feat(landing)`: feature sections (live across pods, host controls and polls, projector view)
@@ -81,10 +81,10 @@ Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the sk
   - [x] `style(screen)`: top questions, readable from the back of a room (large type, 7:1 contrast)
   - [x] `style(screen)`: live poll bars
   - Done when: screenshots at both sizes read well and e2e passes.
-- [ ] **UI-07 Review and ship.**
-  - [ ] accessibility pass: contrast, keyboard order, focus ring, reduced motion, light and dark
-  - [ ] responsive screenshots (1440, 1024, 768, 390) saved to `docs/images/`
-  - [ ] `docs`: README screenshots and `CURRENT_STATE.md` updated
+- [~] **UI-07 Review and ship.** (2026-11-22; done except GitHub CI, which cannot run until the branch is pushed)
+  - [x] accessibility pass: contrast, keyboard order, focus ring, reduced motion, light and dark
+  - [x] responsive screenshots (1440, 1024, 768, 390) saved to `docs/images/`
+  - [x] `docs`: README screenshots and `CURRENT_STATE.md` updated
   - Done when: `pytest`, `ruff`, e2e and CI are green, and the branch is merged with `--no-ff`.
 
 ## Day 2: Kubernetes on minikube (USD 0)
