@@ -133,5 +133,6 @@ button.link { background: none; border: 0; padding: 0; font: inherit; font-weigh
 @media (min-width: 1024px) { main > #how.is-live > .mo-pc__grid { align-content: start; padding-top: var(--padt); } }
 /* a phone's step pictures are tall enough to fill their two screens */
 @media (max-width: 639px) { #how .mo-pc__visual { height: 280px; aspect-ratio: auto; align-items: flex-start; } }
-/* faq: the timeline panel's height */
-#faq .panel { --p-h: 260px; }
+/* faq: a quiet icon before each question */
+.faq__item h3 { display: flex; align-items: flex-start; gap: var(--s-3); }
+.faq__item h3 .ic { margin-top: 2px; }
