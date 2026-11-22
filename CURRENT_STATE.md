@@ -15,7 +15,7 @@ LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and 
 
 | Path | What it is | Status |
 |---|---|---|
-| `app/liveask/` | FastAPI app: `rooms.py`, `questions.py`, `polls.py`, `hub.py` (WebSocket hub + one LISTEN connection per process), `landing.py` (`POST /create`, `GET /join`), `cleanup.py` (CronJob entry point), `migrate.py`, `events.py`, `security.py`, `config.py`, `db.py`, `main.py` | ✅ 95 tests pass |
+| `app/liveask/` | FastAPI app: `rooms.py`, `questions.py`, `polls.py`, `hub.py` (WebSocket hub + one LISTEN connection per process), `landing.py` (`POST /create`, `GET /join`), `ratelimit.py` (room-creation limit), `cleanup.py` (CronJob entry point), `migrate.py`, `events.py`, `security.py`, `config.py`, `db.py`, `main.py` | ✅ 95 tests pass |
 | `app/liveask/static/` | The four pages: landing `/` (`index.html` + `landing.css` + `landing.js`), audience, host, screen (`app.js`, `app.css`), `tokens.css`, self-hosted fonts, `qrcode.js`, icons, and the vendored taste-skill kit in `assets/` (unmodified, checksum-guarded) | ✅ |
 | `e2e/` | Browser checks (`playwright-core`, your Edge): `run.js` (19), `reconnect.js` (6), `rollout.js` (6, Kubernetes), `a11y.js` (8), `shots.js` (screenshots). See `e2e/README.md` | ✅ |
 | `docker-compose.yml`, `nginx/` | Postgres + migrate + **two** app containers behind nginx on `http://localhost:8000` (`LIVEASK_PORT` to change) | ✅ |
@@ -32,7 +32,7 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 
 ## 3. Verified (2026-11-21 to 2026-11-22, Windows 11 laptop)
 
-- `pytest` 95 passed, `ruff` clean, `terraform fmt`/`validate` pass, both kustomize overlays render.
+- `pytest` 106 passed, `ruff` clean, `terraform fmt`/`validate` pass, both kustomize overlays render.
 - Docker Compose: 19/19 browser checks, host and screen on different containers; `reconnect.js` 6/6 (8 of 8 consecutive runs after hardening); `a11y.js` 8/8 at 320 px, light and dark.
 - minikube (`-p eks-lab`): 2 app pods + `postgres-0` Ready; deleting `postgres-0` kept the data; `e2e/run.js` 19/19 through ingress-nginx with the host and the screen on **different pods**; `e2e/rollout.js` 6/6 (32 of 32 questions stored during `rollout restart`, replicas never below 2, the screen reconnected to a new pod and caught up); the CronJob run by hand logged "removed 1 expired room".
 - Load test, 200 WebSocket clients over 6 pods, through `minikube tunnel`: 18,400 of 18,400 deliveries; the HPA scaled **2 → 4 → 6** pods at CPU 345% of the 60% target. Latency median 298 ms, **p95 1079 ms** (target 1000 ms): the POST alone took a median 289 ms through the Windows tunnel, so this is not a clean verdict on NFR-1. Re-measure on EKS.
@@ -66,7 +66,7 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 2. `deploy.yml` must not use a GitHub `environment:` unless the IAM trust policy changes (the OIDC `sub` claim would change).
 3. nginx (Compose) re-resolves container names (`resolve`); a re-created container is found again after about 30 s. It does not resend a POST that timed out on a stopped container, so a client must retry (the e2e checks do).
 4. In Kubernetes, a Kustomize overlay's own files do **not** inherit the base's `namespace`: the local overlay sets `namespace: liveask` itself (found when Postgres landed in `default`).
-5. Anyone can `POST /api/rooms` or `POST /create` without limit (rooms expire after 24 h and are cleaned nightly). Rate-limit it before exposing the ALB for long.
+5. Room creation is limited to 20 per hour per network address (`ROOMS_PER_HOUR_PER_IP`, in memory, so each pod counts on its own and the ceiling is that times the replicas). It trusts the last `X-Forwarded-For` entry (`TRUSTED_PROXY_HOPS=1`, right for the ALB, ingress-nginx and the Compose nginx); with no proxy in front, set it to 0 or a caller could forge the address. Not yet exercised through a real ALB: the browser checks on Compose and minikube were not re-run after this change, only `pytest`.
 6. `window` in the kit has a minimum height, so the hero card is cut by its frame; the checker's `fold-card` rule is satisfied by marking the frame `data-ui-pause-host`.
 7. `deploy.yml` only builds and pushes the image, then prints the next command in the run summary. The cluster API is locked to one IP (`cluster_endpoint_public_access_cidrs`), which GitHub-hosted runners are not on, so `scripts/deploy-from-laptop.sh` applies the manifests from the allowed machine (decision D-019). The script has been syntax-checked but not yet run end to end; the same steps were run by hand on 2026-11-22.
 8. A new GitHub OIDC trust policy needs the repository's real subject. This repository uses immutable subjects (`repo:owner@ID/name@ID`): set `github_oidc_repo_claim` in `terraform.tfvars` from `gh api repos/OWNER/NAME/actions/oidc/customization/sub`. A change to the trust policy can take a minute to take effect.

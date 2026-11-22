@@ -28,7 +28,7 @@ Everything below was run, not just written. Numbers are from 2026-11-21 and 2026
 
 | Claim | Evidence |
 |---|---|
-| The app works | 95 `pytest` tests against a real PostgreSQL; `ruff` clean |
+| The app works | 106 `pytest` tests against a real PostgreSQL; `ruff` clean |
 | A write on one process reaches a WebSocket on another | A test starts two real app processes on one database (`app/tests/test_realtime.py`) |
 | Host, phones and projector update each other across containers | `e2e/run.js`: 19 browser checks through nginx on Docker Compose, and the same 19 on minikube behind ingress-nginx, with the host and the screen on **different pods** |
 | A restarted container does not lose data or the screen | `e2e/reconnect.js`: the screen shows "reconnecting", moves to the other container and shows the question it missed |
@@ -74,7 +74,7 @@ Terraform (`infra/terraform/`): VPC across 2 AZs (public, private and isolated d
 - **Multi-pod real time without sticky sessions or Redis:** PostgreSQL `LISTEN/NOTIFY` fired in the same transaction as the write, proven by a test with two real processes and by browser checks across pods.
 - **Operations evidence, not claims:** a rolling update with no lost data, HPA scaling from 2 to 6 pods, a nightly cleanup CronJob and a database that survives its pod, each run and measured, on minikube and again on EKS.
 - **Infrastructure as code with no long-lived keys:** the whole AWS stack in Terraform, deployed through GitHub OIDC, created and destroyed in one short, cost-capped session.
-- **Honest limits:** one 60-second load run, no phone-on-mobile-data check yet, HTTP only, and room creation is not rate-limited yet.
+- **Honest limits:** one 60-second load run, no phone-on-mobile-data check yet, and HTTP only. Room creation is limited to 20 per hour per network address, counted in memory per pod, so the real ceiling is that times the replicas.
 
 ## Run it
 

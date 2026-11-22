@@ -6,6 +6,7 @@
 |---|---|
 | Presenter access | Random 32-byte host token, returned once, stored only as SHA-256; constant-time compare; token kept in the URL fragment so it never reaches server or ALB logs |
 | Audience abuse | Max 5 questions/min per device, max 300 connections per room, text length limits; text rendered with `textContent` (no HTML), so no XSS |
+| Abuse | Room creation is limited to 20 per hour per network address (in memory, per pod, nothing stored; both `POST /api/rooms` and `POST /create`); questions to 5 per minute per device. Behind the ALB the real address is the last `X-Forwarded-For` entry; with no proxy in front, set `TRUSTED_PROXY_HOPS=0` |
 | Data | Only an optional display name; rooms and all data deleted 24 h after creation |
 | Network | Pods in private subnets; RDS in isolated database subnets, port 5432 only from the node security group; Kubernetes API endpoint limited to your IP (`cluster_endpoint_public_access_cidrs`) |
 | Pods | Non-root UID 10001, read-only root filesystem, all capabilities dropped, seccomp `RuntimeDefault`, no service account token mounted |
