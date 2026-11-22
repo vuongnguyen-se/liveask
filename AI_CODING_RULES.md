@@ -43,7 +43,7 @@ The developer is learning Kubernetes and AWS. Explain briefly, in plain English,
 
 ## 7. Git workflow (small, professional commits)
 
-- **A branch per track.** Day work stays on `vuongnguyen-se/spookfish`; the UI track works on `ui/redesign` and is merged back with `--no-ff` when its Done-when passes. Never push or open a pull request without asking.
+- **A branch per track.** Work for a track stays on its own branch and is merged back with `--no-ff` when its Done-when passes (Day 1 to 2 and the UI track were merged into `main` through PR #1). Never push or open a pull request without asking.
 - **One commit, one logical change:** a component, a function with its tests, a document. Never mix a refactor with a feature. No "WIP" commits. The app, `pytest` and `ruff` pass after **every** commit.
 - **Message:** Conventional Commits, `type(scope): subject` (imperative, 72 characters at most), a blank line, a body that says **why** (the diff already says what), and the task in the footer (`Task: UI-03`). Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build`, `ci`, `style` (visual change only). Scopes: `landing`, `audience`, `host`, `screen`, `ui`, `api`, `hub`, `db`, `k8s`, `infra`, `ci`. End with the co-author trailer.
 - **Before each commit:** `ruff check .`, `ruff format --check .`, `pytest -q`; for any UI change also the browser check in `e2e/`.

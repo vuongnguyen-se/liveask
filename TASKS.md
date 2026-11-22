@@ -6,13 +6,25 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 
 ## Progress overview
 
+**Overall: 26 of 29 board tasks done (90%)**, 1 in progress, 2 to do. Counted from the `**ID**` checkboxes below; update the counts and the bars when you tick a box. Last updated 2026-11-22.
+
+| Track | Done | Progress | Left |
+|---|---|---|---|
+| Day 1: the app | 7 of 7 | `██████████` 100% | none |
+| UI track | 8 of 8 | `██████████` 100% | one landing gate finding still open (`ui-centre`) |
+| Day 2: minikube | 7 of 7 | `██████████` 100% | none |
+| Day 3: AWS session on EKS | 4 of 7 | `██████░░░░` 57% | D3-04 phone check and console screenshots (in progress; they need a new session, the cluster is gone), D3-05 HTTPS (optional), D3-07 final README |
+| **Total** | **26 of 29** | `█████████░` 90% | |
+
+What each day proved, in one line: Day 1 the app works; the UI track made it presentable; Day 2 showed the Kubernetes design works locally; Day 3 proves it on real AWS (e2e 19/19, rollout 6/6, load p95 733 ms, HPA 2 to 6 pods: `docs/eks-session-2026-11-22.md`).
+
 | Day | Goal | Status |
 |---|---|---|
 | 0 | Platform skeleton (Terraform, K8s, CI) carried over into the fresh `liveask` repo | ✅ Done (2026-11-21) |
 | 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | ✅ Done (2026-11-21) |
-| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | ✅ Done (2026-11-22), landing gate ended `OPEN` (1 finding, see `CURRENT_STATE.md`); GitHub CI green on PR #1 |
-| 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | ✅ Done locally (2026-11-22); CI green on PR #1 |
-| 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | ⏳ Not started: Terraform renames and ALB settings are done in code; the 💰 apply needs you (see `RESUME.md` section 4) |
+| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | ✅ Done (2026-11-22), landing gate ended `OPEN` (1 finding, see `CURRENT_STATE.md`); merged to `main` (PR #1), CI green |
+| 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | ✅ Done locally (2026-11-22); merged to `main` (PR #1), CI green |
+| 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | 🟡 Session run and torn down (2026-11-22, `docs/eks-session-2026-11-22.md`); phone check, console screenshots and the final README remain |
 
 ---
 
@@ -57,12 +69,12 @@ Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the sk
   - [x] `test(ui)`: guard test exempts the kit by path only; image still builds; report the image size change
   - Done when: `pytest` green, the Docker image builds and runs, no request leaves localhost.
 - [x] **UI-03 Landing page `/`** (2026-11-22; **`GATE: OPEN`**: 1 finding open, `ui-centre` on the hero window, and 3 `section-gaps` waivers at 390 px, see `CURRENT_STATE.md`) (kind: software; the full skill workflow; one commit per section).
-  - [ ] `feat(landing)`: nav and hero; the **create-room** and **join-by-code** actions still work
-  - [ ] `feat(landing)`: `app-frame` showing LiveAsk's own UI as live HTML
-  - [ ] `feat(landing)`: feature sections (live across pods, host controls and polls, projector view)
-  - [ ] `feat(landing)`: how-it-works diagram card (pods, Postgres `NOTIFY`)
-  - [ ] `feat(landing)`: FAQ and closing footer
-  - [ ] `test(landing)`: `copy-lint`, `consistency`, `check`, `perf`, then `gate.mjs`; waivers listed with reasons
+  - [x] `feat(landing)`: nav and hero; the **create-room** and **join-by-code** actions still work
+  - [x] `feat(landing)`: `app-frame` showing LiveAsk's own UI as live HTML
+  - [x] `feat(landing)`: feature sections (live across pods, host controls and polls, projector view)
+  - [x] `feat(landing)`: how-it-works diagram card (pods, Postgres `NOTIFY`)
+  - [x] `feat(landing)`: FAQ and closing footer
+  - [x] `test(landing)`: `copy-lint`, `consistency`, `check`, `perf`, then `gate.mjs`; waivers listed with reasons
   - Done when: `GATE: PASS` (or `OPEN` with every waiver and open FAIL reported) and the e2e check can still create and join a room.
 - [x] **UI-04 Audience view** (phone first, 390 px).
   - [x] `style(audience)`: header and connection pill
@@ -105,11 +117,12 @@ Before starting: `aws login` (or SSO profile), `terraform.tfvars` filled in, che
 
 - [x] **D3-01** Terraform edits (no apply yet): RDS `db_name`/`username` → `liveask`, access entry namespace → `liveask`; `terraform fmt`/`validate`; review `terraform plan`. (2026-11-22) Renames done; `fmt`, `init -backend=false` and `validate` pass. `terraform plan` not reviewed (needs AWS sign-in).
 - [x] **D3-02** Ingress for ALB: `alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=3600`, `target-group-attributes: deregistration_delay.timeout_seconds=30`, health check `/readyz`. (2026-11-22) Annotations added; both overlays render. Not yet seen on a real ALB.
-- [ ] **D3-03** 💰 `terraform apply`; `aws eks update-kubeconfig`; `scripts/create-db-secret.sh`; set GitHub variables; run **Deploy to EKS**.
+- [x] **D3-03** (2026-11-22) 💰 `terraform apply`; `aws eks update-kubeconfig`; `scripts/create-db-secret.sh`; set GitHub variables; run **Deploy to EKS**.
   - Done when: the ALB URL works from a phone; two phones on mobile data plus a laptop update live.
-- [ ] **D3-04** Repeat the D2-03/04/05 demos on EKS; screenshots of pods spread across AZs (`kubectl get pods -o wide`), HPA scaling, the ALB target group, and the app on a phone.
+  - Result: the ALB answered from the internet and the API worked through it, but the **phone check was not done**. The workflow built and pushed the image; the manifests were applied from the laptop because the IP-locked API is not reachable from GitHub runners. Three fixes were needed (`docs/eks-session-2026-11-22.md`).
+- [~] **D3-04** (2026-11-22: e2e 19/19, rollout 6/6, load p95 733 ms, HPA 2 to 6; screenshots of the AWS console and a phone not taken) Repeat the D2-03/04/05 demos on EKS; screenshots of pods spread across AZs (`kubectl get pods -o wide`), HPA scaling, the ALB target group, and the app on a phone.
 - [ ] **D3-05** (Optional, if time) HTTPS: ACM certificate + Route 53 record `ask.vuongdomain.click`, Ingress `certificate-arn` + `ssl-redirect`.
-- [ ] **D3-06** 🧹 Teardown per `SECURITY_AND_COST.md` §3. Next day: confirm in Cost Explorer.
+- [x] **D3-06** (2026-11-22) 🧹 Teardown per `SECURITY_AND_COST.md` §3. `terraform destroy` removed 78 resources; checked afterwards: no EKS cluster, EC2, NAT gateway, Elastic IP, load balancer, RDS or EBS volume, and the deploy role, KMS alias and budget are gone (the KMS key is in `PendingDeletion`). Still to do: confirm in Cost Explorer on 2026-11-23.
 - [ ] **D3-07** Final README: what it is, screenshots/GIF, architecture diagram, the "why containers" and "multi-pod fan-out" explanations, K8s objects table, how to run locally, real cost of the session, roadmap, CV bullet points.
 
 ## Roadmap (not in the 3 days; list it in the README)

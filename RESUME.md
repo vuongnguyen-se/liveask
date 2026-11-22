@@ -4,15 +4,14 @@ Everything you need to continue LiveAsk from a clean machine. Read `CURRENT_STAT
 
 ## 0. Where the work is
 
-All work is committed on the branch **`feat/liveask-realtime-qa-app`** (Day 1, the UI track and Day 2; `ui/redesign` is merged into it and can be ignored). It was **pushed to GitHub on 2026-11-22**; `main` was left untouched (still the starting commit).
+All work (Day 1, the UI track and Day 2) is on **`main`**: it was merged through PR #1 on 2026-11-22. Branch off `main` for new work.
 
 ```powershell
 git clone https://github.com/vuongnguyen-se/liveask.git
 cd liveask
-git switch feat/liveask-realtime-qa-app
 ```
 
-**PR #1** (https://github.com/vuongnguyen-se/liveask/pull/1) targets `main`, and **GitHub CI is green on it** (all three jobs). CI runs on pushes to `main`, on pull requests and by hand; the deploy workflow (`deploy.yml`) has still never run.
+**PR #1** (https://github.com/vuongnguyen-se/liveask/pull/1) is merged, and **GitHub CI is green** on the PR and on `main` (all three jobs). CI runs on pushes to `main`, on pull requests and by hand; the deploy workflow (`deploy.yml`) has still never run.
 
 Not in git on purpose (recreate them): `.venv/`, `e2e/node_modules/`, `infra/terraform/.terraform/`, `infra/terraform/terraform.tfvars` (it holds your email and IP), `shots/`, `.taste-skill/chrome-check`. Nothing secret is in git.
 
@@ -74,12 +73,12 @@ Nothing has been applied to AWS. The session costs about **USD 0.27 per hour** (
 2. **Check Kubernetes 1.35 is in standard support** on EKS: `aws eks describe-cluster-versions --region ap-southeast-1` (see `CURRENT_STATE.md`).
 3. **Configure Terraform:** `cd infra/terraform; copy terraform.tfvars.example terraform.tfvars`, then fill in `owner` (your GitHub handle), `github_repo` (`vuongnguyen-se/liveask`), `budget_email`, and uncomment `cluster_endpoint_public_access_cidrs` with your public IP (`curl https://checkip.amazonaws.com`, then `["x.x.x.x/32"]`). Leave `create_github_oidc_provider` out (an OIDC provider already exists in the account). Check whether new IAM roles need Say Coffee's permissions boundary.
 4. **Review:** `terraform init`, `terraform plan`; read it.
-5. **💰 Apply (ask before this, say the cost):** `terraform apply`. Then `aws eks update-kubeconfig ...` (the command is a Terraform output), `scripts/create-db-secret.sh`, set the GitHub variables, run the **Deploy to EKS** workflow. Done when the ALB URL works from a phone.
+5. **💰 Apply (ask before this, say the cost):** `terraform apply`. Then `aws eks update-kubeconfig ...` (the command is a Terraform output), `scripts/create-db-secret.sh`, set the GitHub variables, run the **Deploy to EKS** workflow (it pushes the image), then `bash scripts/deploy-from-laptop.sh` from your laptop to apply the manifests (the API is locked to your IP, so GitHub runners cannot). Also set `github_oidc_repo_claim` in `terraform.tfvars` if the repository uses immutable OIDC subjects (`CURRENT_STATE.md` section 7). Done when the ALB URL works from a phone.
 6. **Prove it on EKS:** `BASE_URL=http://<alb> node e2e/run.js`, `node e2e/rollout.js`, `python scripts/load_test.py --base http://<alb> --clients 200 --burn-workers 6`; screenshots of `kubectl get pods -o wide` (AZ spread), the HPA, the ALB target group, and the app on a phone. This is where the **latency target (p95 under 1 s)** gets its real measurement.
 7. **🧹 Teardown, every time:** `kubectl delete -k k8s/overlays/aws`, wait until the ALB is gone (EC2, Load balancers), then `cd infra/terraform; terraform destroy`. Then check tag `Project=liveask`: no EKS cluster, EC2, NAT gateway, Elastic IPs, load balancers, RDS or EBS left. Next day look at Cost Explorer.
 8. Update `README.md` with the EKS numbers and screenshots, and `CURRENT_STATE.md` / `TASKS.md` (D3-03 to D3-07).
 
-The CI workflow is green; the **deploy workflow has never run** and assumes `main`, so merge PR #1 to `main` first.
+The CI workflow is green; the **deploy workflow has never run**. It assumes `main`, where the work now is.
 
 ## 5. If you use an AI coding agent
 
@@ -92,4 +91,4 @@ Open the repo and tell it: *"Read `PROMPT_FOR_CODING_AGENT.md`, `CURRENT_STATE.m
 - Another project on the old computer used port 8080; LiveAsk uses 8000.
 - Long shell commands with large heredocs sometimes fail to parse in Git Bash: put the content in a file instead.
 - `terraform apply` needs AWS credentials; `kubectl` talks to whichever context is current: check `kubectl config current-context` (`eks-lab` for minikube) before applying anything.
-- Open items and honest limits: `CURRENT_STATE.md` sections 4 and 7 (CI unverified, the p95 latency, Vietnamese letters, unlimited room creation, one open UI gate finding).
+- Open items and honest limits: `CURRENT_STATE.md` sections 4 and 7 (the p95 latency, Vietnamese letters, unlimited room creation, one open UI gate finding).

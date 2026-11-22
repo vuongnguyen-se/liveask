@@ -1,10 +1,10 @@
-# Manual deploy: the cluster only exists while you are running the lab,
-# so this runs on demand instead of on every push.
+# Manual deploy of the image: the cluster only exists while you are running the lab,
+# so this runs on demand instead of on every push. It builds and pushes the image to ECR;
+# scripts/deploy-from-laptop.sh then applies the manifests (see the last step for why).
 #
 # Repository variables (Settings > Secrets and variables > Actions > Variables):
 #   AWS_DEPLOY_ROLE_ARN  terraform output github_deploy_role_arn
 #   ECR_REPOSITORY_URL   terraform output ecr_repository_url
-#   EKS_CLUSTER_NAME     terraform output cluster_name
 name: Deploy to EKS
 
 on:
@@ -46,21 +46,16 @@ jobs:
           docker build --build-arg APP_VERSION=${GITHUB_SHA::7} -t "$IMAGE" app
           docker push "$IMAGE"
 
-      - name: Point kubectl at the cluster
-        run: aws eks update-kubeconfig --region "$AWS_REGION" --name "${{ vars.EKS_CLUSTER_NAME }}"
-
-      - name: Apply manifests
-        working-directory: k8s/overlays/aws
+      - name: Tell where the image is and how to apply it
+        # The cluster API is locked to one IP (cluster_endpoint_public_access_cidrs), so a GitHub-hosted
+        # runner cannot reach it. The manifests are applied from the machine on that IP.
         run: |
-          kustomize edit set image "liveask=${{ vars.ECR_REPOSITORY_URL }}:${{ github.sha }}"
-          kubectl apply -k .
-          kubectl -n liveask rollout status deployment/liveask --timeout=180s
-
-      - name: Print the load balancer address
-        run: |
-          for i in $(seq 1 30); do
-            host=$(kubectl -n liveask get ingress liveask -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
-            if [ -n "$host" ]; then echo "App: http://$host"; exit 0; fi
-            sleep 10
-          done
-          echo "ALB not ready yet; check: kubectl -n liveask describe ingress liveask"
+          {
+            echo "Image pushed: \`${{ vars.ECR_REPOSITORY_URL }}:${{ github.sha }}\`"
+            echo
+            echo "Apply it from your laptop (on the allowed IP, signed in to AWS):"
+            echo
+            echo "\`\`\`"
+            echo "bash scripts/deploy-from-laptop.sh ${{ github.sha }}"
+            echo "\`\`\`"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
