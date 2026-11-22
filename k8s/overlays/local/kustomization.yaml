@@ -1,6 +1,25 @@
-# For minikube: the image is built into minikube (see CURRENT_STATE.md); Postgres arrives in
-# the next commit.
+# For minikube (no AWS, USD 0). Build the image into minikube first:
+#   minikube image build -p eks-lab -t liveask:local app
+# then: kubectl apply -k k8s/overlays/local
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
+  - postgres.yaml
+  - ingress.yaml
+# LOCAL ONLY: throwaway credentials for the Postgres StatefulSet, safe to commit because the
+# database exists only inside your minikube. On AWS the password comes from RDS and Secrets
+# Manager (scripts/create-db-secret.sh) and never touches git.
+secretGenerator:
+  - name: liveask-db
+    namespace: liveask
+    literals:
+      - DATABASE_URL=postgresql://liveask:liveask-local-only@postgres:5432/liveask
+    options:
+      disableNameSuffixHash: true   # the Deployment refers to the plain name liveask-db
+  - name: postgres-auth
+    namespace: liveask
+    literals:
+      - POSTGRES_PASSWORD=liveask-local-only
+    options:
+      disableNameSuffixHash: true
