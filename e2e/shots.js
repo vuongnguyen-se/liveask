@@ -78,8 +78,8 @@ async function seed() {
   await shot("host-1280.png", `/host/${room.code}#t=${room.host_token}`, { width: 1280, height: 900 }, { full: true });
   await shot("screen-1920.png", `/screen/${room.code}`, { width: 1920, height: 1080 });
   await shot("screen-1280.png", `/screen/${room.code}`, { width: 1280, height: 720 });
-  await shot("landing-1440.png", "/", { width: 1440, height: 900 }, { full: true });
-  await shot("landing-390.png", "/", phone, { full: true });
+  await shot("landing-1440.png", "/", { width: 1440, height: 900 });
+  await shot("landing-390.png", "/", phone);
   await browser.close();
 })().catch((e) => {
   console.error(e);
