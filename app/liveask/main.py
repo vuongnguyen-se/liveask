@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import mimetypes
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -11,11 +12,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from liveask import db, errors, hub, polls, questions, rooms
+from liveask import db, errors, hub, landing, polls, questions, rooms
 from liveask.config import get_settings
 
 log = logging.getLogger("liveask")
 STATIC_DIR = Path(__file__).parent / "static"
+
+# The slim Python image has no mime entry for woff2 and would send application/octet-stream.
+mimetypes.add_type("font/woff2", ".woff2")
 
 
 @asynccontextmanager
@@ -46,6 +50,7 @@ app.include_router(rooms.router)
 app.include_router(questions.router)
 app.include_router(polls.router)
 app.include_router(hub.router)
+app.include_router(landing.router)
 
 
 @app.get("/healthz")

@@ -1,0 +1,21 @@
+# minikube's ingress addon (ingress-nginx). Reach it with `minikube tunnel -p eks-lab`.
+# WebSockets pass through ingress-nginx by default; the timeouts keep them open for a whole talk.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: liveask
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: liveask
+                port:
+                  name: http

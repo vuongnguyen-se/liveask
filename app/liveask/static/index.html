@@ -1,32 +1,447 @@
 <!doctype html>
-<html lang="en">
+<!-- type: software. Dealt (docs/ui/DESIGN_PLAN.md): hero centred, nav nav-split (re-dealt: no photographs for nav-cards),
+     close close-type, footer footer-statement, rhythm dark-band, buttons tonal, mark initial, radius round,
+     palette cool-white-slate, type host, lit ground sand, moment pinned-chapters (section "how", re-dealt: marquee-row broke the gate's carousel and bleed rules). -->
+<html lang="en" data-type="software" data-radius="round" data-ground="sand" data-buttons="tonal" data-motion>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LiveAsk</title>
-  <link rel="stylesheet" href="/static/styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LiveAsk: live Q&amp;A and polls for presenters</title>
+<meta name="description" content="Show a QR code and your audience asks questions, upvotes and votes in polls from their phones, while you and the projector see every change.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LiveAsk: live Q&amp;A and polls for presenters">
+<meta property="og:description" content="Phones ask and vote, the projector and the presenter's page update as they do. No sign-up.">
+<meta property="og:image" content="/static/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f7f9fa">
+<!-- <link rel="canonical" href="https://[the domain]/"> stays a comment until the site has its own domain -->
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<link rel="preload" href="/static/fonts/host-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/fonts/fonts.css">
+<link rel="stylesheet" href="/static/assets/system.css">
+<link rel="stylesheet" href="/static/assets/ui/cards.css">
+<link rel="stylesheet" href="/static/assets/motion/motion.css">
+<link rel="stylesheet" href="/static/assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="/static/assets/layout/layout.css">
+<link rel="stylesheet" href="/static/assets/icons/icon.css">
+<link rel="stylesheet" href="/static/tokens.css">
+<link rel="stylesheet" href="/static/assets/ui/base.css">
+<link rel="stylesheet" href="/static/assets/ui/window/fragment.css">
+<link rel="stylesheet" href="/static/assets/diagrams/diagram.css">
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+<script src="/static/assets/backgrounds/backgrounds.js"></script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="/static/assets/moments/moments.js">
+<link rel="modulepreload" href="/static/assets/moments/lib.js">
+<link rel="modulepreload" href="/static/assets/moments/pinned-chapters/moment.js">
+<link rel="stylesheet" href="/static/landing.css">
 </head>
-<body data-view="index">
-  <header><h1>LiveAsk</h1></header>
-  <main>
-    <p class="muted">Real-time questions and polls for your talk. No sign-up.</p>
+<body>
+<header class="nav nav--split">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="#top"><span class="mark mark--initial" aria-hidden="true">L</span>LiveAsk</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item"><a class="nav__link" href="#questions">Questions</a></div>
+      <div class="nav__item"><a class="nav__link" href="#polls">Polls</a></div>
+      <div class="nav__item"><a class="nav__link" href="#how">Steps</a></div>
+      <div class="nav__item"><a class="nav__link" href="#faq">FAQ</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="nav__link" href="#join">Join a room</a>
+      <a class="btn btn--primary" href="#create">Create a room</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
 
-    <h2>Join a room</h2>
-    <form id="join" class="card">
-      <label for="code">Room code (6 characters)</label>
-      <input id="code" name="code" maxlength="6" autocomplete="off" autocapitalize="characters" required>
-      <button class="primary" type="submit">Join</button>
-      <p id="join-error" class="error" role="alert"></p>
-    </form>
+<main id="top">
+  <section class="hero hero--centred" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text">
+      <div class="hero__c">
+        <a class="pill" href="#faq"><span>No sign-up needed</span><span class="muted">Rooms expire after 24 hours</span></a>
+        <h1 id="hero-h" aria-label="Live Q&amp;A and polls for presenters"><span class="ly-mark" aria-hidden="true"></span> Live Q&amp;A and polls for presenters</h1>
+        <p class="hero__lead">Show a QR code. Your audience asks questions, upvotes the best ones and votes in polls from their phones, and the projector updates as they do.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="#create">Create a room</a><a class="btn btn--secondary" href="#how">See how it works</a></div>
+      </div>
+      <div class="hero__window" data-ui-pause-host role="img" aria-label="The presenter's list of audience questions, most upvoted first, with one being answered">
+        <div class="ly-piece" aria-hidden="true">
+          <div class="ui ui-panel ui-win" data-ui="window" data-open="Open" data-work="Answering" data-done="Answered">
+            <div class="ui-win__bar">
+              <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="ui-win__crumb"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Cloud 101 <i>/</i> <b>Questions</b></span>
+              <span class="ui-spacer"></span>
+              <span class="ui-win__search" aria-hidden="true"><span class="ui-win__ph">Room</span><span class="ui-kbd">K7PX4M</span></span>
+            </div>
+            <div class="ui-win__body">
+              <nav class="ui-win__side" aria-hidden="true">
+                <span class="ui-win__nav is-on"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Open<em>9</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg>Answered<em>4</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="m4.5 11.5 7-7"/></svg>Hidden<em>1</em></span>
+                </nav>
+              <div class="ui-win__main">
+                <div class="ui-win__cols" aria-hidden="true"><span>Asked by</span><span>Question</span><span>Status</span><span>Votes</span></div>
+                <ul class="ui-win__rows">
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">L</span><span class="ui-win__who">Lan</span><span class="ui-win__sub">What is a pod?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">14</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">EKS or ECS for a small app?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">9</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Do pods share one database?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">7</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
 
-    <h2>Start a room as presenter</h2>
-    <form id="create" class="card">
-      <label for="title">Title</label>
-      <input id="title" name="title" maxlength="120" placeholder="Cloud 101, week 5" required>
-      <button class="primary" type="submit">Create room</button>
-      <p id="create-error" class="error" role="alert"></p>
-    </form>
-  </main>
-  <script src="/static/app.js"></script>
+  <section class="section" id="console" aria-labelledby="console-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="section-head span-5"><h2 id="console-h">Run the room from one page</h2></div>
+        <div class="span-6 start-7 stack-4">
+          <p class="t-lead">Hide a question, mark one answered, open a poll or close the room. Phones and the projector follow every change.</p>
+          <a class="link" href="#how">See how a room runs</a>
+        </div>
+      </div>
+      <div class="ui app fill" role="img" aria-label="The presenter's page: the audience's questions in a list, the open question with its actions, and a live poll">
+        <div class="app__pane app__pane--list" aria-hidden="true">
+          <div class="ui ui-panel ui-win" data-ui="window" data-open="Open" data-work="Answering" data-done="Answered">
+            <div class="ui-win__bar">
+              <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="ui-win__crumb"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Cloud 101 <i>/</i> <b>Questions</b></span>
+              <span class="ui-spacer"></span>
+              <span class="ui-win__search"><span class="ui-win__ph">Room</span><span class="ui-kbd">K7PX4M</span></span>
+            </div>
+            <div class="ui-win__body">
+              <nav class="ui-win__side">
+                <span class="ui-win__nav is-on"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Open<em>9</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg>Answered<em>4</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="m4.5 11.5 7-7"/></svg>Hidden<em>1</em></span>
+                <span class="ui-win__label">Polls</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Next service</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Quick check</span>
+              </nav>
+              <div class="ui-win__main">
+                <div class="ui-win__cols"><span>Asked by</span><span>Question</span><span>Status</span><span>Votes</span></div>
+                <ul class="ui-win__rows">
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">L</span><span class="ui-win__who">Lan</span><span class="ui-win__sub">What is a pod?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">14</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">EKS or ECS for a small app?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">9</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Do pods share one database?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">7</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">When is Lambda the better fit?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">5</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">How does autoscaling pick a count?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">4</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Can I try this at home for free?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">3</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">What does a Service do?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">2</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Is a pod the same as a container?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">2</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Which region should we use?</span><span class="ui-win__st is-you" data-st>Hidden</span><span class="ui-win__age">1</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app__pane app__pane--open" aria-hidden="true">
+          <div class="ui ui-panel cp">
+            <div class="cp__bar"><span class="cp__label">Open question</span><span class="cp__chip">9 votes</span></div>
+            <div class="cp__body">
+              <p class="cp__q">EKS or ECS for a small app?</p>
+              <p class="cp__by">Asked by Anonymous</p>
+              <div class="cp__acts"><span class="cp__btn cp__btn--on">Mark answered</span><span class="cp__btn">Hide</span></div>
+              <p class="cp__label cp__label--poll">Poll: Which service next?</p>
+              <ul class="cp__bars">
+                <li style="--w:58%"><span>EKS</span><b>46</b></li>
+                <li style="--w:26%"><span>ECS</span><b>21</b></li>
+                <li style="--w:15%"><span>Lambda</span><b>12</b></li>
+              </ul>
+              <p class="cp__meta">79 votes. Open for 4 minutes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section g2" id="questions" aria-labelledby="questions-h">
+    <div class="wrap">
+      <div class="group">
+        <div class="section-head">
+          <h2 id="questions-h">Questions rise by votes. <span class="muted">Ties go to the newest.</span></h2>
+        </div>
+        <div class="grid">
+          <article class="card card--row card--open m-nolift span-6">
+            <h3>Ask in 280 characters</h3>
+            <p>Add a name or stay anonymous. A phone can post five questions a minute.</p>
+            <div class="panel"><div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:48px;--ay-sm:16px" role="img" aria-label="The ask form on a phone: a question typed, a name, a character count and the Ask button">
+              <div class="ui ui-panel qv">
+                <div class="qv__bar"><span>Cloud 101</span><span class="qv__muted">Room K7PX4M</span></div>
+                <div class="qv__body">
+                  <p class="qv__label">Ask a question</p>
+                  <p class="qv__field qv__field--area">When is Lambda the better fit?</p>
+                  <div class="qv__row"><span class="qv__field qv__field--grow">Lan</span><span class="qv__muted">31/280</span><span class="qv__btn qv__btn--on">Ask</span></div>
+                </div>
+              </div>
+            </div></div></div>
+          </article>
+          <article class="card card--row card--open m-nolift span-6">
+            <h3>Upvote a question once</h3>
+            <p>A second tap takes the vote back, so every phone counts once per question.</p>
+            <div class="panel"><div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:48px;--ay-sm:16px" role="img" aria-label="Two questions with upvote buttons, one already pressed">
+              <div class="ui ui-panel qv">
+                <div class="qv__bar"><span>Questions</span><span class="qv__muted">Sorted by votes</span></div>
+                <ul class="qv__list">
+                  <li><span class="qv__vote qv__vote--on"><i>&#9650;</i>15</span><span class="qv__text">EKS or ECS for a small app?</span></li>
+                  <li><span class="qv__vote"><i>&#9650;</i>7</span><span class="qv__text">Do pods share one database?</span></li>
+                  <li><span class="qv__vote"><i>&#9650;</i>5</span><span class="qv__text">When is Lambda the better fit?</span></li>
+                </ul>
+              </div>
+            </div></div></div>
+          </article>
+        </div>
+      </div>
+      <div class="grid">
+          <article class="card card--row card--open m-nolift span-6">
+            <h3>Hide a question</h3>
+            <p>It leaves every phone and the projector at once. You still see it in the console.</p>
+            <div class="panel"><div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:48px;--ay-sm:16px" role="img" aria-label="The presenter's list with one question hidden and a Reopen action">
+              <div class="ui ui-panel qv">
+                <div class="qv__bar"><span>Console</span><span class="qv__muted">Visible to you</span></div>
+                <ul class="qv__list">
+                  <li><span class="qv__vote"><i>&#9650;</i>9</span><span class="qv__text">EKS or ECS for a small app?</span></li>
+                  <li class="qv__off"><span class="qv__vote"><i>&#9650;</i>1</span><span class="qv__text">Which region should we use?</span><span class="qv__chip">Hidden</span><span class="qv__btn">Reopen</span></li>
+                  <li><span class="qv__vote"><i>&#9650;</i>3</span><span class="qv__text">What does a Service do?</span></li>
+                </ul>
+              </div>
+            </div></div></div>
+          </article>
+          <article class="card card--row card--open m-nolift span-6">
+            <h3>Mark a question answered</h3>
+            <p>Answered questions stay on the list with an answered mark.</p>
+            <div class="panel"><div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:48px;--ay-sm:16px" role="img" aria-label="A question marked answered, shown struck through with an Answered label">
+              <div class="ui ui-panel qv">
+                <div class="qv__bar"><span>Questions</span><span class="qv__muted">2 answered</span></div>
+                <ul class="qv__list">
+                  <li class="qv__done"><span class="qv__vote"><i>&#9650;</i>14</span><span class="qv__text">What is a pod?</span><span class="qv__chip">Answered</span></li>
+                  <li><span class="qv__vote"><i>&#9650;</i>9</span><span class="qv__text">EKS or ECS for a small app?</span></li>
+                  <li class="qv__done"><span class="qv__vote"><i>&#9650;</i>3</span><span class="qv__text">Can I try this at home?</span><span class="qv__chip">Answered</span></li>
+                </ul>
+              </div>
+            </div></div></div>
+          </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="polls" aria-labelledby="polls-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-4">
+          <h2 id="polls-h">Polls with live results</h2>
+          <p class="t-lead">Write a question and two to six options, then open the poll. The bars move as phones vote.</p>
+          <p class="t-lead">People can change their vote until you close the poll.</p>
+          <ul class="rows rows--spec">
+            <li><span class="rows__name">Options</span><span class="rows__value">2 to 6</span></li>
+            <li><span class="rows__name">Votes per phone</span><span class="rows__value">1, changeable</span></li>
+            <li><span class="rows__name">Results shown on</span><span class="rows__value">Phones, host, screen</span></li>
+          </ul>
+        </div>
+        <div class="frame frame--split span-6 start-7">
+          <div class="stage stage--fade-br">
+            <div class="at-corner to-edge" style="--ax:56px;--ay:56px" role="img" aria-label="A poll on a phone: Which service next, with three options and bars showing 46, 21 and 12 votes, the first one chosen">
+              <div class="ui ui-panel pv">
+                <div class="pv__bar"><span>Cloud 101</span><span class="pv__muted">Poll open</span></div>
+                <div class="pv__body">
+                  <p class="pv__q">Which service next?</p>
+                  <ul class="pv__opts">
+                    <li class="pv__on" style="--w:58%"><span>&#10003; EKS</span><b>46</b></li>
+                    <li style="--w:26%"><span>ECS</span><b>21</b></li>
+                    <li style="--w:15%"><span>Lambda</span><b>12</b></li>
+                  </ul>
+                  <p class="pv__meta">79 votes. You can change yours until the poll closes.</p>
+                  <ul class="pv__opts pv__opts--next">
+                    <li style="--w:0%"><span>Kubernetes basics</span><b>0</b></li>
+                    <li style="--w:0%"><span>Databases on AWS</span><b>0</b></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how" style="--h: 2" data-moment="pinned-chapters" aria-labelledby="how-h">
+    <div class="wrap mo-pc__grid">
+      <div class="mo-pc__text">
+        <h2 id="how-h">How a room runs</h2>
+        <ol class="mo-pc__steps">
+          <li class="mo-pc__step">
+            <h3>1. Open the screen on the projector</h3>
+            <p>It shows the room code and a QR code, set large for the back of the room.</p>
+            <figure class="mo-pc__visual mo-pc__visual--lit" role="img" aria-label="The projector view: the room title, a QR code and the code K7PX4M on the left, the top questions and a live poll on the right">
+              <div class="ui ui-panel sv">
+                <div class="sv__side">
+                  <p class="sv__title">Cloud 101</p>
+                  <img class="sv__qr" id="demo-qr" alt="" width="132" height="132">
+                  <p class="sv__code">K7PX4M</p>
+                </div>
+                <div class="sv__main">
+                  <p class="sv__label">Top questions</p>
+                  <ul class="sv__list">
+                    <li><span class="sv__n">14</span><span class="sv__text">What is a pod?</span></li>
+                    <li><span class="sv__n">9</span><span class="sv__text">EKS or ECS for a small app?</span></li>
+                  </ul>
+                  <p class="sv__label sv__label--poll">Which service next?</p>
+                  <ul class="sv__bars">
+                    <li style="--w:58%"><span>EKS</span><b>46</b></li>
+                    <li style="--w:26%"><span>ECS</span><b>21</b></li>
+                  </ul>
+                </div>
+              </div>
+            </figure>
+          </li>
+          <li class="mo-pc__step">
+            <h3>2. Let people scan and ask</h3>
+            <p>Phones open the audience page, type a question and upvote the ones they want answered.</p>
+            <figure class="mo-pc__visual mo-pc__visual--lit" role="img" aria-label="The audience page on a phone: a question being typed above a list of upvoted questions">
+              <div class="ui ui-panel qv">
+                <div class="qv__bar"><span>Cloud 101</span><span class="qv__muted">Room K7PX4M</span></div>
+                <div class="qv__body">
+                  <p class="qv__field qv__field--area">Do pods share one database?</p>
+                  <div class="qv__row"><span class="qv__field qv__field--grow">Anonymous</span><span class="qv__muted">27/280</span><span class="qv__btn qv__btn--on">Ask</span></div>
+                </div>
+                <ul class="qv__list">
+                  <li><span class="qv__vote qv__vote--on"><i>&#9650;</i>15</span><span class="qv__text">EKS or ECS for a small app?</span></li>
+                  <li><span class="qv__vote"><i>&#9650;</i>7</span><span class="qv__text">When is Lambda the better fit?</span></li>
+                </ul>
+              </div>
+            </figure>
+          </li>
+          <li class="mo-pc__step">
+            <h3>3. Answer the top question</h3>
+            <p>Mark it answered or hide it, and open a poll when you want a vote.</p>
+            <figure class="mo-pc__visual mo-pc__visual--lit" role="img" aria-label="The presenter's page: the open question with Mark answered and Hide, and a live poll">
+              <div class="ui ui-panel cp">
+                <div class="cp__bar"><span class="cp__label">Open question</span><span class="cp__chip">9 votes</span></div>
+                <div class="cp__body">
+                  <p class="cp__q">EKS or ECS for a small app?</p>
+                  <p class="cp__by">Asked by Anonymous</p>
+                  <div class="cp__acts"><span class="cp__btn cp__btn--on">Mark answered</span><span class="cp__btn">Hide</span></div>
+                  <p class="cp__label cp__label--poll">Poll: Which service next?</p>
+                  <ul class="cp__bars">
+                    <li style="--w:58%"><span>EKS</span><b>46</b></li>
+                    <li style="--w:26%"><span>ECS</span><b>21</b></li>
+                  </ul>
+                </div>
+              </div>
+            </figure>
+          </li>
+        </ol>
+      </div>
+      <div class="mo-pc__visuals frame"></div>
+    </div>
+  </section>
+
+  <section class="section ground-inverse" id="sync" aria-labelledby="sync-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="section-head span-5"><h2 id="sync-h">Questions reach every server</h2></div>
+        <div class="span-6 start-7">
+          <p class="t-lead">LiveAsk saves each question in PostgreSQL and announces it to all servers, so a phone on one server sees a question sent through another.</p>
+        </div>
+      </div>
+      <div class="frame frame--diagram">
+        <div class="dg" data-icon-base="/static/icons" data-dg-still data-diagram><script type="application/json">{
+          "layout": "bowtie",
+          "size": "section",
+          "alt": "Phones and the presenter's page send questions, votes and polls to PostgreSQL, which saves them and announces each change to every server; each server pushes it to the phones, hosts and screens connected to it.",
+          "sources": [
+            {"label": "Phones", "icon": "ui:smartphone", "sub": "Ask, upvote, vote"},
+            {"label": "Presenter", "icon": "ui:laptop", "sub": "Hide, open polls"}
+          ],
+          "core": {"label": "PostgreSQL", "icon": "postgres"},
+          "targets": [
+            {"label": "Server A", "icon": "ui:server", "sub": "Pushes live"},
+            {"label": "Server B", "icon": "ui:server", "sub": "Pushes live"},
+            {"label": "Server C", "icon": "ui:server", "sub": "Pushes live"}
+          ]
+        }</script></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq" style="--hm: 2" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-4">
+          <h2 id="faq-h">Answers to common questions</h2>
+          <p class="t-lead">What a room keeps, how long it lasts and what the limits are.</p>
+          <a class="link" href="#console">See the presenter's page</a>
+        </div>
+        <div class="faq span-6 start-7">
+          <div class="faq__item"><h3><svg class="ic ic-svg ic-24 ic-muted" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></g></svg> Do people need an account to join a room?</h3><p>No. Phones join with the link or the 6-character code. A name is optional, and LiveAsk asks for no other personal details.</p></div>
+          <div class="faq__item"><h3><svg class="ic ic-svg ic-24 ic-muted" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M10 2h4m-2 12l3-3"/><circle cx="12" cy="14" r="8"/></g></svg> How long does a room last?</h3><p>A room expires 24 hours after you create it.</p></div>
+          <div class="faq__item"><h3><svg class="ic ic-svg ic-24 ic-muted" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></g></svg> What if I lose the host link to my room?</h3><p>LiveAsk shows it once and keeps only a hash of it, so we cannot show it again. Your browser remembers it on the device that created the room; save the link before you close the page.</p></div>
+          <div class="faq__item"><h3><svg class="ic ic-svg ic-24 ic-muted" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 14l4-4M3.34 19a10 10 0 1 1 17.32 0"/></svg> How many questions can one person ask?</h3><p>Five a minute from each phone, so one person cannot fill the list.</p></div>
+          <div class="faq__item"><h3><svg class="ic ic-svg ic-24 ic-muted" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575a1 1 0 0 1 0 .696a10.8 10.8 0 0 1-1.444 2.49m-6.41-.679a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151a1 1 0 0 1 0-.696a10.75 10.75 0 0 1 4.446-5.143M2 2l20 20"/></g></svg> Can people see hidden questions?</h3><p>No. A hidden question leaves every phone and the projector. You can bring it back from the console.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer footer--statement closing" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">Create your first room</h2>
+        <p>A room needs a title and one click. The projector view shows its QR code straight away.</p>
+      </div>
+      <form class="form" id="create" action="/create" method="post" novalidate>
+        <div class="field">
+          <label for="create-title">Room title</label>
+          <input id="create-title" name="title" type="text" maxlength="120" autocomplete="off" required aria-describedby="create-title-err">
+          <p class="field__error" id="create-title-err" hidden>Write a title for the room, up to 120 characters.</p>
+        </div>
+        <button class="btn btn--primary btn--xl btn--wide" type="submit">Create a room</button>
+        <p class="form__status" role="status" data-form-status></p>
+      </form>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top">LiveAsk</a>
+          <p class="footer__lede">Live questions and polls on phones, the presenter's page and a projector.</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Product</h3><ul><li><a href="#questions">Questions</a></li><li><a href="#polls">Polls</a></li><li><a href="#how">Steps</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+        <div class="span-4 footer__col">
+          <h3>Join</h3>
+          <form class="form" id="join" action="/join" method="get" novalidate>
+            <div class="field">
+              <label for="join-code">Room code</label>
+              <input id="join-code" name="code" type="text" minlength="6" maxlength="6" pattern="[A-Za-z0-9]{6}" autocomplete="off" autocapitalize="characters" required aria-describedby="join-code-err">
+              <p class="field__error" id="join-code-err" hidden>Write the 6 characters shown on the projector.</p>
+            </div>
+            <button class="link" type="submit">Join a room</button>
+            <p class="form__status" role="status" data-form-status></p>
+          </form>
+        </div>
+        <div class="span-2 footer__col"><h3>Code</h3><ul><li><a href="https://github.com/vuongnguyen-se/liveask">Source code</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 LiveAsk</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/static/qrcode.js"></script>
+<script src="/static/landing.js"></script>
+<script type="module" src="/static/assets/system.js"></script>
+<script type="module" src="/static/assets/motion/motion.js"></script>
+<script type="module" src="/static/assets/layout/layout.js"></script>
+<script type="module" src="/static/assets/diagrams/mount.js"></script>
 </body>
 </html>

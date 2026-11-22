@@ -16,12 +16,12 @@ output "github_deploy_role_arn" {
 }
 
 output "db_endpoint" {
-  value = aws_db_instance.notes.address
+  value = aws_db_instance.liveask.address
 }
 
 output "db_secret_arn" {
   description = "Secrets Manager secret holding the RDS master password."
-  value       = aws_db_instance.notes.master_user_secret[0].secret_arn
+  value       = aws_db_instance.liveask.master_user_secret[0].secret_arn
 }
 
 output "app_namespace" {

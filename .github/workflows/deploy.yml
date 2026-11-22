@@ -52,15 +52,15 @@ jobs:
       - name: Apply manifests
         working-directory: k8s/overlays/aws
         run: |
-          kustomize edit set image "notes-api=${{ vars.ECR_REPOSITORY_URL }}:${{ github.sha }}"
+          kustomize edit set image "liveask=${{ vars.ECR_REPOSITORY_URL }}:${{ github.sha }}"
           kubectl apply -k .
-          kubectl -n notes rollout status deployment/notes-api --timeout=180s
+          kubectl -n liveask rollout status deployment/liveask --timeout=180s
 
       - name: Print the load balancer address
         run: |
           for i in $(seq 1 30); do
-            host=$(kubectl -n notes get ingress notes-api -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+            host=$(kubectl -n liveask get ingress liveask -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
             if [ -n "$host" ]; then echo "App: http://$host"; exit 0; fi
             sleep 10
           done
-          echo "ALB not ready yet; check: kubectl -n notes describe ingress notes-api"
+          echo "ALB not ready yet; check: kubectl -n liveask describe ingress liveask"

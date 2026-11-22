@@ -1,10 +1,11 @@
+# A stable in-cluster address for the pods. The Ingress sends traffic here.
 apiVersion: v1
 kind: Service
 metadata:
-  name: notes-api
+  name: liveask
 spec:
   selector:
-    app: notes-api
+    app: liveask
   ports:
     - name: http
       port: 80

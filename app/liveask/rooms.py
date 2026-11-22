@@ -6,6 +6,7 @@ from typing import Annotated
 
 import psycopg.errors
 from fastapi import APIRouter, Response
+from psycopg_pool import AsyncConnectionPool
 from pydantic import BaseModel, StringConstraints
 
 from liveask import events, polls, questions, security
@@ -26,8 +27,8 @@ class RoomIn(BaseModel):
     title: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
 
 
-@router.post("", status_code=201)
-async def create_room(body: RoomIn, pool: Pool) -> dict:
+async def create_room_record(pool: AsyncConnectionPool, title: str) -> dict:
+    """Insert a room and return its codes and links. The token is returned only here."""
     token = security.generate_host_token()
     token_hash = security.hash_token(token)
     for _ in range(10):  # a code clash is very unlikely, but the UNIQUE constraint decides
@@ -37,21 +38,26 @@ async def create_room(body: RoomIn, pool: Pool) -> dict:
                 cur = await conn.execute(
                     "INSERT INTO room (code, title, host_token_hash) VALUES (%s, %s, %s) "
                     "RETURNING expires_at",
-                    (code, body.title, token_hash),
+                    (code, title, token_hash),
                 )
                 row = await cur.fetchone()
         except psycopg.errors.UniqueViolation:
             continue
         return {
             "code": code,
-            "title": body.title,
-            "host_token": token,  # returned only now; only its hash is stored
+            "title": title,
+            "host_token": token,  # only its hash is stored
             "audience_url": f"/r/{code}",
             "screen_url": f"/screen/{code}",
             "host_url": f"/host/{code}#t={token}",
             "expires_at": row[0].isoformat(),
         }
     raise ApiError(503, "unavailable", "could not allocate a room code")
+
+
+@router.post("", status_code=201)
+async def create_room(body: RoomIn, pool: Pool) -> dict:
+    return await create_room_record(pool, body.title)
 
 
 @router.get("/{code}")

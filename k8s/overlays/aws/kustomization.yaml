@@ -5,6 +5,6 @@ resources:
   - ingress.yaml
 # The deploy workflow runs `kustomize edit set image` here with the ECR URL and git SHA.
 images:
-  - name: notes-api
-    newName: notes-api
+  - name: liveask
+    newName: liveask
     newTag: local

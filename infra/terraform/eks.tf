@@ -52,5 +52,5 @@ module "eks" {
 }
 
 locals {
-  app_namespace = "notes"
+  app_namespace = "liveask"
 }
