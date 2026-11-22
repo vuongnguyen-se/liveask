@@ -63,6 +63,8 @@ Terraform (`infra/terraform/`): VPC across 2 AZs (public, private and isolated d
 
 ## Run it
 
+On a new computer: [`RESUME.md`](RESUME.md) has the install list, the checks to run and the AWS steps.
+
 ```powershell
 # 1. Docker Compose: Postgres + two app containers behind nginx (like two pods behind a load balancer)
 docker compose up --build            # then open http://localhost:8000 in several tabs

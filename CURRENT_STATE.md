@@ -70,6 +70,8 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 
 ## 8. Next steps
 
+**Continuing on another computer: start with `RESUME.md`** (install, clone, checks, minikube, the Day 3 steps).
+
 1. **Review and decide** (you): the branch `ui/redesign` (merge into `vuongnguyen-se/spookfish`, then `main`), and whether to **push** so CI runs (I have not pushed anything).
 2. **Day 3 needs you** (💰, about USD 1 per 3 to 4 hours, `SECURITY_AND_COST.md`): sign in to AWS, fill `infra/terraform/terraform.tfvars` (`budget_email`, `cluster_endpoint_public_access_cidrs` = your IP), check Kubernetes `1.35` is in standard support (`aws eks describe-cluster-versions`), review `terraform plan`, then approve `terraform apply`. Every session ends with the teardown.
 3. Repeat the demos on EKS (D3-04), re-measure NFR-1, take screenshots; optional HTTPS (D3-05); teardown (D3-06); final README numbers (D3-07).

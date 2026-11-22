@@ -10,9 +10,9 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 |---|---|---|
 | 0 | Platform skeleton (Terraform, K8s, CI) carried over into the fresh `liveask` repo | ✅ Done (2026-11-21) |
 | 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | ✅ Done (2026-11-21) |
-| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | 🔨 In progress (D-016 to D-018 accepted) |
-| 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | Not started |
-| 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | Not started |
+| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | ✅ Done (2026-11-22), landing gate ended `OPEN` (1 finding, see `CURRENT_STATE.md`); GitHub CI unverified |
+| 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | ✅ Done locally (2026-11-22); CI unverified |
+| 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | ⏳ Not started: Terraform renames and ALB settings are done in code; the 💰 apply needs you (see `RESUME.md` section 4) |
 
 ---
 
