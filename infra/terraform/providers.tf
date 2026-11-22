@@ -31,4 +31,11 @@ provider "helm" {
 data "aws_caller_identity" "current" {}
 data "aws_availability_zones" "available" {
   state = "available"
+
+  # Standard zones only. ap-southeast-1 lists the Hanoi Local Zone first, and a Local Zone
+  # has no NAT gateway, so taking the first two names failed the apply.
+  filter {
+    name   = "zone-type"
+    values = ["availability-zone"]
+  }
 }

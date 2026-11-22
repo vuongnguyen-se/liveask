@@ -79,3 +79,9 @@ variable "budget_email" {
   type        = string
   default     = ""
 }
+
+variable "github_oidc_repo_claim" {
+  description = "Repository part of the GitHub OIDC subject, when it is not owner/name. Repositories that use immutable subjects send owner@ID/name@ID: read it from `gh api repos/OWNER/NAME/actions/oidc/customization/sub` (sub_claim_prefix, without the leading repo:). Empty means github_repo."
+  type        = string
+  default     = ""
+}
