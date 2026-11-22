@@ -66,7 +66,7 @@
         <a class="pill" href="#faq"><span>No sign-up needed</span><span class="muted">Rooms expire after 24 hours</span></a>
         <h1 id="hero-h" aria-label="Live Q&amp;A and polls for presenters"><span class="ly-mark" aria-hidden="true"></span> Live Q&amp;A and polls for presenters</h1>
         <p class="hero__lead">Show a QR code. Your audience asks questions, upvotes the best ones and votes in polls from their phones, and the projector updates as they do.</p>
-        <div class="btn-row"><a class="btn btn--primary" href="#create">Create a room</a><a class="btn btn--secondary" href="#join">Join a room</a></div>
+        <div class="btn-row"><a class="btn btn--primary" href="#create">Create a room</a><a class="btn btn--secondary" href="#how">See how it works</a></div>
       </div>
       <div class="hero__window" role="img" aria-label="The presenter's list of audience questions, most upvoted first, with one being answered">
         <div class="ly-piece" aria-hidden="true">
@@ -109,7 +109,7 @@
       <div class="grid grid--top">
         <div class="section-head span-5"><h2 id="console-h">Run the room from one page</h2></div>
         <div class="span-6 start-7 stack-4">
-          <p class="t-lead muted">Hide a question, mark one answered, open a poll or close the room. Phones and the projector follow every change.</p>
+          <p class="t-lead">Hide a question, mark one answered, open a poll or close the room. Phones and the projector follow every change.</p>
           <a class="link" href="#how">See how a room runs</a>
         </div>
       </div>
@@ -245,7 +245,7 @@
         <div class="span-5 stack-4">
           <h2 id="polls-h">Polls with live results</h2>
           <p class="t-lead">Write a question and two to six options, then open the poll. The bars move as phones vote.</p>
-          <p class="t-lead muted">People can change their vote until you close the poll.</p>
+          <p class="t-lead">People can change their vote until you close the poll.</p>
           <ul class="rows rows--spec">
             <li><span class="rows__name">Options</span><span class="rows__value">2 to 6</span></li>
             <li><span class="rows__name">Votes per phone</span><span class="rows__value">1, changeable</span></li>
@@ -353,13 +353,13 @@
   <section class="section ground-inverse" id="sync" aria-labelledby="sync-h">
     <div class="wrap">
       <div class="grid grid--top">
-        <div class="section-head span-5"><h2 id="sync-h">Every server hears every change</h2></div>
+        <div class="section-head span-5"><h2 id="sync-h">Questions reach every server</h2></div>
         <div class="span-6 start-7">
-          <p class="t-lead muted">LiveAsk saves each question in PostgreSQL and announces it to all servers, so a phone on one server sees a question sent through another.</p>
+          <p class="t-lead">LiveAsk saves each question in PostgreSQL and announces it to all servers, so a phone on one server sees a question sent through another.</p>
         </div>
       </div>
       <div class="frame frame--diagram">
-        <div class="dg" data-icon-base="/static/icons" data-diagram><script type="application/json">{
+        <div class="dg" data-icon-base="/static/icons" data-dg-still data-diagram><script type="application/json">{
           "layout": "bowtie",
           "size": "section",
           "alt": "Phones and the presenter's page send questions, votes and polls to PostgreSQL, which saves them and announces each change to every server; each server pushes it to the phones, hosts and screens connected to it.",
@@ -383,13 +383,13 @@
       <div class="grid grid--top">
         <div class="span-5 stack-4">
           <h2 id="faq-h">Answers to common questions</h2>
-          <p class="t-lead muted">What a room keeps, how long it lasts and what the limits are.</p>
+          <p class="t-lead">What a room keeps, how long it lasts and what the limits are.</p>
           <a class="link" href="#console">See the presenter's page</a>
         </div>
         <div class="faq span-6 start-7">
-          <div class="faq__item"><h3>Do people need an account?</h3><p>No. Phones join with the link or the 6-character code. A name is optional, and LiveAsk asks for no other personal details.</p></div>
+          <div class="faq__item"><h3>Do people need an account to join a room?</h3><p>No. Phones join with the link or the 6-character code. A name is optional, and LiveAsk asks for no other personal details.</p></div>
           <div class="faq__item"><h3>How long does a room last?</h3><p>A room expires 24 hours after you create it.</p></div>
-          <div class="faq__item"><h3>What if I lose the host link?</h3><p>LiveAsk shows it once and keeps only a hash of it, so we cannot show it again. Your browser remembers it on the device that created the room; save the link before you close the page.</p></div>
+          <div class="faq__item"><h3>What if I lose the host link to my room?</h3><p>LiveAsk shows it once and keeps only a hash of it, so we cannot show it again. Your browser remembers it on the device that created the room; save the link before you close the page.</p></div>
           <div class="faq__item"><h3>How many questions can one person ask?</h3><p>Five a minute from each phone, so one person cannot fill the list.</p></div>
           <div class="faq__item"><h3>Can people see hidden questions?</h3><p>No. A hidden question leaves every phone and the projector. You can bring it back from the console.</p></div>
         </div>
@@ -430,7 +430,7 @@
               <input id="join-code" name="code" type="text" minlength="6" maxlength="6" pattern="[A-Za-z0-9]{6}" autocomplete="off" autocapitalize="characters" required aria-describedby="join-code-err">
               <p class="field__error" id="join-code-err" hidden>Write the 6 characters shown on the projector.</p>
             </div>
-            <button class="btn btn--secondary" type="submit">Join a room</button>
+            <button class="link" type="submit">Join a room</button>
             <p class="form__status" role="status" data-form-status></p>
           </form>
         </div>

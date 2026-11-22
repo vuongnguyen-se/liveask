@@ -114,3 +114,16 @@
 .mo-pc__visual--lit > .ui { width: min(100%, 520px); }
 /* a phone shows the steps one under the other: exactly two screens, so no sliver of the next section shows */
 @media (max-width: 639px) { main > #how:not(.is-live) { min-height: 200lvh; } }
+
+/* ---- gate fixes (docs/ui/DESIGN_PLAN.md, gate round 2) ---- */
+/* contrast: the kit sets the hero's lead in the muted grey (5.2:1); body text needs 7:1 */
+.hero--centred .hero__lead { color: var(--ink); }
+/* the create form's button starts on the page's split line (x 732 at 1440), not 4px before it */
+#create { column-gap: var(--gutter); }
+/* a submit button drawn as the kit's text link */
+button.link { background: none; border: 0; padding: 0; font: inherit; font-weight: 500; cursor: pointer; justify-self: start; }
+/* polls: a taller frame so the section's content fills its screen like its neighbours */
+@media (min-width: 1024px) { #polls .frame { aspect-ratio: 628 / 700; } }
+/* sync: a slightly shorter diagram frame keeps the content above the section's bottom padding */
+@media (min-width: 1024px) { .frame--diagram { aspect-ratio: 1200 / 500; } }
+.frame--diagram { margin-top: var(--s-6); }
