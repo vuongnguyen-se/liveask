@@ -5,3 +5,4 @@ __pycache__/
 tests/
 pyproject.toml
 requirements-dev.txt
+**/.taste-skill/
