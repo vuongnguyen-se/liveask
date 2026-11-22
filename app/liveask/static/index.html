@@ -32,6 +32,10 @@
 <link rel="stylesheet" href="/static/assets/diagrams/diagram.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script src="/static/assets/backgrounds/backgrounds.js"></script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="/static/assets/moments/moments.js">
+<link rel="modulepreload" href="/static/assets/moments/lib.js">
+<link rel="modulepreload" href="/static/assets/moments/marquee-row/moment.js">
 <link rel="stylesheet" href="/static/landing.css">
 </head>
 <body>
@@ -342,6 +346,29 @@
             {"label": "Server C", "icon": "ui:server", "sub": "Pushes live"}
           ]
         }</script></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-4">
+          <h2 id="faq-h">Answers to common questions</h2>
+          <p class="t-lead muted">What a room keeps, how long it lasts and what the limits are.</p>
+          <a class="link" href="#console">See the presenter's page</a>
+        </div>
+        <div class="faq span-6 start-7">
+          <div class="faq__item"><h3>Do people need an account?</h3><p>No. Phones join with the link or the 6-character code. A name is optional, and LiveAsk asks for no other personal details.</p></div>
+          <div class="faq__item"><h3>How long does a room last?</h3><p>A room expires 24 hours after you create it.</p></div>
+          <div class="faq__item"><h3>What if I lose the host link?</h3><p>LiveAsk shows it once and keeps only a hash of it, so we cannot show it again. Your browser remembers it on the device that created the room; save the link before you close the page.</p></div>
+          <div class="faq__item"><h3>How many questions can one person ask?</h3><p>Five a minute from each phone, so one person cannot fill the list.</p></div>
+          <div class="faq__item"><h3>Can people see hidden questions?</h3><p>No. A hidden question leaves every phone and the projector. You can bring it back from the console.</p></div>
+        </div>
+      </div>
+      <p class="t-label muted">Made for</p>
+      <div data-moment="marquee-row" data-moment-opts='{"speed": 36}'>
+        <ul class="mo-mq__track"><li>Class presentations</li><li>Club meetings</li><li>Small events</li><li>Lectures</li><li>Workshops</li><li>Meetups</li></ul>
       </div>
     </div>
   </section>
