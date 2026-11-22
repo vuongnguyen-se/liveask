@@ -7,4 +7,6 @@ metadata:
 data:
   LOG_LEVEL: INFO
   MAX_CONNECTIONS_PER_ROOM: "300"   # per pod: each pod holds its own WebSocket connections
+  ROOMS_PER_HOUR_PER_IP: "20"       # rooms one address may create per hour; each pod counts separately; 0 = off
+  TRUSTED_PROXY_HOPS: "1"           # proxies in front of the app (the ALB or ingress): the real address is the last X-Forwarded-For entry
   QUESTIONS_PER_MINUTE: "5"         # per device, counted in the database so it holds across pods

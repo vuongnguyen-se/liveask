@@ -18,7 +18,7 @@ import psycopg
 import pytest
 from fastapi.testclient import TestClient
 
-from liveask import migrate
+from liveask import migrate, ratelimit
 from liveask.main import app
 
 if sys.platform == "win32":  # psycopg async cannot use Windows' default ProactorEventLoop
@@ -40,6 +40,12 @@ async def db_url():
     yield f"{TEST_DATABASE_URL}{sep}options={options}"
     async with await psycopg.AsyncConnection.connect(TEST_DATABASE_URL, autocommit=True) as c:
         await c.execute(f"DROP SCHEMA {schema} CASCADE")
+
+
+@pytest.fixture(autouse=True)
+def fresh_room_limit():
+    """The room-creation count lives in memory: start every test with an empty one."""
+    ratelimit.room_creations.clear()
 
 
 @pytest.fixture

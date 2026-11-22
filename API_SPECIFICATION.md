@@ -24,7 +24,7 @@ One FastAPI service serves the API, the WebSocket endpoint and the static pages.
 
 ## Rooms
 
-`POST /api/rooms` with body `{"title": "Cloud 101 – week 5"}` → `201`
+`POST /api/rooms` with body `{"title": "Cloud 101 – week 5"}` → `201`. `429` (`rate_limited`) when one network address has created more than 20 rooms in the last hour (`ROOMS_PER_HOUR_PER_IP`; the landing page's `POST /create` shares the count and answers `429` with a `Retry-After` header and a short text). The address is the last `X-Forwarded-For` entry (`TRUSTED_PROXY_HOPS`, default 1); counts are kept in memory per pod, never stored.
 ```json
 {"code": "K7PX4M", "title": "Cloud 101 – week 5", "host_token": "…43 chars…",
  "audience_url": "/r/K7PX4M", "screen_url": "/screen/K7PX4M", "host_url": "/host/K7PX4M#t=…",

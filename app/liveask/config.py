@@ -15,6 +15,8 @@ class Settings:
     log_level: str
     max_connections_per_room: int
     questions_per_minute: int
+    rooms_per_hour_per_ip: int
+    trusted_proxy_hops: int
 
 
 def get_settings() -> Settings:
@@ -26,4 +28,6 @@ def get_settings() -> Settings:
         log_level=os.getenv("LOG_LEVEL", "INFO").upper(),
         max_connections_per_room=int(os.getenv("MAX_CONNECTIONS_PER_ROOM", "300")),
         questions_per_minute=int(os.getenv("QUESTIONS_PER_MINUTE", "5")),
+        rooms_per_hour_per_ip=int(os.getenv("ROOMS_PER_HOUR_PER_IP", "20")),
+        trusted_proxy_hops=int(os.getenv("TRUSTED_PROXY_HOPS", "1")),
     )

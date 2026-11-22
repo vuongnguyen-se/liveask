@@ -4,7 +4,7 @@
 
 The presenter shows a QR code. The audience asks and upvotes questions and answers polls from their phones, with no sign-up. The presenter's page and the projector screen update live over WebSockets, whichever Kubernetes pod each person happens to be connected to.
 
-> **Status (2026-11-22).** The app, the Kubernetes manifests and the redesigned UI are built and verified locally (Docker Compose and minikube). The **AWS/EKS session has not been run yet**: nothing has been deployed to AWS and no AWS resources exist. Plan: [`TASKS.md`](TASKS.md) · Current state: [`CURRENT_STATE.md`](CURRENT_STATE.md).
+> **Status (2026-11-22).** The app, the Kubernetes manifests and the redesigned UI are built and verified locally (Docker Compose and minikube) **and on Amazon EKS** in one session of about 50 minutes, which was destroyed afterwards: no AWS resources are left. Not done yet: a check from a real phone on mobile data, and screenshots of the AWS console. Plan: [`TASKS.md`](TASKS.md) · Current state: [`CURRENT_STATE.md`](CURRENT_STATE.md) · EKS session: [`docs/eks-session-2026-11-22.md`](docs/eks-session-2026-11-22.md).
 
 | Landing page | Audience (phone) | Projector |
 |---|---|---|
@@ -24,23 +24,26 @@ With 2 to 6 replicas, a phone connected to **pod A** posts a question, but the p
 
 ## What is verified (and how)
 
-Everything below was run, not just written. Numbers are from 2026-11-21 and 2026-11-22 on a Windows 11 laptop.
+Everything below was run, not just written. Numbers are from 2026-11-21 and 2026-11-22: the local ones on a Windows 11 laptop, the EKS ones through a real Application Load Balancer.
 
 | Claim | Evidence |
 |---|---|
-| The app works | 95 `pytest` tests against a real PostgreSQL; `ruff` clean |
+| The app works | 106 `pytest` tests against a real PostgreSQL; `ruff` clean |
 | A write on one process reaches a WebSocket on another | A test starts two real app processes on one database (`app/tests/test_realtime.py`) |
 | Host, phones and projector update each other across containers | `e2e/run.js`: 19 browser checks through nginx on Docker Compose, and the same 19 on minikube behind ingress-nginx, with the host and the screen on **different pods** |
 | A restarted container does not lose data or the screen | `e2e/reconnect.js`: the screen shows "reconnecting", moves to the other container and shows the question it missed |
 | **Zero-downtime rolling update** (NFR-2) | `e2e/rollout.js` on minikube: during `kubectl rollout restart`, 32 of 32 questions stored, the Deployment never below 2 available replicas, and the open screen reconnected on its own to a new pod and caught up |
 | **Autoscaling** (NFR-4) | `scripts/load_test.py` with CPU load on minikube: CPU reached 345% of the 60% target and the HPA scaled **2 to 4 to 6 pods** in about 40 s |
-| 200 clients, nothing lost | 200 WebSocket clients spread over 6 pods (32 to 35 each); 18,400 of 18,400 expected deliveries arrived. Latency tail: p95 about 1.1 s, but the POST alone took a median 290 ms through a Windows Docker tunnel, so this is **not** a clean verdict on the 1 s target (NFR-1); it is re-measured on EKS |
+| 200 clients, nothing lost (minikube) | 200 WebSocket clients spread over 6 pods (32 to 35 each); 18,400 of 18,400 expected deliveries arrived. Latency tail: p95 about 1.1 s, but the POST alone took a median 290 ms through a Windows Docker tunnel, so this was not a clean verdict on the 1 s target (NFR-1) |
+| **On EKS: the same checks** | Through the ALB: `e2e/run.js` 19 of 19 with the host and the screen on different pods; `e2e/rollout.js` 6 of 6 (12 of 12 questions stored, 0 failed requests, never below 2 replicas, a 10 s rollout, the screen reconnected to a new pod and caught up) |
+| **Latency target (NFR-1) on EKS** | 200 WebSocket clients over 2 pods (101 and 99): 22,600 of 22,600 deliveries, median 235 ms, **p95 733 ms** (target: under 1 s). This is one 60-second run, so it is one measurement, not a guarantee |
+| **Autoscaling on EKS** | The HPA went from 2 to 6 pods (its maximum) at CPU 624% of the 60% target; all 6 targets in the ALB target group were healthy; pods were spread over 2 nodes in 2 availability zones |
 | Data survives the database pod | Deleted `postgres-0` on minikube; the room was still there (StatefulSet and PVC) |
 | Nightly cleanup works | Ran the CronJob by hand: "removed 1 expired room" |
 | Accessibility basics | `e2e/a11y.js`: four pages, light and dark, at 320 px: no sideways scroll, 44 px targets, labelled fields, alt text |
 | No data leaves the site | `e2e/run.js` fails if any page requests another origin; fonts and the QR generator are self-hosted |
 
-GitHub CI is green on the pull request (app tests with Postgres and the image build, manifest rendering, Terraform `fmt` and `validate`). Not verified yet: AWS (EKS, ALB, RDS) and a real phone on mobile data.
+GitHub CI is green (app tests with Postgres and the image build, manifest rendering, Terraform `fmt` and `validate`). Not verified yet: a real phone on mobile data, HTTPS, and a longer or heavier load run than 60 seconds.
 
 ## Kubernetes features used
 
@@ -57,9 +60,21 @@ GitHub CI is green on the pull request (app tests with Postgres and the image bu
 | StatefulSet + headless Service + PVC (local only) | PostgreSQL with persistent storage on minikube; RDS on AWS |
 | Namespace, security context | Non-root, read-only filesystem, no capabilities, seccomp, no service account token |
 
-## AWS (written and validated, not applied)
+## AWS (applied once, then destroyed)
 
-Terraform (`infra/terraform/`): VPC across 2 AZs (public, private and isolated database subnets), **EKS** with Spot managed nodes and access entries, **AWS Load Balancer Controller** (IRSA), **RDS PostgreSQL** (password in Secrets Manager), **ECR**, **GitHub Actions OIDC** deploy role (no AWS keys in GitHub), **AWS Budgets** alerts. `terraform fmt` and `validate` pass; `apply` has never been run. One session costs about USD 0.27 per hour (see [`SECURITY_AND_COST.md`](SECURITY_AND_COST.md)).
+Terraform (`infra/terraform/`): VPC across 2 AZs (public, private and isolated database subnets, one NAT gateway), **EKS** (Kubernetes 1.35) with Spot managed nodes and access entries, **AWS Load Balancer Controller** (IRSA), **RDS PostgreSQL** (password in Secrets Manager), **ECR**, **GitHub Actions OIDC** deploy role (no AWS keys in GitHub) and **AWS Budgets** alerts. All of it was applied on 2026-11-22 (78 resources), used for the checks above and destroyed; a search of the account afterwards found nothing left.
+
+**Cost of the session:** about 50 minutes of running time. At the published rate of about USD 0.27 per hour that is roughly USD 0.25; the actual bill is checked in Cost Explorer the next day (see [`SECURITY_AND_COST.md`](SECURITY_AND_COST.md)). Left running for a month the same stack would cost about USD 190, which is why the session always ends with the teardown.
+
+**What went wrong, and the fix:** the first `apply` failed because `ap-southeast-1` lists a Local Zone first and a Local Zone has no NAT gateway (the VPC now uses standard zones only). The deploy role did not trust the GitHub token until the trust policy used the repository's immutable OIDC subject. And a GitHub-hosted runner cannot reach a Kubernetes API locked to one IP, so the workflow pushes the image and a script applies the manifests from the laptop. Details: [`docs/eks-session-2026-11-22.md`](docs/eks-session-2026-11-22.md).
+
+## What this project shows
+
+- **Platform choice by workload:** containers on EKS for long-lived WebSocket connections, serverless for the light, bursty site (Say Coffee).
+- **Multi-pod real time without sticky sessions or Redis:** PostgreSQL `LISTEN/NOTIFY` fired in the same transaction as the write, proven by a test with two real processes and by browser checks across pods.
+- **Operations evidence, not claims:** a rolling update with no lost data, HPA scaling from 2 to 6 pods, a nightly cleanup CronJob and a database that survives its pod, each run and measured, on minikube and again on EKS.
+- **Infrastructure as code with no long-lived keys:** the whole AWS stack in Terraform, deployed through GitHub OIDC, created and destroyed in one short, cost-capped session.
+- **Honest limits:** one 60-second load run, no phone-on-mobile-data check yet, and HTTP only. Room creation is limited to 20 per hour per network address, counted in memory per pod, so the real ceiling is that times the replicas.
 
 ## Run it
 

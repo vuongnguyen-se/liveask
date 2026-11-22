@@ -6,15 +6,15 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 
 ## Progress overview
 
-**Overall: 26 of 29 board tasks done (90%)**, 1 in progress, 2 to do. Counted from the `**ID**` checkboxes below; update the counts and the bars when you tick a box. Last updated 2026-11-22.
+**Overall: 27 of 29 board tasks done (93%)**, 1 in progress, 1 to do. Counted from the `**ID**` checkboxes below; update the counts and the bars when you tick a box. Last updated 2026-11-22.
 
 | Track | Done | Progress | Left |
 |---|---|---|---|
 | Day 1: the app | 7 of 7 | `██████████` 100% | none |
 | UI track | 8 of 8 | `██████████` 100% | one landing gate finding still open (`ui-centre`) |
 | Day 2: minikube | 7 of 7 | `██████████` 100% | none |
-| Day 3: AWS session on EKS | 4 of 7 | `██████░░░░` 57% | D3-04 phone check and console screenshots (in progress; they need a new session, the cluster is gone), D3-05 HTTPS (optional), D3-07 final README |
-| **Total** | **26 of 29** | `█████████░` 90% | |
+| Day 3: AWS session on EKS | 5 of 7 | `███████░░░` 71% | D3-04 phone check and console screenshots (in progress; they need a new session, the cluster is gone), D3-05 HTTPS (optional) |
+| **Total** | **27 of 29** | `█████████░` 93% | |
 
 What each day proved, in one line: Day 1 the app works; the UI track made it presentable; Day 2 showed the Kubernetes design works locally; Day 3 proves it on real AWS (e2e 19/19, rollout 6/6, load p95 733 ms, HPA 2 to 6 pods: `docs/eks-session-2026-11-22.md`).
 
@@ -123,7 +123,7 @@ Before starting: `aws login` (or SSO profile), `terraform.tfvars` filled in, che
 - [~] **D3-04** (2026-11-22: e2e 19/19, rollout 6/6, load p95 733 ms, HPA 2 to 6; screenshots of the AWS console and a phone not taken) Repeat the D2-03/04/05 demos on EKS; screenshots of pods spread across AZs (`kubectl get pods -o wide`), HPA scaling, the ALB target group, and the app on a phone.
 - [ ] **D3-05** (Optional, if time) HTTPS: ACM certificate + Route 53 record `ask.vuongdomain.click`, Ingress `certificate-arn` + `ssl-redirect`.
 - [x] **D3-06** (2026-11-22) 🧹 Teardown per `SECURITY_AND_COST.md` §3. `terraform destroy` removed 78 resources; checked afterwards: no EKS cluster, EC2, NAT gateway, Elastic IP, load balancer, RDS or EBS volume, and the deploy role, KMS alias and budget are gone (the KMS key is in `PendingDeletion`). Still to do: confirm in Cost Explorer on 2026-11-23.
-- [ ] **D3-07** Final README: what it is, screenshots/GIF, architecture diagram, the "why containers" and "multi-pod fan-out" explanations, K8s objects table, how to run locally, real cost of the session, roadmap, CV bullet points.
+- [x] **D3-07** (2026-11-22) Final README: what it is, screenshots/GIF, architecture diagram, the "why containers" and "multi-pod fan-out" explanations, K8s objects table, how to run locally, real cost of the session, roadmap, CV bullet points.
 
 ## Roadmap (not in the 3 days; list it in the README)
 
