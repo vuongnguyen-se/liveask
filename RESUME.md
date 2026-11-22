@@ -4,10 +4,15 @@ Everything you need to continue LiveAsk from a clean machine. Read `CURRENT_STAT
 
 ## 0. Where the work is
 
-All work is committed on the local branch **`vuongnguyen-se/liveask-day1-repo-review`** (it has the Day 1, UI and Day 2 work; `ui/redesign` is merged into it and can be ignored). It was **not on GitHub** when this was written. Get it onto the new computer first:
+All work is committed on the branch **`vuongnguyen-se/liveask-day1-repo-review`** (Day 1, the UI track and Day 2; `ui/redesign` is merged into it and can be ignored). It was **pushed to GitHub on 2026-11-22**; `main` was left untouched (still the starting commit).
 
-- **If it has been pushed:** `git clone https://github.com/vuongnguyen-se/liveask.git`, then `git switch vuongnguyen-se/liveask-day1-repo-review` (or `main` if it was merged there).
-- **If it has not:** on the old computer run `git push -u origin vuongnguyen-se/liveask-day1-repo-review`, or copy the whole folder (including `.git`) with a USB stick or cloud drive.
+```powershell
+git clone https://github.com/vuongnguyen-se/liveask.git
+cd liveask
+git switch vuongnguyen-se/liveask-day1-repo-review
+```
+
+GitHub CI (`ci.yml`) runs on pushes to `main`, on pull requests and by hand, so **a branch push alone did not run it**. To run it: open a pull request (https://github.com/vuongnguyen-se/liveask/pull/new/vuongnguyen-se/liveask-day1-repo-review) or `gh workflow run ci.yml --ref vuongnguyen-se/liveask-day1-repo-review`, then look at the Actions tab. It has never run on this work.
 
 Not in git on purpose (recreate them): `.venv/`, `e2e/node_modules/`, `infra/terraform/.terraform/`, `infra/terraform/terraform.tfvars` (it holds your email and IP), `shots/`, `.taste-skill/chrome-check`. Nothing secret is in git.
 

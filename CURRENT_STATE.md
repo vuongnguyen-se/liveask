@@ -6,8 +6,8 @@ _Last updated: 2026-11-22. Update this file at the end of every work session._
 
 LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **Nothing has been deployed to AWS and no AWS resources exist.** Day 3 (one billable EKS session) has not started: it needs you (see section 8).
 
-- GitHub: https://github.com/vuongnguyen-se/liveask (public, branch `main`). **Nothing from this work has been pushed**, so GitHub CI has not run on it.
-- Working branches (local): `vuongnguyen-se/spookfish` (Day 1) and `ui/redesign` (the UI track, Day 2 and later work, branched from it). Merge `ui/redesign` back with `--no-ff` (`AI_CODING_RULES.md` section 7).
+- GitHub: https://github.com/vuongnguyen-se/liveask (public, branch `main`).
+- Branch: **`vuongnguyen-se/liveask-day1-repo-review`** holds everything (Day 1, the UI track, Day 2; `ui/redesign` was merged into it with `--no-ff`). It was **pushed to GitHub on 2026-11-22**; `main` is untouched. GitHub CI has not run on it (it runs on `main`, pull requests and by hand, not on a plain branch push).
 - Local path: this worktree, `C:\Users\Vuong\orca\workspaces\liveask\spookfish`.
 - History: the platform skeleton came from https://github.com/vuongnguyen-se/eks-platform-lab (archived).
 
