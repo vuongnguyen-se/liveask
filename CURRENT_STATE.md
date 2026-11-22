@@ -1,10 +1,10 @@
 # Current State (handoff)
 
-_Last updated: 2026-11-22. Update this file at the end of every work session._
+_Last updated: 2026-11-22 (after the EKS session and its teardown). Update this file at the end of every work session._
 
 ## 1. Summary
 
-LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **Nothing has been deployed to AWS and no AWS resources exist.** Day 3 (one billable EKS session) has not started: it needs you (see section 8).
+LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **One EKS session ran on 2026-11-22 and was destroyed afterwards: no AWS resources of this project exist now.** The results are in `docs/eks-session-2026-11-22.md`. Still open: the phone check, console screenshots, the final README, and the Cost Explorer check on 2026-11-23.
 
 - GitHub: https://github.com/vuongnguyen-se/liveask (public, branch `main`).
 - Branch: all work was developed on `feat/liveask-realtime-qa-app` and **merged into `main` through PR #1 on 2026-11-22** (https://github.com/vuongnguyen-se/liveask/pull/1, merge commit `a221cde`). **CI is green on the PR and on `main`.** New work goes on a fresh branch from `main`.
@@ -21,10 +21,10 @@ LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and 
 | `docker-compose.yml`, `nginx/` | Postgres + migrate + **two** app containers behind nginx on `http://localhost:8000` (`LIVEASK_PORT` to change) | ✅ |
 | `k8s/base` | Namespace, ConfigMap, Deployment (migrate initContainer, probes, preStop, `maxUnavailable: 0`), Service, HPA, PDB, CronJob | ✅ verified on minikube |
 | `k8s/overlays/local` | Postgres StatefulSet + PVC, throwaway secrets, ingress-nginx Ingress | ✅ verified on minikube |
-| `k8s/overlays/aws` | ALB Ingress (idle timeout 3600 s, deregistration delay 30 s, `/readyz` check) | renders; **never applied** |
-| `infra/terraform/` | VPC, EKS (Spot nodes), AWS Load Balancer Controller, metrics-server, ECR, RDS (db `liveask`), GitHub OIDC role, Budgets | ✅ `fmt`/`validate` pass; **never applied; `plan` not reviewed** |
+| `k8s/overlays/aws` | ALB Ingress (idle timeout 3600 s, deregistration delay 30 s, `/readyz` check) | applied once on 2026-11-22 (ALB answered from the internet), then destroyed |
+| `infra/terraform/` | VPC, EKS (Spot nodes), AWS Load Balancer Controller, metrics-server, ECR, RDS (db `liveask`), GitHub OIDC role, Budgets | ✅ `fmt`/`validate` pass; applied once on 2026-11-22 and destroyed (78 resources); `plan` reviewed |
 | `scripts/` | `create-db-secret.sh`, `load-test.sh`, `load_test.py`, `rolling-update-demo.sh`, `vendor_taste_kit.py` | load test and rolling update verified; secret script untested (needs AWS) |
-| `.github/workflows/` | `ci.yml` (ruff, pytest with Postgres, image build, terraform, render both overlays), `deploy.yml` (manual: OIDC, ECR, `kubectl apply -k`) | `ci.yml` green on PR #1 and on `main`; `deploy.yml` **never run** |
+| `.github/workflows/` | `ci.yml` (ruff, pytest with Postgres, image build, terraform, render both overlays), `deploy.yml` (manual: OIDC, ECR, `kubectl apply -k`) | `ci.yml` green on PR #1 and on `main`; `deploy.yml` ran on 2026-11-22: it builds and pushes the image but cannot apply to an IP-locked cluster |
 | `docs/` | `ui/` (plan, copy, kit notes), `images/` (architecture + screenshots) | ✅ |
 
 ### Pinned versions
@@ -37,10 +37,11 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 - minikube (`-p eks-lab`): 2 app pods + `postgres-0` Ready; deleting `postgres-0` kept the data; `e2e/run.js` 19/19 through ingress-nginx with the host and the screen on **different pods**; `e2e/rollout.js` 6/6 (32 of 32 questions stored during `rollout restart`, replicas never below 2, the screen reconnected to a new pod and caught up); the CronJob run by hand logged "removed 1 expired room".
 - Load test, 200 WebSocket clients over 6 pods, through `minikube tunnel`: 18,400 of 18,400 deliveries; the HPA scaled **2 → 4 → 6** pods at CPU 345% of the 60% target. Latency median 298 ms, **p95 1079 ms** (target 1000 ms): the POST alone took a median 289 ms through the Windows tunnel, so this is not a clean verdict on NFR-1. Re-measure on EKS.
 - UI: the skill's layout checker reports no findings at 1440, 1024, 820, 768 and 390; `copy-lint` 0 FAIL, 0 WARN; the skill's finish gate (three rounds used) ended **`GATE: OPEN`**: 21 findings in round 1, 6 in round 2, **1 open** at the end and 3 waived. Open: `ui-centre` (the hero window sits 200 px from the left and 480 px from the right of its frame, instead of centred); the skill says to stop and report it. Waived, each with a reason in `.taste-skill/waivers.json`: three `section-gaps` findings at 390 px (the kit sizes sections to whole phone screens). 29 non-blocking WARNs remain.
+- **EKS, 2026-11-22** (Kubernetes 1.35, 2 Spot nodes in 2 zones, RDS, ALB; destroyed afterwards): `e2e/run.js` 19/19 through the ALB with host and screen on different pods; `e2e/rollout.js` 6/6 (12 of 12 questions stored, replicas never below 2, 10 s rollout); load test with 200 clients: 22,600 of 22,600 deliveries, median 235 ms, **p95 733 ms** (target 1,000 ms: met in this one 60 s run); the HPA scaled 2 to 6 pods at CPU 624% of the 60% target; all 6 ALB targets healthy. Details and the problems found: `docs/eks-session-2026-11-22.md`.
 
 ## 4. Not verified
 
-- **AWS** (EKS, ALB, RDS, the deploy workflow, `create-db-secret.sh`, `terraform plan`). A real phone on mobile data. The NFR-1 latency on EKS. Vietnamese letters in the UI (Host Grotesk has no glyphs for them; the system font fills in).
+- A real phone on mobile data, and screenshots of the AWS console (the cluster is gone; they need another session). HTTPS. The NFR-1 latency over a longer or heavier run (one 60 s run passed). Vietnamese letters in the UI (Host Grotesk has no glyphs for them; the system font fills in).
 
 ## 5. Developer machine notes (Windows 11)
 
@@ -67,11 +68,15 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 4. In Kubernetes, a Kustomize overlay's own files do **not** inherit the base's `namespace`: the local overlay sets `namespace: liveask` itself (found when Postgres landed in `default`).
 5. Anyone can `POST /api/rooms` or `POST /create` without limit (rooms expire after 24 h and are cleaned nightly). Rate-limit it before exposing the ALB for long.
 6. `window` in the kit has a minimum height, so the hero card is cut by its frame; the checker's `fold-card` rule is satisfied by marking the frame `data-ui-pause-host`.
+7. `deploy.yml` builds and pushes the image, but its `kubectl apply` step times out when the cluster API is locked to one IP (`cluster_endpoint_public_access_cidrs`), because GitHub-hosted runners are not on the list. On 2026-11-22 the manifests were applied from the laptop instead. Decide before the next session: apply from the laptop, or open the API for the workflow.
+8. A new GitHub OIDC trust policy needs the repository's real subject. This repository uses immutable subjects (`repo:owner@ID/name@ID`): set `github_oidc_repo_claim` in `terraform.tfvars` from `gh api repos/OWNER/NAME/actions/oidc/customization/sub`. A change to the trust policy can take a minute to take effect.
+9. `ap-southeast-1` lists the Hanoi Local Zone first; the VPC uses standard zones only (`providers.tf`), because a Local Zone has no NAT gateway.
+10. On this laptop `python3` is a Microsoft Store stub, so `scripts/create-db-secret.sh` needs a `python3` on PATH that points to a real Python. Edge refused the ALB address with `ERR_BLOCKED_BY_CLIENT`; Chrome worked (`BROWSER_PATH`).
 
 ## 8. Next steps
 
 **Continuing on another computer: start with `RESUME.md`** (install, clone, checks, minikube, the Day 3 steps).
 
 1. **Done:** the work is merged into `main` (PR #1) and CI is green there. `deploy.yml` assumes `main`, so it can now run.
-2. **Day 3 needs you** (💰, about USD 1 per 3 to 4 hours, `SECURITY_AND_COST.md`): sign in to AWS, fill `infra/terraform/terraform.tfvars` (`budget_email`, `cluster_endpoint_public_access_cidrs` = your IP), check Kubernetes `1.35` is in standard support (`aws eks describe-cluster-versions`), review `terraform plan`, then approve `terraform apply`. Every session ends with the teardown.
-3. Repeat the demos on EKS (D3-04), re-measure NFR-1, take screenshots; optional HTTPS (D3-05); teardown (D3-06); final README numbers (D3-07).
+2. **Day 3 remainder** (needs you; each new session costs about USD 0.27 per hour and ends with the teardown): a phone check on mobile data and console screenshots need a new `terraform apply`; if you do that, re-run the deploy by applying the manifests from the laptop (see section 7, items 7 and 8). Optional HTTPS (D3-05).
+3. Write the final README with the EKS numbers (D3-07), and check Cost Explorer on 2026-11-23.
