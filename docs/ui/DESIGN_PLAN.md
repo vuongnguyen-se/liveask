@@ -113,3 +113,20 @@ The audience, host and screen pages use the same tokens, the same two faces, the
 - **Rival's name test:** the h1 names a category ("Live Q&A and polls for presenters"), as copy.md rule 1 asks for an unknown brand, so a rival could use it. The specifics sit in the lines under it (QR code, phones, projector, 24 hours) and in the FAQ's admission.
 - **Over-correction:** no heading is a question and none is two fragments; the only list of three is the verbs of the console line and the marquee words.
 - **Read aloud:** each line is one a presenter could say about the product.
+
+## What changed during the build (2026-11-22)
+
+The plan above is what was dealt and written first. The build and the skill's finish gate changed it in these places, each for a stated reason.
+
+| Plan | As built | Why |
+|---|---|---|
+| Moment `marquee-row` in its own section "formats" | **Re-dealt: `pinned-chapters`**, the section "How a room runs" (id `how`, nav word "Steps") with three steps (open the screen, let people scan and ask, answer the top question) | The gate rejected the marquee: a clipped carousel and a track bleeding to one side. The recipe allows a re-deal when a part's use does not fit. The pinned steps carry real mocks of the projector, the phone and the presenter's page |
+| A separate `screen` section | Merged into the pinned steps (step 1 is the projector view with a real QR code) | A two-screen section with no second group failed the air, visual and gap checks |
+| Diagram `bowtie` in the dark band | Kept, set to hold still until the pointer is on it (`data-dg-still`); heading "Questions reach every server" | The gate rejects motion that starts when a section scrolls into view; headings must name a thing |
+| FAQ with a timeline diagram | **Real icons** before each question instead | The kit's timeline is sized for a card panel and brought five findings in a narrow column; a text-only closing section is not allowed |
+| Hero second button "Join a room" | "See how it works" (#how) | The same label drawn in two looks (hero and footer) fails `same-action` |
+| Footer join as a secondary button | A link-styled submit button | A third button style fails `button-styles` |
+| Footer logo with the dealt mark | The name alone | The kit's footer mark is a 13 px tile that pushes the name off the page margin |
+| Body text in `--p-muted` | Ink | Body text needs 7:1; the dealt grey is 5.2:1 and is kept for captions and labels |
+
+Fonts: Host Grotesk covers `latin` and `latin-ext` only, so Vietnamese letters (U+1EA0 to U+1EF9) fall back to the system font. Decided to keep the dealt pairing; revisit if Vietnamese questions matter.
