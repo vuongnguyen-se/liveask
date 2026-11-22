@@ -40,7 +40,7 @@ Everything below was run, not just written. Numbers are from 2026-11-21 and 2026
 | Accessibility basics | `e2e/a11y.js`: four pages, light and dark, at 320 px: no sideways scroll, 44 px targets, labelled fields, alt text |
 | No data leaves the site | `e2e/run.js` fails if any page requests another origin; fonts and the QR generator are self-hosted |
 
-Not verified yet: CI on GitHub (nothing has been pushed from this branch), AWS (EKS, ALB, RDS), a real phone on mobile data.
+GitHub CI is green on the pull request (app tests with Postgres and the image build, manifest rendering, Terraform `fmt` and `validate`). Not verified yet: AWS (EKS, ALB, RDS) and a real phone on mobile data.
 
 ## Kubernetes features used
 

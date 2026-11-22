@@ -12,7 +12,7 @@ cd liveask
 git switch feat/liveask-realtime-qa-app
 ```
 
-GitHub CI (`ci.yml`) runs on pushes to `main`, on pull requests and by hand, so **a branch push alone did not run it**. To run it: open a pull request (https://github.com/vuongnguyen-se/liveask/pull/new/feat/liveask-realtime-qa-app) or `gh workflow run ci.yml --ref feat/liveask-realtime-qa-app`, then look at the Actions tab. It has never run on this work.
+**PR #1** (https://github.com/vuongnguyen-se/liveask/pull/1) targets `main`, and **GitHub CI is green on it** (all three jobs). CI runs on pushes to `main`, on pull requests and by hand; the deploy workflow (`deploy.yml`) has still never run.
 
 Not in git on purpose (recreate them): `.venv/`, `e2e/node_modules/`, `infra/terraform/.terraform/`, `infra/terraform/terraform.tfvars` (it holds your email and IP), `shots/`, `.taste-skill/chrome-check`. Nothing secret is in git.
 
@@ -79,7 +79,7 @@ Nothing has been applied to AWS. The session costs about **USD 0.27 per hour** (
 7. **🧹 Teardown, every time:** `kubectl delete -k k8s/overlays/aws`, wait until the ALB is gone (EC2, Load balancers), then `cd infra/terraform; terraform destroy`. Then check tag `Project=liveask`: no EKS cluster, EC2, NAT gateway, Elastic IPs, load balancers, RDS or EBS left. Next day look at Cost Explorer.
 8. Update `README.md` with the EKS numbers and screenshots, and `CURRENT_STATE.md` / `TASKS.md` (D3-03 to D3-07).
 
-GitHub Actions CI and the deploy workflow have **never run**: push the branch and look at the Actions tab before relying on them. The deploy workflow assumes `main`, so merge to `main` first.
+The CI workflow is green; the **deploy workflow has never run** and assumes `main`, so merge PR #1 to `main` first.
 
 ## 5. If you use an AI coding agent
 

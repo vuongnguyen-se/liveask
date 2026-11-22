@@ -7,7 +7,7 @@ _Last updated: 2026-11-22. Update this file at the end of every work session._
 LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **Nothing has been deployed to AWS and no AWS resources exist.** Day 3 (one billable EKS session) has not started: it needs you (see section 8).
 
 - GitHub: https://github.com/vuongnguyen-se/liveask (public, branch `main`).
-- Branch: **`feat/liveask-realtime-qa-app`** holds everything (Day 1, the UI track, Day 2; `ui/redesign` was merged into it with `--no-ff`). It was **pushed to GitHub on 2026-11-22**; `main` is untouched. GitHub CI has not run on it (it runs on `main`, pull requests and by hand, not on a plain branch push).
+- Branch: **`feat/liveask-realtime-qa-app`** holds everything (Day 1, the UI track, Day 2; `ui/redesign` was merged into it with `--no-ff`). It was **pushed to GitHub on 2026-11-22**, and **PR #1** (https://github.com/vuongnguyen-se/liveask/pull/1) targets `main`. **GitHub CI ran on the PR and is green** (all three jobs).
 - Local path: this worktree, `C:\Users\Vuong\orca\workspaces\liveask\spookfish`.
 - History: the platform skeleton came from https://github.com/vuongnguyen-se/eks-platform-lab (archived).
 
@@ -40,7 +40,7 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 
 ## 4. Not verified
 
-- **GitHub CI** (nothing pushed). **AWS** (EKS, ALB, RDS, the deploy workflow, `create-db-secret.sh`, `terraform plan`). A real phone on mobile data. The NFR-1 latency on EKS. Vietnamese letters in the UI (Host Grotesk has no glyphs for them; the system font fills in).
+- **AWS** (EKS, ALB, RDS, the deploy workflow, `create-db-secret.sh`, `terraform plan`). A real phone on mobile data. The NFR-1 latency on EKS. Vietnamese letters in the UI (Host Grotesk has no glyphs for them; the system font fills in).
 
 ## 5. Developer machine notes (Windows 11)
 

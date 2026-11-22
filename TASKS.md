@@ -10,8 +10,8 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 |---|---|---|
 | 0 | Platform skeleton (Terraform, K8s, CI) carried over into the fresh `liveask` repo | ✅ Done (2026-11-21) |
 | 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | ✅ Done (2026-11-21) |
-| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | ✅ Done (2026-11-22), landing gate ended `OPEN` (1 finding, see `CURRENT_STATE.md`); GitHub CI unverified |
-| 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | ✅ Done locally (2026-11-22); CI unverified |
+| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | ✅ Done (2026-11-22), landing gate ended `OPEN` (1 finding, see `CURRENT_STATE.md`); GitHub CI green on PR #1 |
+| 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | ✅ Done locally (2026-11-22); CI green on PR #1 |
 | 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | ⏳ Not started: Terraform renames and ALB settings are done in code; the 💰 apply needs you (see `RESUME.md` section 4) |
 
 ---
@@ -81,7 +81,7 @@ Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the sk
   - [x] `style(screen)`: top questions, readable from the back of a room (large type, 7:1 contrast)
   - [x] `style(screen)`: live poll bars
   - Done when: screenshots at both sizes read well and e2e passes.
-- [~] **UI-07 Review and ship.** (2026-11-22; done except GitHub CI, which cannot run until the branch is pushed)
+- [x] **UI-07 Review and ship.** (2026-11-22; CI green on PR #1)
   - [x] accessibility pass: contrast, keyboard order, focus ring, reduced motion, light and dark
   - [x] responsive screenshots (1440, 1024, 768, 390) saved to `docs/images/`
   - [x] `docs`: README screenshots and `CURRENT_STATE.md` updated
@@ -96,7 +96,7 @@ Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the sk
 - [x] **D2-04** Zero-downtime demo (`scripts/rolling-update-demo.sh`): keep the screen open, run `kubectl rollout restart deployment/liveask`; clients reconnect automatically, nothing is lost. Record a short GIF or screenshots. (2026-11-22) `e2e/rollout.js` 6/6: 32 of 32 questions stored, replicas never below 2, the screen reconnected to a new pod and caught up. No GIF recorded.
 - [x] **D2-05** Load test (`scripts/load_test.py`): open N WebSockets + post questions/votes; watch `kubectl get hpa,pods -w` scale up. Save a screenshot. (2026-11-22) 200 clients over 6 pods, 18,400 of 18,400 delivered, HPA 2 to 4 to 6 pods at CPU 345%/60%. p95 latency about 1.1 s is dominated by the Windows tunnel (POST median 290 ms): re-measure on EKS. No screenshot saved; the output is in `CURRENT_STATE.md`.
 - [x] **D2-06** Run the CronJob manually (`kubectl create job --from=cronjob/liveask-cleanup …`) with an expired test room; it gets deleted. (2026-11-22) Manual job logged "removed 1 expired room"; 0 left.
-- [~] **D2-07** Update CI: tests for the new package, image build, kustomize render for both overlays. Update `scripts/create-db-secret.sh` (secret `liveask-db`, namespace `liveask`, db `liveask`). Done in code (2026-11-22): `ci.yml` runs ruff, pytest with a Postgres service, the image build and a render of both overlays; the secret script, load test and deploy workflow are renamed. **CI has not run on GitHub: nothing was pushed.**
+- [x] **D2-07** Update CI: tests for the new package, image build, kustomize render for both overlays. Update `scripts/create-db-secret.sh` (secret `liveask-db`, namespace `liveask`, db `liveask`). Done in code (2026-11-22): `ci.yml` runs ruff, pytest with a Postgres service, the image build and a render of both overlays; the secret script, load test and deploy workflow are renamed. CI ran on PR #1 on 2026-11-22 and is green (app tests with Postgres and the image build, manifest render, Terraform).
   - Done when: CI green.
 
 ## Day 3: AWS session on EKS 💰 🧹 (≈ 3–4 h, ≈ USD 1)
