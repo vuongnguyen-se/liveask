@@ -36,4 +36,4 @@ Left running for a month it would be ≈ USD 190, so the session always ends wit
 1. `kubectl delete -k k8s/overlays/aws` and wait until the ALB is gone (EC2 console → Load balancers). The controller created it, not Terraform.
 2. `cd infra/terraform && terraform destroy`.
 3. Check, filtered by tag `Project=liveask`: no EKS cluster, EC2 instances, NAT gateway, Elastic IPs, load balancers, RDS instances or snapshots, EBS volumes.
-4. Next day: Cost Explorer, confirm the spend stopped.
+4. Next day (optional): Cost Explorer, confirm the spend stopped. It was not done for the 2026-11-22 sessions (D-020).
