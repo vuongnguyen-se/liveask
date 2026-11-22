@@ -4,7 +4,7 @@
 
 The presenter shows a QR code. The audience asks and upvotes questions and answers polls from their phones, with no sign-up. The presenter's page and the projector screen update live over WebSockets, whichever Kubernetes pod each person happens to be connected to.
 
-> **Status (2026-11-22).** The app, the Kubernetes manifests and the redesigned UI are built and verified locally (Docker Compose and minikube) **and on Amazon EKS**, in two sessions (about 50 and 95 minutes) that were each destroyed afterwards: no AWS resources are left. The second session included a **test from real phones on mobile data, which passed**. Not done: screenshots of the AWS console, and HTTPS. Plan: [`TASKS.md`](TASKS.md) · Current state: [`CURRENT_STATE.md`](CURRENT_STATE.md) · EKS session: [`docs/eks-session-2026-11-22.md`](docs/eks-session-2026-11-22.md).
+> **Status (2026-11-22).** The app, the Kubernetes manifests and the redesigned UI are built and verified locally (Docker Compose and minikube) **and on Amazon EKS**, in two sessions (about 50 and 95 minutes) that were each destroyed afterwards: no AWS resources are left. The second session included a **test from real phones on mobile data, which passed**. Not done: screenshots of the AWS console, and HTTPS. **The project is closed** (decision D-020): nothing is running and nothing needs maintaining. Plan: [`TASKS.md`](TASKS.md) · Current state: [`CURRENT_STATE.md`](CURRENT_STATE.md) · EKS session: [`docs/eks-session-2026-11-22.md`](docs/eks-session-2026-11-22.md).
 
 | Landing page | Audience (phone) | Projector |
 |---|---|---|
@@ -28,7 +28,7 @@ Everything below was run, not just written. Numbers are from 2026-11-21 and 2026
 
 | Claim | Evidence |
 |---|---|
-| The app works | 106 `pytest` tests against a real PostgreSQL; `ruff` clean |
+| The app works | 108 `pytest` tests against a real PostgreSQL; `ruff` clean |
 | A write on one process reaches a WebSocket on another | A test starts two real app processes on one database (`app/tests/test_realtime.py`) |
 | Host, phones and projector update each other across containers | `e2e/run.js`: 19 browser checks through nginx on Docker Compose, and the same 19 on minikube behind ingress-nginx, with the host and the screen on **different pods** |
 | A restarted container does not lose data or the screen | `e2e/reconnect.js`: the screen shows "reconnecting", moves to the other container and shows the question it missed |
@@ -64,7 +64,7 @@ GitHub CI is green (app tests with Postgres and the image build, manifest render
 
 Terraform (`infra/terraform/`): VPC across 2 AZs (public, private and isolated database subnets, one NAT gateway), **EKS** (Kubernetes 1.35) with Spot managed nodes and access entries, **AWS Load Balancer Controller** (IRSA), **RDS PostgreSQL** (password in Secrets Manager), **ECR**, **GitHub Actions OIDC** deploy role (no AWS keys in GitHub) and **AWS Budgets** alerts. All of it was applied on 2026-11-22 (78 resources), used for the checks above and destroyed; a search of the account afterwards found nothing left.
 
-**Cost of the sessions:** about 50 minutes and about 1 hour 35 minutes (the second runs from the apply to the end of the destroy), so roughly 2 hours 25 minutes in total. At the published rate of about USD 0.27 per hour that is roughly USD 0.65; the actual bill is checked in Cost Explorer the next day (see [`SECURITY_AND_COST.md`](SECURITY_AND_COST.md)). Left running for a month the same stack would cost about USD 190, which is why the session always ends with the teardown.
+**Cost of the sessions:** about 50 minutes and about 1 hour 35 minutes (the second runs from the apply to the end of the destroy), so roughly 2 hours 25 minutes in total. At the published rate of about USD 0.27 per hour that is roughly USD 0.65; this is an estimate from running time: the bill was not checked in Cost Explorer (costs and teardown rules: [`SECURITY_AND_COST.md`](SECURITY_AND_COST.md)). Left running for a month the same stack would cost about USD 190, which is why the session always ends with the teardown.
 
 **What went wrong, and the fix:** the first `apply` failed because `ap-southeast-1` lists a Local Zone first and a Local Zone has no NAT gateway (the VPC now uses standard zones only). The deploy role did not trust the GitHub token until the trust policy used the repository's immutable OIDC subject. And a GitHub-hosted runner cannot reach a Kubernetes API locked to one IP, so the workflow pushes the image and a script applies the manifests from the laptop. Details: [`docs/eks-session-2026-11-22.md`](docs/eks-session-2026-11-22.md).
 

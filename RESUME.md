@@ -40,7 +40,7 @@ python -m venv .venv
 .venv\Scripts\python -m pip install -r app/requirements-dev.txt
 docker compose up -d db                      # Postgres on 127.0.0.1:5432
 $env:TEST_DATABASE_URL = "postgresql://liveask:liveask-local-only@127.0.0.1:5432/liveask"
-cd app; ..\.venv\Scripts\python -m pytest -q; cd ..     # expect: 106 passed
+cd app; ..\.venv\Scripts\python -m pytest -q; cd ..     # expect: 108 passed
 .venv\Scripts\python -m ruff check app                   # expect: All checks passed
 
 docker compose up --build -d                 # Postgres + migrate + 2 app containers + nginx

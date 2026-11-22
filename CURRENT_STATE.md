@@ -4,7 +4,7 @@ _Last updated: 2026-11-22 (after the EKS session and its teardown). Update this 
 
 ## 1. Summary
 
-LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **Two EKS sessions ran on 2026-11-22 and were each destroyed afterwards: no AWS resources of this project exist now (checked after each destroy).** The results, including a phone test on mobile data that passed, are in `docs/eks-session-2026-11-22.md`. Still open: the optional HTTPS task (D3-05) and the Cost Explorer check on 2026-11-23.
+LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **Two EKS sessions ran on 2026-11-22 and were each destroyed afterwards: no AWS resources of this project exist now (checked after each destroy).** The results, including a phone test on mobile data that passed, are in `docs/eks-session-2026-11-22.md`. **The project was closed on 2026-11-22** (decision D-020): the optional HTTPS task and the Cost Explorer check were dropped, and nothing is running or needs maintaining.
 
 - GitHub: https://github.com/vuongnguyen-se/liveask (public, branch `main`).
 - Branch: all work was developed on `feat/liveask-realtime-qa-app` and **merged into `main` through PR #1 on 2026-11-22** (https://github.com/vuongnguyen-se/liveask/pull/1, merge commit `a221cde`). **CI is green on the PR and on `main`.** New work goes on a fresh branch from `main`.
@@ -32,7 +32,7 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 
 ## 3. Verified (2026-11-21 to 2026-11-22, Windows 11 laptop)
 
-- `pytest` 106 passed, `ruff` clean, `terraform fmt`/`validate` pass, both kustomize overlays render.
+- `pytest` 108 passed, `ruff` clean, `terraform fmt`/`validate` pass, both kustomize overlays render.
 - Docker Compose: 19/19 browser checks, host and screen on different containers; `reconnect.js` 6/6 (8 of 8 consecutive runs after hardening); `a11y.js` 8/8 at 320 px, light and dark.
 - minikube (`-p eks-lab`): 2 app pods + `postgres-0` Ready; deleting `postgres-0` kept the data; `e2e/run.js` 19/19 through ingress-nginx with the host and the screen on **different pods**; `e2e/rollout.js` 6/6 (32 of 32 questions stored during `rollout restart`, replicas never below 2, the screen reconnected to a new pod and caught up); the CronJob run by hand logged "removed 1 expired room".
 - Load test, 200 WebSocket clients over 6 pods, through `minikube tunnel`: 18,400 of 18,400 deliveries; the HPA scaled **2 → 4 → 6** pods at CPU 345% of the 60% target. Latency median 298 ms, **p95 1079 ms** (target 1000 ms): the POST alone took a median 289 ms through the Windows tunnel, so this is not a clean verdict on NFR-1. Re-measure on EKS.
@@ -79,5 +79,5 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 **Continuing on another computer: start with `RESUME.md`** (install, clone, checks, minikube, the Day 3 steps).
 
 1. **Done:** the work is merged into `main` (PR #1) and CI is green there. `deploy.yml` assumes `main`, so it can now run.
-2. **Optional:** HTTPS on a custom domain (D3-05; the account has a Route 53 zone for `vuongdomain.click` and no certificate yet). Each new session costs about USD 0.27 per hour and ends with the teardown.
-3. Check Cost Explorer on 2026-11-23 for both sessions. Then decide on the landing page's length on phones (about 11.5 screens): it is a design call, not a bug.
+2. Nothing is required. To run AWS again, follow `RESUME.md` section 4 (about USD 0.27 per hour, always end with the teardown). HTTPS and the other roadmap items are listed in the README.
+3. The landing page is about 11.5 phone screens tall: a design choice, left as it is.

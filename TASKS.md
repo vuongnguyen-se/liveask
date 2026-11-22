@@ -6,15 +6,15 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 
 ## Progress overview
 
-**Overall: 28 of 29 board tasks done (97%)**, 0 in progress, 1 optional task to do. Counted from the `**ID**` checkboxes below; update the counts and the bars when you tick a box. Last updated 2026-11-22.
+**Project closed on 2026-11-22: 28 of 29 board tasks done (97%), and the 29th (optional HTTPS) dropped by decision.** Nothing is left to do and nothing is running. Counted from the `**ID**` checkboxes below; update the counts and the bars when you tick a box. Last updated 2026-11-22.
 
 | Track | Done | Progress | Left |
 |---|---|---|---|
 | Day 1: the app | 7 of 7 | `██████████` 100% | none |
 | UI track | 8 of 8 | `██████████` 100% | one landing gate finding still open (`ui-centre`) |
 | Day 2: minikube | 7 of 7 | `██████████` 100% | none |
-| Day 3: AWS session on EKS | 6 of 7 | `█████████░` 86% | D3-05 HTTPS (optional) |
-| **Total** | **28 of 29** | `██████████` 97% | |
+| Day 3: AWS session on EKS | 6 of 7 | `█████████░` 86% | D3-05 HTTPS dropped (optional, by decision D-020) |
+| **Total** | **28 of 29** | `██████████` 97% | 1 dropped, 0 open |
 
 What each day proved, in one line: Day 1 the app works; the UI track made it presentable; Day 2 showed the Kubernetes design works locally; Day 3 proved it on real AWS, twice, including a real phone (e2e 19/19, rollout 6/6, load p95 733 and 801 ms, HPA 2 to 6 pods: `docs/eks-session-2026-11-22.md`).
 
@@ -24,7 +24,7 @@ What each day proved, in one line: Day 1 the app works; the UI track made it pre
 | 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | ✅ Done (2026-11-21) |
 | UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | ✅ Done (2026-11-22), landing gate ended `OPEN` (1 finding, see `CURRENT_STATE.md`); merged to `main` (PR #1), CI green |
 | 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | ✅ Done locally (2026-11-22); merged to `main` (PR #1), CI green |
-| 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | ✅ Done (2026-11-22): two sessions, both torn down; only the optional HTTPS task remains (`docs/eks-session-2026-11-22.md`) |
+| 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | ✅ Done (2026-11-22): two sessions, both torn down; HTTPS dropped (`docs/eks-session-2026-11-22.md`) |
 
 ---
 
@@ -121,8 +121,8 @@ Before starting: `aws login` (or SSO profile), `terraform.tfvars` filled in, che
   - Done when: the ALB URL works from a phone; two phones on mobile data plus a laptop update live.
   - Result: the ALB answered from the internet and the API worked through it, but the **phone check was not done**. The workflow built and pushed the image; the manifests were applied from the laptop because the IP-locked API is not reachable from GitHub runners. Three fixes were needed (`docs/eks-session-2026-11-22.md`).
 - [x] **D3-04** (2026-11-22, two sessions) Repeat the D2-03/04/05 demos on EKS; the app on a phone. Done: e2e 19/19, rollout 6/6, load p95 733 ms then 801 ms, HPA 2 to 6 pods, 6 healthy ALB targets over 2 zones, and a **phone test on mobile data that passed**. Not saved: screenshots of the AWS console and of the phone (the evidence is terminal output in `docs/eks-session-2026-11-22.md`).
-- [ ] **D3-05** (Optional, if time) HTTPS: ACM certificate + Route 53 record `ask.vuongdomain.click`, Ingress `certificate-arn` + `ssl-redirect`.
-- [x] **D3-06** (2026-11-22) 🧹 Teardown per `SECURITY_AND_COST.md` §3. `terraform destroy` removed 78 resources in each of the two sessions; checked afterwards both times: no EKS cluster, EC2, NAT gateway, Elastic IP, load balancer, RDS or EBS volume, and the deploy role, KMS alias and budget are gone (the KMS key is in `PendingDeletion`). Still to do: confirm in Cost Explorer on 2026-11-23.
+- [-] **D3-05** (dropped 2026-11-22, decision D-020) (Optional) HTTPS: ACM certificate + Route 53 record, Ingress `certificate-arn` + `ssl-redirect`. Dropped because the project is closed; it stays on the roadmap.
+- [x] **D3-06** (2026-11-22) 🧹 Teardown per `SECURITY_AND_COST.md` §3. `terraform destroy` removed 78 resources in each of the two sessions; checked afterwards both times: no EKS cluster, EC2, NAT gateway, Elastic IP, load balancer, RDS or EBS volume, and the deploy role, KMS alias and budget are gone (the KMS key is in `PendingDeletion`). The Cost Explorer check was dropped (decision D-020): the cost is an estimate from running time, not a billed figure.
 - [x] **D3-07** (2026-11-22) Final README: what it is, screenshots/GIF, architecture diagram, the "why containers" and "multi-pod fan-out" explanations, K8s objects table, how to run locally, real cost of the session, roadmap, CV bullet points.
 
 ## Roadmap (not in the 3 days; list it in the README)

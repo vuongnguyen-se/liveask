@@ -50,6 +50,7 @@
   .chip.done { border-color: var(--done); color: var(--done); }
   .chip.doing { border-color: var(--doing); color: var(--doing); font-weight: 600; }
   .chip.optional { border-color: var(--opt); color: var(--opt); border-style: dashed; }
+  .chip.dropped { color: var(--todo); border-style: dashed; text-decoration: line-through; }
   /* flow */
   .flow { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
   .stage { flex: 1 1 120px; min-width: 120px; border: 1px solid var(--line); border-radius: 10px; padding: 12px;
@@ -97,6 +98,7 @@
       <span><i class="dot" style="background:var(--doing)"></i>in progress</span>
       <span><i class="dot" style="background:var(--todo)"></i>to do</span>
       <span><i class="dot" style="background:var(--opt)"></i>optional</span>
+      <span><i class="dot" style="background:var(--todo)"></i>dropped</span>
     </div>
   </section>
 
@@ -132,7 +134,7 @@
 <script>
 // ===== DATA: edit this block to update the page =====================================================
 const DATA = {
-  updated: "2026-11-22, 14:30",
+  updated: "2026-11-22, 14:35 (project closed)",
   tracks: [
     { name: "Day 1: the app", tasks: [
       ["D1-01","package, config, migrate","done"], ["D1-02","rooms","done"], ["D1-03","questions and votes","done"],
@@ -148,7 +150,7 @@ const DATA = {
       ["D2-07","CI","done"] ]},
     { name: "Day 3: AWS on EKS", tasks: [
       ["D3-01","Terraform edits","done"], ["D3-02","ALB ingress settings","done"], ["D3-03","apply + deploy","done"],
-      ["D3-04","EKS demos + phone test","done"], ["D3-05","HTTPS","optional"], ["D3-06","teardown","done"],
+      ["D3-04","EKS demos + phone test","done"], ["D3-05","HTTPS (dropped)","dropped"], ["D3-06","teardown","done"],
       ["D3-07","final README","done"] ]},
   ],
   flow: [
@@ -159,7 +161,7 @@ const DATA = {
     ["EKS session 1","e2e, rollout, load on real AWS","done"],
     ["EKS session 2","clean apply, phone test, script","done"],
   ],
-  flownote: "Both EKS sessions are done and destroyed. Only the optional HTTPS task is left.",
+  flownote: "Project closed on 2026-11-22. Both EKS sessions are done and destroyed; the optional HTTPS task was dropped.",
   sessionnote: "Session 2: 12:50 to 14:24. Destroyed and checked: nothing is running.",
   session: [
     ["terraform apply: 78 resources, clean run","done"],
@@ -170,9 +172,9 @@ const DATA = {
     ["terraform destroy and a check that nothing is left","done"],
   ],
   left: [
-    "Cost Explorer check on 2026-11-23, for both sessions",
-    "Optional: HTTPS on a custom domain (D3-05)",
-    "Decide whether the landing page is too long on phones (11.5 screens)",
+    "Nothing is required: the project is closed (decision D-020)",
+    "Dropped by decision: HTTPS on a custom domain, the Cost Explorer check",
+    "Left as it is: the landing page is about 11.5 phone screens tall",
     "One landing-page gate finding is still open (ui-centre)",
   ],
   proof: [
@@ -180,7 +182,7 @@ const DATA = {
     "e2e 19/19 and rolling update 6/6 on EKS, twice; no question lost",
     "200 clients, all delivered; p95 733 ms and 801 ms (target 1 s)",
     "HPA 2 to 6 pods; 6 healthy ALB targets over 2 zones",
-    "106 tests pass; the deploy script ran end to end",
+    "108 tests pass; the deploy script ran end to end",
   ],
 };
 // =====================================================================================================
@@ -188,13 +190,13 @@ const DATA = {
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const count = (tasks, s) => tasks.filter((t) => t[2] === s).length;
-const label = { done: "done", doing: "in progress", todo: "to do", optional: "optional" };
+const label = { done: "done", doing: "in progress", todo: "to do", optional: "optional", dropped: "dropped" };
 
 const all = DATA.tracks.flatMap((t) => t.tasks);
-const done = count(all, "done"), doing = count(all, "doing");
+const done = count(all, "done"), doing = count(all, "doing"), dropped = count(all, "dropped");
 $("updated").textContent = "Last updated " + DATA.updated + ". Counted from the task board.";
 $("pct").textContent = Math.round((done / all.length) * 100) + "%";
-$("of").textContent = done + " of " + all.length + " tasks done" + (doing ? ", " + doing + " in progress" : "");
+$("of").textContent = done + " of " + all.length + " tasks done" + (doing ? ", " + doing + " in progress" : "") + (dropped ? ", " + dropped + " dropped" : "");
 
 function bar(node, total, d, g) {
   node.append(Object.assign(el("span", "d"), {}), Object.assign(el("span", "g"), {}));
