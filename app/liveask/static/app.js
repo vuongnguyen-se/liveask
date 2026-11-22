@@ -379,10 +379,13 @@
     $("audience-link").href = audienceUrl;
     $("screen-link").textContent = screenUrl;
     $("screen-link").href = screenUrl;
-    $("copy-audience").addEventListener("click", async () => {
-      try { await navigator.clipboard.writeText(audienceUrl); $("copy-audience").textContent = "Copied"; }
-      catch (e) { $("copy-audience").textContent = "Select the link and copy"; }
+    $("room-code").textContent = code;
+    const copyButton = (button, text, fallback) => button.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(text); button.textContent = "Copied"; }
+      catch (e) { button.textContent = fallback; }
     });
+    copyButton($("copy-audience"), audienceUrl, "Select the link and copy");
+    copyButton($("copy-code"), code, "Select the code and copy");
 
     let room;
     const call = async (method, path, body) => {

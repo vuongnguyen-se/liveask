@@ -65,3 +65,16 @@ def test_front_end_never_uses_innerhtml():
         for banned in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval("):
             assert banned not in text, f"{banned} found in {name}"
     assert Path(STATIC_DIR / "qrcode.js").exists()
+
+
+def test_the_host_page_shows_the_room_code_with_a_copy_button(web):
+    html = web.get("/host/K7PX4M").text
+    assert 'id="room-code"' in html and 'id="copy-code"' in html
+    js = (STATIC_DIR / "app.js").read_text(encoding="utf-8")
+    assert '$("room-code").textContent = code' in js
+
+
+def test_the_landing_hero_links_straight_to_the_join_field(web):
+    html = web.get("/").text
+    assert 'class="hero__join' in html and 'href="#join-code"' in html
+    assert 'id="join-code"' in html  # the field the link jumps to exists

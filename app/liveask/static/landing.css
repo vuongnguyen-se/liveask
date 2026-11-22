@@ -136,3 +136,16 @@ button.link { background: none; border: 0; padding: 0; font: inherit; font-weigh
 /* faq: a quiet icon before each question */
 .faq__item h3 { display: flex; align-items: flex-start; gap: var(--s-3); }
 .faq__item h3 .ic { margin-top: 2px; }
+
+/* ---- the close and the footer in a short desktop window ---- */
+/* From 1280px the kit fixes footer.closing at exactly one screen (708px of content at 1440x900). A window
+   that is shorter than that lays the footer's links over the create form. Like the kit's own rule for
+   640 to 1279px, let the block grow past the screen instead of overlapping; at 900px tall it is unchanged. */
+@media (min-width: 1280px) {
+  footer.closing { height: auto; min-height: 100svh; display: flex; flex-direction: column; }
+  footer.closing > .wrap { flex: 1 0 auto; height: auto; min-height: 0; }
+}
+
+/* ---- the hero's join link: a phone user with a code does not scroll to the footer to find the field ---- */
+.hero__join { margin-top: var(--s-2); }
+.hero__join a { text-decoration: underline; text-underline-offset: 3px; display: inline-block; padding-block: var(--s-2); }
