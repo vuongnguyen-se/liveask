@@ -8,6 +8,7 @@ resources:
   - service.yaml
   - hpa.yaml
   - pdb.yaml
+  - cronjob.yaml
 labels:
   - pairs:
       app.kubernetes.io/part-of: liveask
