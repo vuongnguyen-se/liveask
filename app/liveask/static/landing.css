@@ -109,3 +109,8 @@
 
 /* ---- faq: the marquee row runs edge to edge, fading at both sides (a layer, not a one-sided bleed) ---- */
 #faq [data-moment="marquee-row"] { margin-inline: calc(50% - 50vw); max-width: 100vw; overflow: hidden; }
+
+/* ---- how: mocks inside the pinned frame (a drawn window on the lit ground) ---- */
+.mo-pc__visual--lit > .ui { width: min(100%, 520px); }
+/* a phone shows the steps one under the other: exactly two screens, so no sliver of the next section shows */
+@media (max-width: 639px) { main > #how:not(.is-live) { min-height: 200lvh; } }

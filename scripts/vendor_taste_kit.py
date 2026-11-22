@@ -42,8 +42,8 @@ FILES = [
     "diagrams/presets.json",
     "moments/moments.js",
     "moments/lib.js",
-    "moments/marquee-row/moment.css",
-    "moments/marquee-row/moment.js",
+    "moments/pinned-chapters/moment.css",
+    "moments/pinned-chapters/moment.js",
 ]
 
 
