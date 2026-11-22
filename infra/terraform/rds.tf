@@ -13,7 +13,7 @@ resource "aws_vpc_security_group_ingress_rule" "db_from_nodes" {
   description                  = "Pods on EKS nodes"
 }
 
-resource "aws_db_instance" "notes" {
+resource "aws_db_instance" "liveask" {
   identifier     = "${local.name}-db"
   engine         = "postgres"
   engine_version = "17"
@@ -23,8 +23,8 @@ resource "aws_db_instance" "notes" {
   storage_type      = "gp3"
   storage_encrypted = true
 
-  db_name  = "notes"
-  username = "notes_admin"
+  db_name  = "liveask"
+  username = "liveask_admin"
   # RDS creates the password and keeps it in Secrets Manager; it never appears in Terraform state.
   manage_master_user_password = true
 
