@@ -1,23 +1,70 @@
-# Local development: the API plus PostgreSQL, no AWS needed.
-#   docker compose up --build   ->  http://localhost:8000/docs
+# Local development without Kubernetes: Postgres, a one-shot migration, TWO app containers
+# ("pods") and nginx in front of them, like the load balancer on AWS.
+#
+#   docker compose up --build        ->  http://localhost:8000
+#   (another port: LIVEASK_PORT=9000 docker compose up --build)
+#
+# Open several tabs: the status badge shows which container ("api1" or "api2") each tab is
+# connected to, and a question asked in one tab still appears in all the others.
+
+x-app: &app
+  build: ./app
+  image: liveask-app
+  environment: &app-env
+    DATABASE_URL: postgresql://liveask:liveask-local-only@db:5432/liveask
+  read_only: true            # same hardening as the Kubernetes Deployment
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+
 services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: notes
-      POSTGRES_PASSWORD: notes-local-only
-      POSTGRES_DB: notes
+      POSTGRES_USER: liveask
+      POSTGRES_PASSWORD: liveask-local-only
+      POSTGRES_DB: liveask
+    ports:
+      - "127.0.0.1:5432:5432"   # lets pytest on your machine reach it
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U notes"]
+      test: ["CMD-SHELL", "pg_isready -U liveask"]
       interval: 3s
       retries: 10
 
-  api:
-    build: ./app
-    environment:
-      DATABASE_URL: postgresql://notes:notes-local-only@db:5432/notes
-    ports:
-      - "8000:8000"
+  migrate:                      # runs once and exits: the same job as the Kubernetes initContainer
+    <<: *app
+    command: ["python", "-m", "liveask.migrate"]
+    restart: "no"
     depends_on:
       db:
+        condition: service_healthy
+
+  api1: &api
+    <<: *app
+    environment:
+      <<: *app-env
+      POD_NAME: api1
+    healthcheck:                # python is in the image, curl is not; /readyz is 503 until ready
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=2)"]
+      interval: 3s
+      retries: 15
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  api2:
+    <<: *api
+    environment:
+      <<: *app-env
+      POD_NAME: api2
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "${LIVEASK_PORT:-8000}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      api1:
+        condition: service_healthy
+      api2:
         condition: service_healthy

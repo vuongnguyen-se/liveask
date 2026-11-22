@@ -3,13 +3,24 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: notes-api
-  namespace: notes
+  name: liveask
+  namespace: liveask
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/healthcheck-path: /readyz
     alb.ingress.kubernetes.io/tags: Project=liveask
+    # WebSockets stay open for a whole talk: the default idle timeout (60 s) would cut them.
+    # The client's 25 s ping also keeps the connection from being idle.
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=3600
+    # After a pod is marked for deletion the ALB stops sending it new connections; 30 s lets the
+    # existing requests finish. The pod's preStop sleep (10 s) covers the time the ALB needs to notice.
+    alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
+    # A pod gets traffic only when /readyz says the database and the LISTEN connection are up.
+    alb.ingress.kubernetes.io/healthcheck-path: /readyz
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "10"
+    alb.ingress.kubernetes.io/healthy-threshold-count: "2"
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
+    alb.ingress.kubernetes.io/success-codes: "200"
 spec:
   ingressClassName: alb
   rules:
@@ -19,6 +30,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: notes-api
+                name: liveask
                 port:
                   name: http

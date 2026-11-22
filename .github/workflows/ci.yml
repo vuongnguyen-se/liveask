@@ -21,6 +21,19 @@ jobs:
     defaults:
       run:
         working-directory: app
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: liveask
+          POSTGRES_PASSWORD: liveask-ci-only
+          POSTGRES_DB: liveask
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U liveask" --health-interval 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://liveask:liveask-ci-only@localhost:5432/liveask
     steps:
       - uses: actions/checkout@v7
         with:
@@ -31,9 +44,11 @@ jobs:
           cache: pip
           cache-dependency-path: app/requirements-dev.txt
       - run: pip install -r requirements-dev.txt
+      - run: ruff check .
+      - run: ruff format --check .
       - run: pytest -q
       - name: Build image (not pushed)
-        run: docker build -t notes-api:ci .
+        run: docker build -t liveask:ci .
 
   terraform:
     name: Terraform fmt and validate

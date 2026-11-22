@@ -62,4 +62,8 @@ Poll object: `{"id": 3, "question": "...", "options": ["EKS","ECS","Lambda"], "s
 
 - **Server → client** messages: `{"type": "question.created", "data": {question}}`, `question.updated`, `poll.created`, `poll.updated`, `room.closed`, and `{"type": "hello", "data": {"pod": "<hostname>"}}` on connect. The UI shows "connected to pod …", which makes the multi-pod demo visible.
 - **Client → server:** only `{"type": "ping"}` every 25 s; the server replies `pong`. All writes go through the REST endpoints above, which keeps WebSocket handling simple.
+- Extra server message: `{"type": "resync", "data": {}}` is sent when a pod's LISTEN connection was lost and restored (events may have been missed). The client reloads `GET /api/rooms/{code}`.
+- `question.updated` for a **hidden** question carries only `{"id", "status": "hidden"}`, never its text. When the host sets it back to `open`, clients get the full object.
+- `poll.created` is sent when a poll is first **opened** (a draft is private to the host); `poll.updated` follows for votes and closing.
+- Close codes: **4404** unknown or expired room (do not retry), **1013** room full on this pod or server not ready (retry later), **1012** server restarting.
 - On shutdown the server closes sockets with code **1012** (service restart). Clients reconnect with backoff (0.5 s, 1 s, 2 s … max 10 s) and call `GET /api/rooms/{code}` to resync.

@@ -1,0 +1,17 @@
+[
+  {
+    "check": "section-gaps",
+    "target": "section#questions / section#polls",
+    "reason": "at 390 the kit sizes each section to whole phone screens (100lvh) and these two hold different amounts of content, so the gap between their last and first content differs; changing the content to equalise it would add filler"
+  },
+  {
+    "check": "section-gaps",
+    "target": "section#sync / section#faq",
+    "reason": "at 390 the dark diagram section and the two-screen FAQ are sized to whole phone screens by the kit, which leaves a larger gap at the change of ground; it is the screen grid, not stray space"
+  },
+  {
+    "check": "section-gaps",
+    "target": "section#faq / footer#contact",
+    "reason": "at 390 the stacked FAQ needs two phone screens (--hm: 2) and its answers fill about two thirds of them; the rest is the section's bottom padding before the footer"
+  }
+]

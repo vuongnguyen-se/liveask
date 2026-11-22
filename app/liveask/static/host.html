@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="round" data-buttons="tonal">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LiveAsk host</title>
+<meta name="theme-color" content="#f7f9fa">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/static/fonts/host-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/fonts/fonts.css">
+<link rel="stylesheet" href="/static/assets/system.css">
+<link rel="stylesheet" href="/static/tokens.css">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="app" data-view="host">
+  <header class="app-bar">
+    <div class="app-wrap app-bar__row">
+      <a class="app-brand" href="/"><span class="mark mark--initial" aria-hidden="true">L</span>LiveAsk</a>
+      <span id="status" class="pill" role="status">connecting…</span>
+    </div>
+  </header>
+  <main class="app-wrap">
+    <h1 id="title" class="app-title">Presenter's page</h1>
+    <div id="closed" class="banner" role="status" hidden>This room is closed. Questions and votes are off.</div>
+    <div id="missing" class="banner" role="alert" hidden>No room has this code, or the host link is incomplete.</div>
+    <div id="notoken" class="banner" role="alert" hidden>This page needs the host link you got when you created the room.</div>
+
+    <div class="card share">
+      <h2 class="app-h2" style="margin:0">Share</h2>
+      <p class="muted">Audience: <a id="audience-link" target="_blank" rel="noopener"></a></p>
+      <p class="muted">Projector: <a id="screen-link" target="_blank" rel="noopener"></a></p>
+      <div class="row">
+        <button id="copy-audience" class="btn btn--secondary btn--sm" type="button">Copy audience link</button>
+        <button id="close-room" class="btn btn--secondary btn--sm" type="button">Close room</button>
+      </div>
+    </div>
+
+    <h2 class="app-h2">Polls</h2>
+    <form id="poll-form" class="card" novalidate>
+      <div class="field">
+        <label for="poll-question">Poll question</label>
+        <input id="poll-question" maxlength="200" required>
+      </div>
+      <div class="field">
+        <label for="poll-options">Options, one per line (2 to 6)</label>
+        <textarea id="poll-options" required></textarea>
+      </div>
+      <button class="btn btn--primary" type="submit">Create poll (draft)</button>
+      <p id="poll-error" class="error" role="alert"></p>
+    </form>
+    <div id="polls" aria-label="Polls"></div>
+
+    <h2 class="app-h2">Questions</h2>
+    <ul id="questions" class="list"></ul>
+    <p id="empty" class="muted" hidden>No questions yet. They appear here as phones send them.</p>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

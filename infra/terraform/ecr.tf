@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "api" {
-  name                 = "${var.project}/notes-api"
+  name                 = "${var.project}/app"
   image_tag_mutability = "IMMUTABLE" # a tag (the git SHA) always means the same image
   force_delete         = true        # lab: terraform destroy also removes images
 

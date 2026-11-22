@@ -2,9 +2,9 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: notes-api
+  name: liveask
 spec:
   minAvailable: 1
   selector:
     matchLabels:
-      app: notes-api
+      app: liveask

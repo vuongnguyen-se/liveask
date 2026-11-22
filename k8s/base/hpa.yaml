@@ -1,13 +1,14 @@
-# Adds pods when average CPU passes 60% of the request. Try it with scripts/load-test.sh.
+# Adds pods when average CPU passes 60% of the request (needs metrics-server).
+# Try it with scripts/load_test.py.
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: notes-api
+  name: liveask
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: notes-api
+    name: liveask
   minReplicas: 2
   maxReplicas: 6
   metrics:

@@ -1,0 +1,94 @@
+/* The app views (audience, host, screen). D-016: they take the landing page's design system, not its
+   marketing-page rules. system.css gives the reset, buttons, cards, fields and pills; tokens.css the
+   dealt palette and faces; this file only adds what an app screen needs, in those tokens.
+   Class names and ids here are the contract with app.js and e2e/ (see e2e/README.md). */
+
+/* ---- dark mode: the kit's inverse ground (.ground-inverse), applied by the phone's setting ---- */
+@media (prefers-color-scheme: dark) {
+  body.app {
+    --bg: var(--p-inv-bg); --surface: var(--p-inv-surface); --ink: var(--p-inv-ink); --muted: var(--p-inv-muted);
+    --accent: var(--p-inv-accent); --accent-ink: var(--p-inv-accent-ink); --card: var(--p-inv-surface);
+    --action: var(--p-inv-action); --action-ink: var(--p-inv-action-ink);
+    --line: color-mix(in oklab, var(--ink) 11%, transparent);
+    --line-strong: color-mix(in oklab, var(--ink) 20%, transparent);
+  }
+}
+body.app { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--t-body)/1.5 var(--font-text); }
+
+/* ---- frame ---- */
+.app-wrap { width: min(100% - 32px, 720px); margin-inline: auto; }
+.app-bar { border-bottom: 1px solid var(--line); }
+.app-bar__row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); min-height: 56px; }
+.app-brand { display: inline-flex; align-items: center; gap: var(--s-2); font: 500 20px/1 var(--font-display); letter-spacing: var(--display-tracking); color: var(--ink); text-decoration: none; }
+.app-title { margin: var(--s-6) 0 var(--s-4); font: var(--display-weight) var(--t-h3)/1.2 var(--font-display); letter-spacing: var(--display-tracking); overflow-wrap: anywhere; }
+.app-h2 { margin: var(--s-7) 0 var(--s-3); font: 500 var(--t-card)/1.3 var(--font-text); letter-spacing: -0.01em; }
+main.app-wrap { padding-bottom: var(--s-9); }
+
+/* ---- connection pill (the kit's .pill, as a status) ---- */
+#status.pill { height: 32px; white-space: nowrap; color: var(--muted); }
+#status.pill.live { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+#status.pill.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+/* ---- messages ---- */
+.banner { margin: var(--s-4) 0; padding: var(--s-3) var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--surface); }
+.banner[hidden] { display: none; }
+.error { min-height: 1.4em; margin: 0; color: var(--error); font-size: var(--t-small); }
+.muted { color: var(--muted); }
+
+/* ---- forms ---- */
+.ask { gap: var(--s-3); }
+.ask__row { display: flex; flex-wrap: wrap; align-items: end; gap: var(--s-3); }
+.ask__name { flex: 1 1 180px; min-width: 0; }
+.ask__row .muted { padding-bottom: var(--s-3); font-size: var(--t-small); font-variant-numeric: tabular-nums; }
+.ask .field input, .ask .field textarea { width: 100%; }
+
+/* ---- lists and question cards ---- */
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+.question { flex-direction: row; align-items: flex-start; gap: var(--s-3); }
+.question .body { flex: 1; min-width: 0; }
+.question .text { overflow-wrap: anywhere; }
+.question.hidden { opacity: .55; }
+.question.answered .text { text-decoration: line-through; text-decoration-color: var(--muted); }
+.badge { display: inline-block; height: auto; padding: 0 var(--s-2); border: 1px solid var(--line-strong); border-radius: 999px; background: none; color: var(--muted); font-size: 13px; line-height: 22px; }
+.poll__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+#polls > .card { margin-bottom: var(--s-3); }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); margin-top: var(--s-3); }
+
+/* the upvote: a 56px target, pressed when this device voted */
+.vote { display: grid; justify-items: center; gap: 2px; min-width: 56px; min-height: 56px; padding: 6px var(--s-2); border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--bg); color: var(--ink); line-height: 1.1; cursor: pointer; transition: background var(--dur) var(--ease); }
+.vote strong { font-weight: 500; font-size: var(--t-body); }
+.vote[aria-pressed="true"] { background: var(--action); border-color: var(--action); color: var(--action-ink); }
+.vote:disabled { cursor: default; opacity: .6; }
+.vote.static { border-color: var(--line); color: var(--muted); cursor: default; }
+
+/* ---- polls: options are buttons while the poll is open, plain boxes otherwise ---- */
+.option { position: relative; display: block; width: 100%; min-height: 48px; margin-top: var(--s-2); padding: var(--s-3) var(--s-4); overflow: hidden; border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--bg); color: inherit; font: inherit; text-align: left; }
+button.option { cursor: pointer; }
+.option .fill { position: absolute; inset: 0 auto 0 0; background: color-mix(in oklab, var(--accent) 18%, transparent); transition: width .3s var(--ease); }
+.option .label { position: relative; display: flex; justify-content: space-between; gap: var(--s-3); }
+.option.mine { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+@media (prefers-reduced-motion: reduce) { .option .fill, .vote { transition: none; } }
+
+/* ---- host ---- */
+.share p { margin: 0; overflow-wrap: anywhere; }
+.share a { color: var(--ink); }
+
+/* ---- projector screen: large type, readable from the back of a room ---- */
+body.screen { font-size: 22px; }
+.screen-grid { display: grid; grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); gap: var(--s-7); max-width: 1600px; margin: 0 auto; padding: var(--s-6) var(--s-7); }
+.screen-side { display: grid; justify-items: center; align-content: start; gap: var(--s-3); text-align: center; }
+.screen-side h1 { margin: 0; font: var(--display-weight) 2rem/1.15 var(--font-display); letter-spacing: var(--display-tracking); overflow-wrap: anywhere; }
+#qr { width: 100%; max-width: 320px; height: auto; padding: var(--s-3); border-radius: var(--r-lg); background: #fff; image-rendering: pixelated; }
+#code { font: 500 3rem/1 var(--font-mono); letter-spacing: .2em; padding-left: .2em; }
+#join-url { margin: 0; overflow-wrap: anywhere; font-size: var(--t-small); }
+.screen .app-h2 { margin-top: 0; font-size: 1.1rem; }
+.screen .question .text { font-size: 1.6rem; line-height: 1.25; }
+.screen .vote { min-width: 80px; min-height: 80px; }
+.screen .vote strong { font-size: 1.4rem; }
+.screen .option { min-height: 64px; font-size: 1.4rem; }
+.screen #status.pill { position: fixed; right: var(--s-3); bottom: var(--s-3); background: var(--bg); }
+@media (max-width: 800px) { .screen-grid { grid-template-columns: minmax(0, 1fr); padding: var(--s-5); } }
+
+/* the polls block sits a step below whatever is above it, and only when there is a poll */
+#polls:not(:empty) { margin-top: var(--s-4); }
+.screen #polls:not(:empty) { margin-top: 0; }
