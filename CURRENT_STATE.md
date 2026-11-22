@@ -7,8 +7,8 @@ _Last updated: 2026-11-22. Update this file at the end of every work session._
 LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **Nothing has been deployed to AWS and no AWS resources exist.** Day 3 (one billable EKS session) has not started: it needs you (see section 8).
 
 - GitHub: https://github.com/vuongnguyen-se/liveask (public, branch `main`).
-- Branch: **`feat/liveask-realtime-qa-app`** holds everything (Day 1, the UI track, Day 2; `ui/redesign` was merged into it with `--no-ff`). It was **pushed to GitHub on 2026-11-22**, and **PR #1** (https://github.com/vuongnguyen-se/liveask/pull/1) targets `main`. **GitHub CI ran on the PR and is green** (all three jobs).
-- Local path: this worktree, `C:\Users\Vuong\orca\workspaces\liveask\spookfish`.
+- Branch: all work was developed on `feat/liveask-realtime-qa-app` and **merged into `main` through PR #1 on 2026-11-22** (https://github.com/vuongnguyen-se/liveask/pull/1, merge commit `a221cde`). **CI is green on the PR and on `main`.** New work goes on a fresh branch from `main`.
+- Local path: wherever the repository is cloned; the machine-specific paths in section 5 and the taste-skill source path in `DECISIONS.md` belong to the original Windows laptop.
 - History: the platform skeleton came from https://github.com/vuongnguyen-se/eks-platform-lab (archived).
 
 ## 2. What exists
@@ -24,7 +24,7 @@ LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and 
 | `k8s/overlays/aws` | ALB Ingress (idle timeout 3600 s, deregistration delay 30 s, `/readyz` check) | renders; **never applied** |
 | `infra/terraform/` | VPC, EKS (Spot nodes), AWS Load Balancer Controller, metrics-server, ECR, RDS (db `liveask`), GitHub OIDC role, Budgets | ✅ `fmt`/`validate` pass; **never applied; `plan` not reviewed** |
 | `scripts/` | `create-db-secret.sh`, `load-test.sh`, `load_test.py`, `rolling-update-demo.sh`, `vendor_taste_kit.py` | load test and rolling update verified; secret script untested (needs AWS) |
-| `.github/workflows/` | `ci.yml` (ruff, pytest with Postgres, image build, terraform, render both overlays), `deploy.yml` (manual: OIDC, ECR, `kubectl apply -k`) | **never run on GitHub** |
+| `.github/workflows/` | `ci.yml` (ruff, pytest with Postgres, image build, terraform, render both overlays), `deploy.yml` (manual: OIDC, ECR, `kubectl apply -k`) | `ci.yml` green on PR #1 and on `main`; `deploy.yml` **never run** |
 | `docs/` | `ui/` (plan, copy, kit notes), `images/` (architecture + screenshots) | ✅ |
 
 ### Pinned versions
@@ -72,6 +72,6 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 
 **Continuing on another computer: start with `RESUME.md`** (install, clone, checks, minikube, the Day 3 steps).
 
-1. **Review and decide** (you): the branch `ui/redesign` (merge into `vuongnguyen-se/spookfish`, then `main`), and whether to **push** so CI runs (I have not pushed anything).
+1. **Done:** the work is merged into `main` (PR #1) and CI is green there. `deploy.yml` assumes `main`, so it can now run.
 2. **Day 3 needs you** (💰, about USD 1 per 3 to 4 hours, `SECURITY_AND_COST.md`): sign in to AWS, fill `infra/terraform/terraform.tfvars` (`budget_email`, `cluster_endpoint_public_access_cidrs` = your IP), check Kubernetes `1.35` is in standard support (`aws eks describe-cluster-versions`), review `terraform plan`, then approve `terraform apply`. Every session ends with the teardown.
 3. Repeat the demos on EKS (D3-04), re-measure NFR-1, take screenshots; optional HTTPS (D3-05); teardown (D3-06); final README numbers (D3-07).

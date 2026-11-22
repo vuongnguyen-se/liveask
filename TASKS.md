@@ -10,8 +10,8 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[-]` dropped (say why)
 |---|---|---|
 | 0 | Platform skeleton (Terraform, K8s, CI) carried over into the fresh `liveask` repo | ✅ Done (2026-11-21) |
 | 1 | The app: rooms, questions, votes, polls, real-time across pods; runs in Docker Compose | ✅ Done (2026-11-21) |
-| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | ✅ Done (2026-11-22), landing gate ended `OPEN` (1 finding, see `CURRENT_STATE.md`); GitHub CI green on PR #1 |
-| 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | ✅ Done locally (2026-11-22); CI green on PR #1 |
+| UI | Redesign the UI with taste-skill (landing page + three app views), one commit per component | ✅ Done (2026-11-22), landing gate ended `OPEN` (1 finding, see `CURRENT_STATE.md`); merged to `main` (PR #1), CI green |
+| 2 | Kubernetes on minikube: all objects, cross-pod real time, zero-downtime update, HPA demo | ✅ Done locally (2026-11-22); merged to `main` (PR #1), CI green |
 | 3 | One AWS session on EKS, screenshots, teardown; README and diagram final | ⏳ Not started: Terraform renames and ALB settings are done in code; the 💰 apply needs you (see `RESUME.md` section 4) |
 
 ---
@@ -57,12 +57,12 @@ Stop rule: if the gate still fails after 3 rounds, report the open FAILs (the sk
   - [x] `test(ui)`: guard test exempts the kit by path only; image still builds; report the image size change
   - Done when: `pytest` green, the Docker image builds and runs, no request leaves localhost.
 - [x] **UI-03 Landing page `/`** (2026-11-22; **`GATE: OPEN`**: 1 finding open, `ui-centre` on the hero window, and 3 `section-gaps` waivers at 390 px, see `CURRENT_STATE.md`) (kind: software; the full skill workflow; one commit per section).
-  - [ ] `feat(landing)`: nav and hero; the **create-room** and **join-by-code** actions still work
-  - [ ] `feat(landing)`: `app-frame` showing LiveAsk's own UI as live HTML
-  - [ ] `feat(landing)`: feature sections (live across pods, host controls and polls, projector view)
-  - [ ] `feat(landing)`: how-it-works diagram card (pods, Postgres `NOTIFY`)
-  - [ ] `feat(landing)`: FAQ and closing footer
-  - [ ] `test(landing)`: `copy-lint`, `consistency`, `check`, `perf`, then `gate.mjs`; waivers listed with reasons
+  - [x] `feat(landing)`: nav and hero; the **create-room** and **join-by-code** actions still work
+  - [x] `feat(landing)`: `app-frame` showing LiveAsk's own UI as live HTML
+  - [x] `feat(landing)`: feature sections (live across pods, host controls and polls, projector view)
+  - [x] `feat(landing)`: how-it-works diagram card (pods, Postgres `NOTIFY`)
+  - [x] `feat(landing)`: FAQ and closing footer
+  - [x] `test(landing)`: `copy-lint`, `consistency`, `check`, `perf`, then `gate.mjs`; waivers listed with reasons
   - Done when: `GATE: PASS` (or `OPEN` with every waiver and open FAIL reported) and the e2e check can still create and join a room.
 - [x] **UI-04 Audience view** (phone first, 390 px).
   - [x] `style(audience)`: header and connection pill
