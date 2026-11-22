@@ -1,13 +1,6 @@
-# For kind / minikube: no ALB, one replica, image loaded with `kind load docker-image`.
+# For minikube: the image is built into minikube (see CURRENT_STATE.md); Postgres arrives in
+# the next commit.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
-patches:
-  - target:
-      kind: HorizontalPodAutoscaler
-      name: notes-api
-    patch: |-
-      - op: replace
-        path: /spec/minReplicas
-        value: 1

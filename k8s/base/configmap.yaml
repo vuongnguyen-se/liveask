@@ -1,0 +1,10 @@
+# Plain settings read by the app (liveask/config.py). Nothing secret here: the database URL
+# lives in the liveask-db Secret.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: liveask-config
+data:
+  LOG_LEVEL: INFO
+  MAX_CONNECTIONS_PER_ROOM: "300"   # per pod: each pod holds its own WebSocket connections
+  QUESTIONS_PER_MINUTE: "5"         # per device, counted in the database so it holds across pods

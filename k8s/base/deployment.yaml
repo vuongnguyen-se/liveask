@@ -1,15 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: notes-api
+  name: liveask
   labels:
-    app: notes-api
+    app: liveask
 spec:
   replicas: 2
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: notes-api
+      app: liveask
+  # Zero-downtime update: a new pod must be Ready before an old one is stopped.
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,9 +19,11 @@ spec:
   template:
     metadata:
       labels:
-        app: notes-api
+        app: liveask
     spec:
       automountServiceAccountToken: false
+      # Time for the preStop sleep, then the app closing its WebSockets (code 1012), then exit.
+      terminationGracePeriodSeconds: 45
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
@@ -33,37 +36,74 @@ spec:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              app: notes-api
-      containers:
-        - name: api
-          image: notes-api
-          ports:
-            - name: http
-              containerPort: 8000
+              app: liveask
+      initContainers:
+        # Applies schema.sql under a Postgres advisory lock, so pods starting together take
+        # turns. Same image as the app (D-007). Retried by Kubernetes until the database is up.
+        - name: migrate
+          image: liveask
+          command: ["python", "-m", "liveask.migrate"]
           env:
-            # Created by scripts/create-db-secret.sh. Without it the app uses in-memory storage.
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: notes-db
+                  name: liveask-db
                   key: DATABASE_URL
-                  optional: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      containers:
+        - name: api
+          image: liveask
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: liveask-config
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: liveask-db
+                  key: DATABASE_URL
+            # Shown in the "live · pod ..." badge, so the multi-pod demo is visible.
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           resources:
             requests:
               cpu: 100m
               memory: 128Mi
             limits:
               memory: 256Mi
+          # Liveness never touches the database: a database outage must not restart every pod.
           livenessProbe:
             httpGet:
               path: /healthz
               port: http
             periodSeconds: 10
+          # Readiness needs the database and the LISTEN connection; it is 503 while shutting down.
           readinessProbe:
             httpGet:
               path: /readyz
               port: http
             periodSeconds: 5
+          lifecycle:
+            preStop:
+              # Keep serving for 10 s after the pod is marked for deletion, so the load balancer
+              # stops sending new connections before the app begins to shut down.
+              exec:
+                command: ["sleep", "10"]
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
