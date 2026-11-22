@@ -16,14 +16,14 @@ SECRET_JSON="$(aws secretsmanager get-secret-value --secret-id "$SECRET_ARN" --q
 DATABASE_URL="$(SECRET_JSON="$SECRET_JSON" DB_HOST="$DB_HOST" python3 -c '
 import json, os, urllib.parse as u
 s = json.loads(os.environ["SECRET_JSON"])
-print("postgresql://%s:%s@%s:5432/notes?sslmode=require" % (
+print("postgresql://%s:%s@%s:5432/liveask?sslmode=require" % (
     u.quote(s["username"], safe=""), u.quote(s["password"], safe=""), os.environ["DB_HOST"]))
 ')"
 
 kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
-kubectl -n "$NAMESPACE" create secret generic notes-db \
+kubectl -n "$NAMESPACE" create secret generic liveask-db \
   --from-literal=DATABASE_URL="$DATABASE_URL" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-echo "Secret notes-db is in namespace $NAMESPACE. Restart pods to pick it up:"
-echo "  kubectl -n $NAMESPACE rollout restart deployment/notes-api"
+echo "Secret liveask-db is in namespace $NAMESPACE. Restart pods to pick it up:"
+echo "  kubectl -n $NAMESPACE rollout restart deployment/liveask"
