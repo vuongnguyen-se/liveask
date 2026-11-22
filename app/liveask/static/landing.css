@@ -127,3 +127,11 @@ button.link { background: none; border: 0; padding: 0; font: inherit; font-weigh
 /* sync: a slightly shorter diagram frame keeps the content above the section's bottom padding */
 @media (min-width: 1024px) { .frame--diagram { aspect-ratio: 1200 / 500; } }
 .frame--diagram { margin-top: var(--s-6); }
+
+/* ---- gate fixes, round 3 ---- */
+/* the pinned steps start 120px under the section top like every other section, not centred in the screen */
+@media (min-width: 1024px) { main > #how.is-live > .mo-pc__grid { align-content: start; padding-top: var(--padt); } }
+/* a phone's step pictures are tall enough to fill their two screens */
+@media (max-width: 639px) { #how .mo-pc__visual { height: 280px; aspect-ratio: auto; align-items: flex-start; } }
+/* faq: the timeline panel's height */
+#faq .panel { --p-h: 260px; }

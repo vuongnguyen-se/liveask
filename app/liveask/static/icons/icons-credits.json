@@ -23,6 +23,17 @@
     "trademark": false
   },
   {
+    "file": "ui-plus.svg",
+    "icon": "ui:plus",
+    "name": "Plus",
+    "kind": "line",
+    "source": "@iconify-json/lucide@1.2.100",
+    "author": "Lucide Contributors",
+    "licence": "ISC",
+    "url": "https://github.com/lucide-icons/lucide",
+    "trademark": false
+  },
+  {
     "file": "ui-server.svg",
     "icon": "ui:server",
     "name": "Server",
@@ -37,6 +48,28 @@
     "file": "ui-smartphone.svg",
     "icon": "ui:smartphone",
     "name": "Smartphone",
+    "kind": "line",
+    "source": "@iconify-json/lucide@1.2.100",
+    "author": "Lucide Contributors",
+    "licence": "ISC",
+    "url": "https://github.com/lucide-icons/lucide",
+    "trademark": false
+  },
+  {
+    "file": "ui-timer.svg",
+    "icon": "ui:timer",
+    "name": "Timer",
+    "kind": "line",
+    "source": "@iconify-json/lucide@1.2.100",
+    "author": "Lucide Contributors",
+    "licence": "ISC",
+    "url": "https://github.com/lucide-icons/lucide",
+    "trademark": false
+  },
+  {
+    "file": "ui-users.svg",
+    "icon": "ui:users",
+    "name": "Users",
     "kind": "line",
     "source": "@iconify-json/lucide@1.2.100",
     "author": "Lucide Contributors",

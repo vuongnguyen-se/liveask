@@ -92,9 +92,6 @@
                   <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">L</span><span class="ui-win__who">Lan</span><span class="ui-win__sub">What is a pod?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">14</span></li>
                   <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">EKS or ECS for a small app?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">9</span></li>
                   <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Do pods share one database?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">7</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">When is Lambda the better fit?</span><span class="ui-win__st" data-st>Open</span><span class="ui-win__age">5</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">Can I try this at home for free?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">3</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">A</span><span class="ui-win__who">Anonymous</span><span class="ui-win__sub">What does a Service do?</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">2</span></li>
                 </ul>
               </div>
             </div>
@@ -378,13 +375,22 @@
     </div>
   </section>
 
-  <section class="section" id="faq" aria-labelledby="faq-h">
+  <section class="section" id="faq" style="--hm: 2" aria-labelledby="faq-h">
     <div class="wrap">
       <div class="grid grid--top">
         <div class="span-5 stack-4">
           <h2 id="faq-h">Answers to common questions</h2>
           <p class="t-lead">What a room keeps, how long it lasts and what the limits are.</p>
           <a class="link" href="#console">See the presenter's page</a>
+          <div class="panel"><div class="dg" data-icon-base="/static/icons" data-dg-still data-diagram><script type="application/json">{
+            "layout": "timeline",
+            "alt": "A room's life: you create it, run the talk with phones, host and screen, and it expires 24 hours after creation.",
+            "steps": [
+              {"label": "Create a room", "sub": "A title, one click", "icon": "ui:plus"},
+              {"label": "Run the talk", "sub": "Phones, host, screen", "icon": "ui:users"},
+              {"label": "Room expires", "sub": "24 hours after creation", "icon": "ui:timer"}
+            ]
+          }</script></div></div>
         </div>
         <div class="faq span-6 start-7">
           <div class="faq__item"><h3>Do people need an account to join a room?</h3><p>No. Phones join with the link or the 6-character code. A name is optional, and LiveAsk asks for no other personal details.</p></div>
@@ -418,7 +424,7 @@
     <div class="closing__links">
       <div class="grid">
         <div class="span-4 stack-4">
-          <a class="nav__logo" href="#top"><span class="mark mark--initial" aria-hidden="true">L</span>LiveAsk</a>
+          <a class="nav__logo" href="#top">LiveAsk</a>
           <p class="footer__lede">Live questions and polls on phones, the presenter's page and a projector.</p>
         </div>
         <div class="span-2 footer__col"><h3>Product</h3><ul><li><a href="#questions">Questions</a></li><li><a href="#polls">Polls</a></li><li><a href="#how">Steps</a></li><li><a href="#faq">FAQ</a></li></ul></div>
