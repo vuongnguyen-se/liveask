@@ -1,29 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software" data-radius="round" data-buttons="tonal">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LiveAsk screen</title>
-  <link rel="stylesheet" href="/static/styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LiveAsk screen</title>
+<meta name="theme-color" content="#f7f9fa">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/static/fonts/host-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/fonts/fonts.css">
+<link rel="stylesheet" href="/static/assets/system.css">
+<link rel="stylesheet" href="/static/tokens.css">
+<link rel="stylesheet" href="/static/app.css">
 </head>
-<body class="screen" data-view="screen">
+<body class="app screen" data-view="screen">
   <div class="screen-grid">
     <aside class="screen-side">
       <h1 id="title">LiveAsk</h1>
       <img id="qr" alt="QR code to join the room" hidden>
-      <div id="code" class="code"></div>
+      <div id="code"></div>
       <p id="join-url" class="muted"></p>
-      <div id="closed" class="banner" hidden>This room is closed.</div>
-      <div id="missing" class="banner" hidden>Room not found.</div>
+      <div id="closed" class="banner" role="status" hidden>This room is closed.</div>
+      <div id="missing" class="banner" role="alert" hidden>No room has this code.</div>
     </aside>
-    <main style="max-width:none;margin:0;padding:0">
-      <section id="polls" aria-label="Live poll"></section>
-      <h2>Top questions</h2>
+    <main>
+      <div id="polls" aria-label="Live poll"></div>
+      <h2 class="app-h2">Top questions</h2>
       <ul id="questions" class="list"></ul>
       <p id="empty" class="muted" hidden>Scan the QR code and ask the first question.</p>
     </main>
   </div>
-  <span id="status" class="pill">connecting…</span>
+  <span id="status" class="pill" role="status">connecting…</span>
   <script src="/static/qrcode.js"></script>
   <script src="/static/app.js"></script>
 </body>
