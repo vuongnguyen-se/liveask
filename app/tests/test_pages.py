@@ -32,7 +32,7 @@ def test_pages_are_served(web, path, marker):
 
 
 def test_static_files_are_served(web):
-    for name in ("app.js", "styles.css", "qrcode.js"):
+    for name in ("app.js", "app.css", "qrcode.js", "landing.js"):
         assert web.get(f"/static/{name}").status_code == 200
 
 
@@ -52,7 +52,7 @@ def test_pages_load_no_external_resources():
     for page in STATIC_DIR.glob("*.html"):
         text = page.read_text(encoding="utf-8")
         assert not REMOTE_RESOURCE.search(text), f"{page.name} loads a remote resource"
-    for sheet in ("tokens.css", "styles.css", "landing.css", "fonts/fonts.css"):
+    for sheet in ("tokens.css", "app.css", "landing.css", "fonts/fonts.css"):
         css = (STATIC_DIR / sheet).read_text(encoding="utf-8")
         assert not re.search(r"url\(\s*[\"']?(?:https?:)?//", css), f"{sheet} loads a remote file"
 
