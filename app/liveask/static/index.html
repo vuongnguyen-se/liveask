@@ -273,6 +273,50 @@
       </div>
     </div>
   </section>
+
+  <section class="section g2" id="screen" aria-labelledby="screen-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="section-head span-5"><h2 id="screen-h">A screen for the projector</h2></div>
+        <div class="span-6 start-7 stack-4">
+          <p class="t-lead muted">Open the screen link on the projector. It shows the room code, a QR code, the top six questions and the poll in progress.</p>
+          <a class="link" href="#create">Try the screen view</a>
+        </div>
+      </div>
+      <div class="frame frame--hero">
+        <div class="stage">
+          <div class="at-rise fit" style="--fit-max:880px;--ax:max(24px, 50% - 440px);--ay:48px;--ay-sm:16px" role="img" aria-label="The projector view: the room title, a QR code and the code K7PX4M on the left, the top questions and a live poll on the right">
+            <div class="ui ui-panel sv">
+              <div class="sv__side">
+                <p class="sv__title">Cloud 101</p>
+                <img class="sv__qr" id="demo-qr" alt="" width="132" height="132">
+                <p class="sv__code">K7PX4M</p>
+              </div>
+              <div class="sv__main">
+                <p class="sv__label">Top questions</p>
+                <ul class="sv__list">
+                  <li><span class="sv__n">14</span><span class="sv__text">What is a pod?</span></li>
+                  <li><span class="sv__n">9</span><span class="sv__text">EKS or ECS for a small app?</span></li>
+                  <li><span class="sv__n">7</span><span class="sv__text">Do pods share one database?</span></li>
+                </ul>
+                <p class="sv__label sv__label--poll">Which service next?</p>
+                <ul class="sv__bars">
+                  <li style="--w:58%"><span>EKS</span><b>46</b></li>
+                  <li style="--w:26%"><span>ECS</span><b>21</b></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="span-3"><h3 class="t-card">Room code</h3><p class="muted">Six characters, set large.</p></div>
+        <div class="span-3"><h3 class="t-card">QR code</h3><p class="muted">Opens the audience page.</p></div>
+        <div class="span-3"><h3 class="t-card">Top questions</h3><p class="muted">The six most upvoted open ones.</p></div>
+        <div class="span-3"><h3 class="t-card">Live poll</h3><p class="muted">The newest open poll.</p></div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="footer footer--statement closing" id="contact" aria-labelledby="close-h">
@@ -320,6 +364,8 @@
   </div>
 </footer>
 
+<script src="/static/qrcode.js"></script>
+<script src="/static/landing.js"></script>
 <script type="module" src="/static/assets/system.js"></script>
 <script type="module" src="/static/assets/motion/motion.js"></script>
 <script type="module" src="/static/assets/layout/layout.js"></script>
