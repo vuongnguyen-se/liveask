@@ -71,6 +71,9 @@ button.option { cursor: pointer; }
 
 /* ---- host ---- */
 .share p { margin: 0; overflow-wrap: anywhere; }
+.room-code-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; }
+.room-code-row > div { display: grid; gap: var(--s-1); }
+.room-code { font: 500 2rem/1.1 var(--font-mono); letter-spacing: .16em; user-select: all; }
 .share a { color: var(--ink); }
 
 /* ---- projector screen: large type, readable from the back of a room ---- */

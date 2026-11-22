@@ -145,3 +145,7 @@ button.link { background: none; border: 0; padding: 0; font: inherit; font-weigh
   footer.closing { height: auto; min-height: 100svh; display: flex; flex-direction: column; }
   footer.closing > .wrap { flex: 1 0 auto; height: auto; min-height: 0; }
 }
+
+/* ---- the hero's join link: a phone user with a code does not scroll to the footer to find the field ---- */
+.hero__join { margin-top: var(--s-2); }
+.hero__join a { text-decoration: underline; text-underline-offset: 3px; display: inline-block; padding-block: var(--s-2); }
