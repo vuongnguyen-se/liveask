@@ -101,3 +101,8 @@
   .sv__side { border-right: 0; border-bottom: 1px solid var(--u-line); padding: 16px; }
   .sv__main { padding: 16px; }
 }
+
+/* ---- sync: the diagram frame needs a height of its own (the diagram fills it) ---- */
+.frame--diagram { aspect-ratio: 1200 / 560; margin-top: var(--s-7); }
+@media (max-width: 1023px) { .frame--diagram { aspect-ratio: 4 / 3; } }
+@media (max-width: 639px) { .frame--diagram { aspect-ratio: 3 / 4; } }

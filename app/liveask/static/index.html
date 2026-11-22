@@ -317,6 +317,34 @@
       </div>
     </div>
   </section>
+
+  <section class="section ground-inverse" id="sync" aria-labelledby="sync-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="section-head span-5"><h2 id="sync-h">Every server hears every change</h2></div>
+        <div class="span-6 start-7">
+          <p class="t-lead muted">LiveAsk saves each question in PostgreSQL and announces it to all servers, so a phone on one server sees a question sent through another.</p>
+        </div>
+      </div>
+      <div class="frame frame--diagram">
+        <div class="dg" data-icon-base="/static/icons" data-diagram><script type="application/json">{
+          "layout": "bowtie",
+          "size": "section",
+          "alt": "Phones and the presenter's page send questions, votes and polls to PostgreSQL, which saves them and announces each change to every server; each server pushes it to the phones, hosts and screens connected to it.",
+          "sources": [
+            {"label": "Phones", "icon": "ui:smartphone", "sub": "Ask, upvote, vote"},
+            {"label": "Presenter", "icon": "ui:laptop", "sub": "Hide, open polls"}
+          ],
+          "core": {"label": "PostgreSQL", "icon": "postgres"},
+          "targets": [
+            {"label": "Server A", "icon": "ui:server", "sub": "Pushes live"},
+            {"label": "Server B", "icon": "ui:server", "sub": "Pushes live"},
+            {"label": "Server C", "icon": "ui:server", "sub": "Pushes live"}
+          ]
+        }</script></div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="footer footer--statement closing" id="contact" aria-labelledby="close-h">
