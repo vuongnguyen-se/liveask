@@ -20,7 +20,7 @@ Create a room
 
 ## Hero
 
-Rooms need no sign-up and expire after 24 hours.
+No sign-up needed. Rooms expire after 24 hours.
 
 Live Q&A and polls for presenters
 
@@ -34,6 +34,8 @@ Join a room
 Run the room from one page
 
 Hide a question, mark one answered, open a poll or close the room. Phones and the projector follow every change.
+
+See the projector view
 
 ## Questions
 
@@ -58,11 +60,22 @@ Write a question and two to six options, then open the poll. The bars move as ph
 
 People can change their vote until you close the poll.
 
+Options: 2 to 6
+Votes per phone: 1, changeable
+Results shown on: phones, host, screen
+
 ## Screen
 
 A screen for the projector
 
 Open the screen link on the projector. It shows the room code, a QR code, the top six questions and the poll in progress.
+
+Try the screen view
+
+Room code: six characters, set large.
+QR code: opens the audience page.
+Top questions: the six most upvoted open ones.
+Live poll: the newest open poll.
 
 ## Sync
 
@@ -70,22 +83,13 @@ Every server hears every change
 
 LiveAsk saves each question in PostgreSQL and announces it to all servers, so a phone on one server sees a question sent through another.
 
-## Formats
-
-Made for classes, clubs and events
-
-Class presentations
-Club meetings
-Small events
-Lectures
-Workshops
-Meetups
-
-One room per talk. It expires after 24 hours.
-
 ## FAQ
 
 Answers to common questions
+
+What a room keeps, how long it lasts and what the limits are.
+
+See the presenter's page
 
 Do people need an account?
 No. Phones join with the link or the 6-character code. A name is optional, and LiveAsk asks for no other personal details.
@@ -101,6 +105,14 @@ Five a minute from each phone, so one person cannot fill the list.
 
 Can people see hidden questions?
 No. A hidden question leaves every phone and the projector. You can bring it back from the console.
+
+Made for
+Class presentations
+Club meetings
+Small events
+Lectures
+Workshops
+Meetups
 
 ## Close
 
