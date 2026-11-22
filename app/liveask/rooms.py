@@ -5,11 +5,11 @@ from __future__ import annotations
 from typing import Annotated
 
 import psycopg.errors
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Request, Response
 from psycopg_pool import AsyncConnectionPool
 from pydantic import BaseModel, StringConstraints
 
-from liveask import events, polls, questions, security
+from liveask import events, polls, questions, ratelimit, security
 from liveask.common import (
     AuthHeader,
     OptionalDevice,
@@ -56,7 +56,12 @@ async def create_room_record(pool: AsyncConnectionPool, title: str) -> dict:
 
 
 @router.post("", status_code=201)
-async def create_room(body: RoomIn, pool: Pool) -> dict:
+async def create_room(body: RoomIn, pool: Pool, request: Request) -> dict:
+    wait = ratelimit.room_creation_retry_after(request)
+    if wait:
+        raise ApiError(
+            429, "rate_limited", f"too many rooms from this network; try again in {wait} s"
+        )
     return await create_room_record(pool, body.title)
 
 
