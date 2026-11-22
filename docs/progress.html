@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveAsk progress</title>
+<!--
+  How to update: edit the DATA block below (status: done | doing | todo | optional), then reload.
+  Keep it in step with TASKS.md, which stays the source of truth. No network requests, no build step.
+-->
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --ink: #1c1d1f; --muted: #5d6066; --line: #dcdcd7;
+    --done: #1f7a4d; --doing: #b45309; --todo: #8b8f98; --opt: #6b5bb5; --track: #e8e8e3;
+    --focus: #1d4ed8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141516; --card: #1d1f21; --ink: #ececea; --muted: #a2a6ad; --line: #34373b;
+      --done: #4cc38a; --doing: #f0a43c; --todo: #8b8f98; --opt: #a99cf0; --track: #2a2d30;
+      --focus: #7aa2ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 32px 20px 56px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 { font-size: 1.05rem; margin: 0 0 12px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px; margin-bottom: 20px; }
+  .big { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .big .num { font-size: 2.6rem; font-weight: 700; line-height: 1; }
+  .big .of { color: var(--muted); }
+  .bar { height: 14px; border-radius: 7px; background: var(--track); overflow: hidden;
+    display: flex; margin-top: 12px; }
+  .bar > span { display: block; height: 100%; }
+  .bar .d { background: var(--done); } .bar .g { background: var(--doing); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: .9rem; margin-top: 10px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: baseline; }
+  .tracks { display: grid; gap: 14px; }
+  .trow { display: grid; grid-template-columns: 190px 1fr 74px; gap: 14px; align-items: center; }
+  .trow .name { font-weight: 600; }
+  .trow .count { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .trow .bar { margin-top: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; grid-column: 1 / -1; }
+  .chip { font-size: .78rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line);
+    color: var(--muted); white-space: nowrap; }
+  .chip.done { border-color: var(--done); color: var(--done); }
+  .chip.doing { border-color: var(--doing); color: var(--doing); font-weight: 600; }
+  .chip.optional { border-color: var(--opt); color: var(--opt); border-style: dashed; }
+  /* flow */
+  .flow { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+  .stage { flex: 1 1 120px; min-width: 120px; border: 1px solid var(--line); border-radius: 10px; padding: 12px;
+    position: relative; margin: 0 24px 14px 0; background: var(--card); }
+  .stage:last-child { margin-right: 0; }
+  .stage:not(:last-child)::after { content: "\2192"; position: absolute; right: -19px; top: 50%;
+    transform: translateY(-50%); color: var(--muted); font-size: 1.2rem; }
+  .stage .t { font-weight: 600; font-size: .95rem; }
+  .stage .d { color: var(--muted); font-size: .84rem; margin-top: 2px; }
+  .stage .s { margin-top: 8px; font-size: .8rem; font-weight: 600; }
+  .stage.done { border-color: var(--done); } .stage.done .s { color: var(--done); }
+  .stage.doing { border-color: var(--doing); box-shadow: 0 0 0 2px color-mix(in srgb, var(--doing) 25%, transparent); }
+  .stage.doing .s { color: var(--doing); }
+  .stage.todo .s { color: var(--todo); }
+  /* session timeline */
+  ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  ol.steps li { display: flex; gap: 10px; align-items: baseline; }
+  .badge { flex: none; min-width: 74px; text-align: center; font-size: .75rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 6px; border: 1px solid currentColor; }
+  .badge.done { color: var(--done); } .badge.doing { color: var(--doing); }
+  .badge.todo { color: var(--todo); } .badge.optional { color: var(--opt); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .note { color: var(--muted); font-size: .9rem; }
+  ul.plain { margin: 0; padding-left: 20px; } ul.plain li { margin: 4px 0; }
+  a { color: var(--focus); } a:focus-visible, .chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  @media (max-width: 720px) {
+    .trow { grid-template-columns: 1fr 70px; } .trow .bar { grid-column: 1 / -1; grid-row: 2; }
+    .two { grid-template-columns: 1fr; }
+    .stage { margin-right: 0; } .stage:not(:last-child)::after { content: none; }
+  }
+  @media (prefers-reduced-motion: no-preference) { .bar > span { transition: width .4s ease; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>LiveAsk progress</h1>
+  <p class="sub" id="updated"></p>
+
+  <section class="card" aria-labelledby="h-overall">
+    <h2 id="h-overall">Overall</h2>
+    <div class="big"><span class="num" id="pct"></span><span class="of" id="of"></span></div>
+    <div class="bar" id="overall" role="img"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--done)"></i>done</span>
+      <span><i class="dot" style="background:var(--doing)"></i>in progress</span>
+      <span><i class="dot" style="background:var(--todo)"></i>to do</span>
+      <span><i class="dot" style="background:var(--opt)"></i>optional</span>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-flow">
+    <h2 id="h-flow">The flow: from idea to proof on AWS</h2>
+    <div class="flow" id="flow"></div>
+    <p class="note" id="flownote"></p>
+  </section>
+
+  <section class="card" aria-labelledby="h-tracks">
+    <h2 id="h-tracks">Tasks by track</h2>
+    <div class="tracks" id="tracks"></div>
+  </section>
+
+  <div class="two">
+    <section class="card" aria-labelledby="h-session">
+      <h2 id="h-session">The second AWS session</h2>
+      <p class="note" id="sessionnote"></p>
+      <ol class="steps" id="steps"></ol>
+    </section>
+    <section class="card" aria-labelledby="h-next">
+      <h2 id="h-next">What is left</h2>
+      <ul class="plain" id="left"></ul>
+      <h2 style="margin-top:18px">Proven so far</h2>
+      <ul class="plain" id="proof"></ul>
+    </section>
+  </div>
+
+  <p class="note">Source of truth: <a href="../TASKS.md">TASKS.md</a> · state: <a href="../CURRENT_STATE.md">CURRENT_STATE.md</a>
+    · EKS results: <a href="eks-session-2026-11-22.md">eks-session-2026-11-22.md</a></p>
+</main>
+
+<script>
+// ===== DATA: edit this block to update the page =====================================================
+const DATA = {
+  updated: "2026-11-22, 14:30",
+  tracks: [
+    { name: "Day 1: the app", tasks: [
+      ["D1-01","package, config, migrate","done"], ["D1-02","rooms","done"], ["D1-03","questions and votes","done"],
+      ["D1-04","polls","done"], ["D1-05","real time across pods","done"], ["D1-06","pages and reconnect","done"],
+      ["D1-07","Docker Compose with two apps","done"] ]},
+    { name: "UI track", tasks: [
+      ["UI-00","browser checks in the repo","done"], ["UI-01","brief, copy, plan","done"], ["UI-02","foundation","done"],
+      ["UI-03","landing page (1 gate finding open)","done"], ["UI-04","audience view","done"], ["UI-05","host console","done"],
+      ["UI-06","projector screen","done"], ["UI-07","review and ship","done"] ]},
+    { name: "Day 2: minikube", tasks: [
+      ["D2-01","k8s base","done"], ["D2-02","local overlay + Postgres","done"], ["D2-03","cross-pod demo","done"],
+      ["D2-04","zero-downtime update","done"], ["D2-05","load test + HPA","done"], ["D2-06","cleanup CronJob","done"],
+      ["D2-07","CI","done"] ]},
+    { name: "Day 3: AWS on EKS", tasks: [
+      ["D3-01","Terraform edits","done"], ["D3-02","ALB ingress settings","done"], ["D3-03","apply + deploy","done"],
+      ["D3-04","EKS demos + phone test","done"], ["D3-05","HTTPS","optional"], ["D3-06","teardown","done"],
+      ["D3-07","final README","done"] ]},
+  ],
+  flow: [
+    ["Platform","Terraform, K8s, CI skeleton","done"],
+    ["Day 1: app","rooms, questions, polls, WebSockets","done"],
+    ["UI track","landing page + 3 views","done"],
+    ["Day 2: minikube","K8s objects, HPA, rollout","done"],
+    ["EKS session 1","e2e, rollout, load on real AWS","done"],
+    ["EKS session 2","clean apply, phone test, script","done"],
+  ],
+  flownote: "Both EKS sessions are done and destroyed. Only the optional HTTPS task is left.",
+  sessionnote: "Session 2: 12:50 to 14:24. Destroyed and checked: nothing is running.",
+  session: [
+    ["terraform apply: 78 resources, clean run","done"],
+    ["database secret","done"],
+    ["deploy from the laptop (first full run of the script)","done"],
+    ["browser checks 19/19, rollout 6/6, load p95 801 ms","done"],
+    ["phone test on mobile data","done"],
+    ["terraform destroy and a check that nothing is left","done"],
+  ],
+  left: [
+    "Cost Explorer check on 2026-11-23, for both sessions",
+    "Optional: HTTPS on a custom domain (D3-05)",
+    "Decide whether the landing page is too long on phones (11.5 screens)",
+    "One landing-page gate finding is still open (ui-centre)",
+  ],
+  proof: [
+    "Real phones on mobile data: the app worked (plain HTTP)",
+    "e2e 19/19 and rolling update 6/6 on EKS, twice; no question lost",
+    "200 clients, all delivered; p95 733 ms and 801 ms (target 1 s)",
+    "HPA 2 to 6 pods; 6 healthy ALB targets over 2 zones",
+    "106 tests pass; the deploy script ran end to end",
+  ],
+};
+// =====================================================================================================
+
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const count = (tasks, s) => tasks.filter((t) => t[2] === s).length;
+const label = { done: "done", doing: "in progress", todo: "to do", optional: "optional" };
+
+const all = DATA.tracks.flatMap((t) => t.tasks);
+const done = count(all, "done"), doing = count(all, "doing");
+$("updated").textContent = "Last updated " + DATA.updated + ". Counted from the task board.";
+$("pct").textContent = Math.round((done / all.length) * 100) + "%";
+$("of").textContent = done + " of " + all.length + " tasks done" + (doing ? ", " + doing + " in progress" : "");
+
+function bar(node, total, d, g) {
+  node.append(Object.assign(el("span", "d"), {}), Object.assign(el("span", "g"), {}));
+  node.children[0].style.width = (d / total) * 100 + "%";
+  node.children[1].style.width = (g / total) * 100 + "%";
+}
+bar($("overall"), all.length, done, doing);
+$("overall").setAttribute("aria-label", done + " of " + all.length + " tasks done, " + doing + " in progress");
+
+for (const track of DATA.tracks) {
+  const row = el("div", "trow");
+  const d = count(track.tasks, "done"), g = count(track.tasks, "doing");
+  row.append(el("span", "name", track.name));
+  const b = el("div", "bar"); bar(b, track.tasks.length, d, g);
+  b.setAttribute("role", "img"); b.setAttribute("aria-label", d + " of " + track.tasks.length + " done");
+  row.append(b, el("span", "count", d + " / " + track.tasks.length));
+  const chips = el("div", "chips");
+  for (const [id, text, s] of track.tasks) {
+    const c = el("span", "chip " + s, id + " " + text);
+    c.title = label[s]; chips.append(c);
+  }
+  row.append(chips); $("tracks").append(row);
+}
+
+for (const [title, desc, s] of DATA.flow) {
+  const st = el("div", "stage " + s);
+  st.append(el("div", "t", title), el("div", "d", desc), el("div", "s", label[s]));
+  $("flow").append(st);
+}
+$("flownote").textContent = DATA.flownote;
+$("sessionnote").textContent = DATA.sessionnote;
+for (const [text, s] of DATA.session) {
+  const li = el("li"); li.append(el("span", "badge " + s, label[s]), el("span", null, text)); $("steps").append(li);
+}
+for (const t of DATA.left) $("left").append(el("li", null, t));
+for (const t of DATA.proof) $("proof").append(el("li", null, t));
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@ _Last updated: 2026-11-22 (after the EKS session and its teardown). Update this 
 
 ## 1. Summary
 
-LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **One EKS session ran on 2026-11-22 and was destroyed afterwards: no AWS resources of this project exist now.** The results are in `docs/eks-session-2026-11-22.md`. Still open: the phone check, console screenshots, the final README, and the Cost Explorer check on 2026-11-23.
+LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and verified locally**: the app (Day 1), the redesigned UI (the UI track) and Kubernetes on minikube (Day 2). **Two EKS sessions ran on 2026-11-22 and were each destroyed afterwards: no AWS resources of this project exist now (checked after each destroy).** The results, including a phone test on mobile data that passed, are in `docs/eks-session-2026-11-22.md`. Still open: the optional HTTPS task (D3-05) and the Cost Explorer check on 2026-11-23.
 
 - GitHub: https://github.com/vuongnguyen-se/liveask (public, branch `main`).
 - Branch: all work was developed on `feat/liveask-realtime-qa-app` and **merged into `main` through PR #1 on 2026-11-22** (https://github.com/vuongnguyen-se/liveask/pull/1, merge commit `a221cde`). **CI is green on the PR and on `main`.** New work goes on a fresh branch from `main`.
@@ -38,10 +38,11 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 - Load test, 200 WebSocket clients over 6 pods, through `minikube tunnel`: 18,400 of 18,400 deliveries; the HPA scaled **2 → 4 → 6** pods at CPU 345% of the 60% target. Latency median 298 ms, **p95 1079 ms** (target 1000 ms): the POST alone took a median 289 ms through the Windows tunnel, so this is not a clean verdict on NFR-1. Re-measure on EKS.
 - UI: the skill's layout checker reports no findings at 1440, 1024, 820, 768 and 390; `copy-lint` 0 FAIL, 0 WARN; the skill's finish gate (three rounds used) ended **`GATE: OPEN`**: 21 findings in round 1, 6 in round 2, **1 open** at the end and 3 waived. Open: `ui-centre` (the hero window sits 200 px from the left and 480 px from the right of its frame, instead of centred); the skill says to stop and report it. Waived, each with a reason in `.taste-skill/waivers.json`: three `section-gaps` findings at 390 px (the kit sizes sections to whole phone screens). 29 non-blocking WARNs remain.
 - **EKS, 2026-11-22** (Kubernetes 1.35, 2 Spot nodes in 2 zones, RDS, ALB; destroyed afterwards): `e2e/run.js` 19/19 through the ALB with host and screen on different pods; `e2e/rollout.js` 6/6 (12 of 12 questions stored, replicas never below 2, 10 s rollout); load test with 200 clients: 22,600 of 22,600 deliveries, median 235 ms, **p95 733 ms** (target 1,000 ms: met in this one 60 s run); the HPA scaled 2 to 6 pods at CPU 624% of the 60% target; all 6 ALB targets healthy. Details and the problems found: `docs/eks-session-2026-11-22.md`.
+- **EKS, session 2 (2026-11-22, clean apply of 78 resources, destroyed afterwards):** `deploy-from-laptop.sh` end to end; `e2e/run.js` 19/19; `e2e/rollout.js` 6/6 (13 of 13 questions stored, 20 s rollout); load test, 200 clients: 22,400 of 22,400 deliveries, median 261 ms, **p95 801 ms**, max 2,959 ms; HPA 2 to 6 pods at CPU 716%; 6 of 6 ALB targets healthy; **a test from real phones on mobile data passed**.
 
 ## 4. Not verified
 
-- A real phone on mobile data, and screenshots of the AWS console (the cluster is gone; they need another session). HTTPS. The NFR-1 latency over a longer or heavier run (one 60 s run passed). Vietnamese letters in the UI (Host Grotesk has no glyphs for them; the system font fills in).
+- Screenshots of the AWS console and of the phone (the evidence is terminal output). HTTPS. The NFR-1 latency over a longer or heavier run (two 60 s runs passed, with p95 733 and 801 ms, but one delivery took 2.9 s). Vietnamese letters in the UI (Host Grotesk has no glyphs for them; the system font fills in).
 
 ## 5. Developer machine notes (Windows 11)
 
@@ -68,7 +69,7 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 4. In Kubernetes, a Kustomize overlay's own files do **not** inherit the base's `namespace`: the local overlay sets `namespace: liveask` itself (found when Postgres landed in `default`).
 5. Room creation is limited to 20 per hour per network address (`ROOMS_PER_HOUR_PER_IP`, in memory, so each pod counts on its own and the ceiling is that times the replicas). It trusts the last `X-Forwarded-For` entry (`TRUSTED_PROXY_HOPS=1`, right for the ALB, ingress-nginx and the Compose nginx); with no proxy in front, set it to 0 or a caller could forge the address. Not yet exercised through a real ALB: the browser checks on Compose and minikube were not re-run after this change, only `pytest`.
 6. `window` in the kit has a minimum height, so the hero card is cut by its frame; the checker's `fold-card` rule is satisfied by marking the frame `data-ui-pause-host`.
-7. `deploy.yml` only builds and pushes the image, then prints the next command in the run summary. The cluster API is locked to one IP (`cluster_endpoint_public_access_cidrs`), which GitHub-hosted runners are not on, so `scripts/deploy-from-laptop.sh` applies the manifests from the allowed machine (decision D-019). The script has been syntax-checked but not yet run end to end; the same steps were run by hand on 2026-11-22.
+7. `deploy.yml` only builds and pushes the image, then prints the next command in the run summary. The cluster API is locked to one IP (`cluster_endpoint_public_access_cidrs`), which GitHub-hosted runners are not on, so `scripts/deploy-from-laptop.sh` applies the manifests from the allowed machine (decision D-019). The script ran end to end in the second session.
 8. A new GitHub OIDC trust policy needs the repository's real subject. This repository uses immutable subjects (`repo:owner@ID/name@ID`): set `github_oidc_repo_claim` in `terraform.tfvars` from `gh api repos/OWNER/NAME/actions/oidc/customization/sub`. A change to the trust policy can take a minute to take effect.
 9. `ap-southeast-1` lists the Hanoi Local Zone first; the VPC uses standard zones only (`providers.tf`), because a Local Zone has no NAT gateway.
 10. On this laptop `python3` is a Microsoft Store stub, so `scripts/create-db-secret.sh` needs a `python3` on PATH that points to a real Python. Edge refused the ALB address with `ERR_BLOCKED_BY_CLIENT`; Chrome worked (`BROWSER_PATH`).
@@ -78,5 +79,5 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 **Continuing on another computer: start with `RESUME.md`** (install, clone, checks, minikube, the Day 3 steps).
 
 1. **Done:** the work is merged into `main` (PR #1) and CI is green there. `deploy.yml` assumes `main`, so it can now run.
-2. **Day 3 remainder** (needs you; each new session costs about USD 0.27 per hour and ends with the teardown): a phone check on mobile data and console screenshots need a new `terraform apply`; if you do that, re-run the deploy by applying the manifests from the laptop (see section 7, items 7 and 8). Optional HTTPS (D3-05).
-3. Write the final README with the EKS numbers (D3-07), and check Cost Explorer on 2026-11-23.
+2. **Optional:** HTTPS on a custom domain (D3-05; the account has a Route 53 zone for `vuongdomain.click` and no certificate yet). Each new session costs about USD 0.27 per hour and ends with the teardown.
+3. Check Cost Explorer on 2026-11-23 for both sessions. Then decide on the landing page's length on phones (about 11.5 screens): it is a design call, not a bug.
