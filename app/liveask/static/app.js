@@ -62,7 +62,7 @@
     try {
       res = await fetch(path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
     } catch (e) {
-      throw Object.assign(new Error("Network error. Check your connection."), { status: 0 });
+      throw Object.assign(new Error("No connection. LiveAsk retries on its own."), { status: 0 });
     }
     if (res.status === 204) return null;
     let data = null;
@@ -241,9 +241,7 @@
     return el(
       "div",
       { className: "card" },
-      el("strong", {}, poll.question),
-      " ",
-      el("span", { className: "badge" }, poll.status),
+      el("div", { className: "poll__head" }, el("strong", {}, poll.question), el("span", { className: "badge" }, poll.status)),
       ...options,
       el("div", { className: "muted" }, `${poll.total} vote${poll.total === 1 ? "" : "s"}`),
     );
@@ -360,7 +358,10 @@
         $("text").value = "";
         $("count").textContent = "0/280";
         render();
-      } catch (err) { showError($("ask-error"), err); }
+      } catch (err) {
+        showError($("ask-error"), err.status === 429
+          ? new Error("Five questions a minute is the limit. Try again in a moment.") : err);
+      }
     });
   };
 
@@ -406,9 +407,9 @@
             extra: el(
               "div",
               { className: "row" },
-              q.status !== "answered" ? el("button", { type: "button", onclick: setStatus(q, "answered") }, "Mark answered") : null,
-              q.status !== "hidden" ? el("button", { type: "button", onclick: setStatus(q, "hidden") }, "Hide") : null,
-              q.status !== "open" ? el("button", { type: "button", onclick: setStatus(q, "open") }, "Reopen") : null,
+              q.status !== "answered" ? el("button", { type: "button", className: "btn btn--secondary btn--sm", onclick: setStatus(q, "answered") }, "Mark answered") : null,
+              q.status !== "hidden" ? el("button", { type: "button", className: "btn btn--secondary btn--sm", onclick: setStatus(q, "hidden") }, "Hide") : null,
+              q.status !== "open" ? el("button", { type: "button", className: "btn btn--secondary btn--sm", onclick: setStatus(q, "open") }, "Reopen") : null,
             ),
           }),
         ),
@@ -425,8 +426,8 @@
           const controls = el(
             "div",
             { className: "row" },
-            p.status === "draft" ? el("button", { type: "button", className: "primary", onclick: setPoll(p, "open") }, "Open for voting") : null,
-            p.status === "open" ? el("button", { type: "button", onclick: setPoll(p, "closed") }, "Close poll") : null,
+            p.status === "draft" ? el("button", { type: "button", className: "btn btn--primary btn--sm", onclick: setPoll(p, "open") }, "Open for voting") : null,
+            p.status === "open" ? el("button", { type: "button", className: "btn btn--secondary btn--sm", onclick: setPoll(p, "closed") }, "Close poll") : null,
           );
           card.append(controls);
           return card;
