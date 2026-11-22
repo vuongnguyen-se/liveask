@@ -24,7 +24,7 @@ LiveAsk (real-time Q&A and polls, see `PROJECT_REQUIREMENTS.md`) is **built and 
 | `k8s/overlays/aws` | ALB Ingress (idle timeout 3600 s, deregistration delay 30 s, `/readyz` check) | applied once on 2026-11-22 (ALB answered from the internet), then destroyed |
 | `infra/terraform/` | VPC, EKS (Spot nodes), AWS Load Balancer Controller, metrics-server, ECR, RDS (db `liveask`), GitHub OIDC role, Budgets | ✅ `fmt`/`validate` pass; applied once on 2026-11-22 and destroyed (78 resources); `plan` reviewed |
 | `scripts/` | `create-db-secret.sh`, `load-test.sh`, `load_test.py`, `rolling-update-demo.sh`, `vendor_taste_kit.py` | load test and rolling update verified; secret script untested (needs AWS) |
-| `.github/workflows/` | `ci.yml` (ruff, pytest with Postgres, image build, terraform, render both overlays), `deploy.yml` (manual: OIDC, ECR, `kubectl apply -k`) | `ci.yml` green on PR #1 and on `main`; `deploy.yml` ran on 2026-11-22: it builds and pushes the image but cannot apply to an IP-locked cluster |
+| `.github/workflows/` | `ci.yml` (ruff, pytest with Postgres, image build, terraform, render both overlays), `deploy.yml` (manual: OIDC, ECR, `kubectl apply -k`) | `ci.yml` green on PR #1 and on `main`; `deploy.yml` builds and pushes the image (ran on 2026-11-22); `deploy-from-laptop.sh` applies the manifests |
 | `docs/` | `ui/` (plan, copy, kit notes), `images/` (architecture + screenshots) | ✅ |
 
 ### Pinned versions
@@ -68,7 +68,7 @@ Terraform ≥ 1.6 (local 1.17.1) · AWS provider `>= 5.95, < 6.0` · Helm provid
 4. In Kubernetes, a Kustomize overlay's own files do **not** inherit the base's `namespace`: the local overlay sets `namespace: liveask` itself (found when Postgres landed in `default`).
 5. Anyone can `POST /api/rooms` or `POST /create` without limit (rooms expire after 24 h and are cleaned nightly). Rate-limit it before exposing the ALB for long.
 6. `window` in the kit has a minimum height, so the hero card is cut by its frame; the checker's `fold-card` rule is satisfied by marking the frame `data-ui-pause-host`.
-7. `deploy.yml` builds and pushes the image, but its `kubectl apply` step times out when the cluster API is locked to one IP (`cluster_endpoint_public_access_cidrs`), because GitHub-hosted runners are not on the list. On 2026-11-22 the manifests were applied from the laptop instead. Decide before the next session: apply from the laptop, or open the API for the workflow.
+7. `deploy.yml` only builds and pushes the image, then prints the next command in the run summary. The cluster API is locked to one IP (`cluster_endpoint_public_access_cidrs`), which GitHub-hosted runners are not on, so `scripts/deploy-from-laptop.sh` applies the manifests from the allowed machine (decision D-019). The script has been syntax-checked but not yet run end to end; the same steps were run by hand on 2026-11-22.
 8. A new GitHub OIDC trust policy needs the repository's real subject. This repository uses immutable subjects (`repo:owner@ID/name@ID`): set `github_oidc_repo_claim` in `terraform.tfvars` from `gh api repos/OWNER/NAME/actions/oidc/customization/sub`. A change to the trust policy can take a minute to take effect.
 9. `ap-southeast-1` lists the Hanoi Local Zone first; the VPC uses standard zones only (`providers.tf`), because a Local Zone has no NAT gateway.
 10. On this laptop `python3` is a Microsoft Store stub, so `scripts/create-db-secret.sh` needs a `python3` on PATH that points to a real Python. Edge refused the ALB address with `ERR_BLOCKED_BY_CLIENT`; Chrome worked (`BROWSER_PATH`).

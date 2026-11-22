@@ -81,7 +81,7 @@ cd e2e; npm install; npm run all                    # browser checks against Com
 scripts/rolling-update-demo.sh                      # zero-downtime update on minikube
 ```
 
-AWS (one session, always ending with the teardown): `terraform apply`, `scripts/create-db-secret.sh`, then GitHub Actions "Deploy to EKS". Teardown: `kubectl delete -k k8s/overlays/aws`, wait for the ALB to disappear, then `terraform destroy`.
+AWS (one session, always ending with the teardown): `terraform apply`, `scripts/create-db-secret.sh`, then GitHub Actions "Deploy to EKS" (builds and pushes the image) and `bash scripts/deploy-from-laptop.sh` (applies the manifests from your laptop, because the Kubernetes API is locked to your IP). Teardown: `kubectl delete -k k8s/overlays/aws`, wait for the ALB to disappear, then `terraform destroy`.
 
 ## The UI
 
